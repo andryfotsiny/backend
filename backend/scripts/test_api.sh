@@ -14,7 +14,7 @@ echo "2. Test vérification téléphone frauduleux..."
 curl -s -X POST $API_URL/api/v1/phone/check-phone \
   -H "Content-Type: application/json" \
   -d '{
-    "phone": "+33612345678",
+    "phone": "+33756123456",
     "country": "FR"
   }' | python3 -m json.tool
 echo ""
@@ -32,9 +32,9 @@ echo "4. Test analyse email..."
 curl -s -X POST $API_URL/api/v1/email/analyze-email \
   -H "Content-Type: application/json" \
   -d '{
-    "sender": "noreply@fake-bank.com",
-    "subject": "Action requise sur votre compte",
-    "body": "Cher client, nous avons détecté une activité suspecte. Cliquez ici pour confirmer vos identifiants."
+    "sender": "noreply@fake-bank-secure.com",
+    "subject": "URGENT Action requise",
+    "body": "Payez maintenant bit.ly"
   }' | python3 -m json.tool
 echo ""
 

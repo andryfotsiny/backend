@@ -39,7 +39,7 @@ def upgrade() -> None:
         sa.Column('verified', sa.Boolean(), nullable=True),
         sa.Column('first_reported', sa.DateTime(), nullable=True),
         sa.Column('last_reported', sa.DateTime(), nullable=True),
-        sa.Column('metadata', postgresql.JSONB(astext_type=sa.Text()), nullable=True),
+        sa.Column('meta_data', postgresql.JSONB(astext_type=sa.Text()), nullable=True),
         sa.Column('source', sa.String(length=50), nullable=True),
         sa.PrimaryKeyConstraint('phone_number')
     )
@@ -96,7 +96,7 @@ def upgrade() -> None:
         sa.Column('timestamp', sa.DateTime(), nullable=True),
         sa.Column('verification_status', sa.Enum('PENDING', 'VERIFIED', 'REJECTED', name='verificationstatus'), nullable=True),
         sa.Column('verified_by', sa.Integer(), nullable=True),
-        sa.Column('metadata', postgresql.JSONB(astext_type=sa.Text()), nullable=True),
+        sa.Column('meta_data', postgresql.JSONB(astext_type=sa.Text()), nullable=True),
         sa.ForeignKeyConstraint(['user_id'], ['users.user_id'], ),
         sa.PrimaryKeyConstraint('report_id')
     )

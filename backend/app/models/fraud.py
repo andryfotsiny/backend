@@ -22,7 +22,7 @@ class FraudulentNumber(Base):
     verified = Column(Boolean, default=False)
     first_reported = Column(DateTime, default=datetime.utcnow)
     last_reported = Column(DateTime, default=datetime.utcnow)
-    metadata = Column(JSONB, default={})
+    meta_data = Column(JSONB, default={})
     source = Column(String(50), default="crowdsource")
 
 class FraudulentSMSPattern(Base):

@@ -1,6 +1,7 @@
 import asyncio
 import sys
-sys.path.insert(0, '/app')
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from app.db.session import async_session_maker
 from app.models.fraud import FraudulentNumber, FraudulentSMSPattern, FraudulentDomain, FraudType

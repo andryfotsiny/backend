@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, DateTime, Integer, Boolean, ForeignKey, Enum as SQLEnum, BigInteger
+from sqlalchemy import Column, String, DateTime, Integer, Boolean, ForeignKey, Enum as SQLEnum, BigInteger,Float
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from datetime import datetime
 import uuid
@@ -26,7 +26,7 @@ class UserReport(Base):
     timestamp = Column(DateTime, default=datetime.utcnow, index=True)
     verification_status = Column(SQLEnum(VerificationStatus), default=VerificationStatus.PENDING)
     verified_by = Column(Integer, default=0)
-    metadata = Column(JSONB, default={})
+    meta_data = Column(JSONB, default={})
 
 class DetectionLog(Base):
     __tablename__ = "detection_logs"

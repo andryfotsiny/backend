@@ -1,8 +1,4 @@
-import joblib
-import numpy as np
 from typing import Tuple, Optional
-import os
-from app.core.config import settings
 
 class MLService:
     def __init__(self):
@@ -12,43 +8,13 @@ class MLService:
         self.vectorizer = None
         
     def load_models(self):
-        model_path = settings.ML_MODEL_PATH
-        try:
-            if os.path.exists(f"{model_path}/phone_model.pkl"):
-                self.phone_model = joblib.load(f"{model_path}/phone_model.pkl")
-            if os.path.exists(f"{model_path}/sms_model.pkl"):
-                self.sms_model = joblib.load(f"{model_path}/sms_model.pkl")
-            if os.path.exists(f"{model_path}/vectorizer.pkl"):
-                self.vectorizer = joblib.load(f"{model_path}/vectorizer.pkl")
-        except:
-            pass
+        pass
     
     def predict_phone(self, phone: str, features: dict) -> Tuple[bool, float]:
-        if not self.phone_model:
-            return False, 0.0
-        
-        try:
-            feature_vector = self._extract_phone_features(phone, features)
-            proba = self.phone_model.predict_proba([feature_vector])[0]
-            is_fraud = proba[1] > settings.FRAUD_CONFIDENCE_THRESHOLD
-            confidence = float(proba[1])
-            return is_fraud, confidence
-        except:
-            return False, 0.0
+        return False, 0.0
     
     def predict_sms(self, content: str, sender: str) -> Tuple[bool, float, list]:
-        if not self.sms_model or not self.vectorizer:
-            return self._rule_based_sms(content)
-        
-        try:
-            text_features = self.vectorizer.transform([content])
-            proba = self.sms_model.predict_proba(text_features)[0]
-            is_fraud = proba[1] > settings.FRAUD_CONFIDENCE_THRESHOLD
-            confidence = float(proba[1])
-            risk_factors = self._extract_risk_factors(content)
-            return is_fraud, confidence, risk_factors
-        except:
-            return self._rule_based_sms(content)
+        return self._rule_based_sms(content)
     
     def predict_email(self, sender: str, subject: str, body: str) -> Tuple[bool, float]:
         combined = f"{subject} {body}"
