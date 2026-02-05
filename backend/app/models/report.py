@@ -19,7 +19,7 @@ class UserReport(Base):
     __tablename__ = "user_reports"
     
     report_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    user_id = Column(UUID(as_uuid=True), ForeignKey("users.user_id"), nullable=False)
+    user_id = Column(UUID(as_uuid=True), nullable=True)
     report_type = Column(SQLEnum(ReportType), nullable=False)
     content_hash = Column(String(64), nullable=False)
     phone_number = Column(String(20), nullable=True)

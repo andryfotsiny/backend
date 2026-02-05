@@ -1,0 +1,66 @@
+content,is_fraud,fraud_type
+"URGENT! Votre colis attend. Payez 2€ maintenant: http://bit.ly/abc123",1,phishing
+"Félicitations! Vous avez gagné 5000€. Cliquez ici: http://bit.ly/win",1,scam
+"Votre compte bancaire sera bloqué. Confirmez vos infos: http://secure-bank.ru",1,phishing
+"ALERTE SECURITE: Connexion suspecte détectée. Changez mot de passe ici",1,phishing
+"Remboursement impôts de 450€. Réclamez maintenant sur impots-gouv.net",1,scam
+"Votre livraison Chronopost attend. Frais de 1.99€ à payer",1,phishing
+"Gagnez un iPhone 15 GRATUIT! Participez maintenant",1,scam
+"Netflix: Votre abonnement expire. Mettez à jour paiement",1,phishing
+"Amazon: Problème avec votre commande. Cliquez pour résoudre",1,phishing
+"Paypal: Activité inhabituelle. Confirmez identité immédiatement",1,phishing
+"CAF: Vous avez droit à 380€ d'aide. Réclamez vite",1,scam
+"Amende impayée de 75€. Payez sous 48h sinon majoration",1,scam
+"Votre colis DHL bloqué en douane. Payez 3€ de frais",1,phishing
+"Crédit rapide 5000€ sans justificatif. Réponse en 2h",1,scam
+"URGENT: Carte bancaire expirée. Renouvelez maintenant",1,phishing
+"Bonjour, comment ça va?",0,legitimate
+"RDV dentiste demain 14h. Confirmez par SMS",0,legitimate
+"Merci pour votre achat. Livraison prévue lundi",0,legitimate
+"Votre code de vérification: 123456",0,legitimate
+"Réunion reportée à 15h. A tout à l'heure",0,legitimate
+"Papa rentre tard ce soir. Bisous",0,legitimate
+"N'oublie pas le pain. Merci",0,legitimate
+"Joyeux anniversaire! Gros bisous",0,legitimate
+"Le train a 10min de retard. J'arrive bientôt",0,legitimate
+"Super soirée hier! On remet ça quand?",0,legitimate
+"Rappelle-moi quand tu peux",0,legitimate
+"J'ai reçu le colis. Merci beaucoup!",0,legitimate
+"Rendez-vous confirmé pour le 15/02 à 10h",0,legitimate
+"Bon courage pour ton exam!",0,legitimate
+"Tu veux qu'on mange ensemble ce midi?",0,legitimate
+"PROMO -50% sur tout le site jusqu'à dimanche",0,legitimate
+"Votre commande #12345 est expédiée",0,legitimate
+"Cours annulé demain matin",0,legitimate
+"Ta pizza arrive dans 15min",0,legitimate
+"Soldes d'hiver: jusqu'à -70% en magasin",0,legitimate
+"Appel de 12€ inclus. Votre forfait Free Mobile est activé",1,scam
+"Windows a détecté un virus. Appelez le 08 XX XX XX XX",1,scam
+"Votre facture EDF impayée. Coupure d'électricité prévue",1,scam
+"FreeBox: Votre ligne sera coupée. Régularisez vite",1,scam
+"Colissimo: échec livraison. Reprogrammez sur colissimo-fr.com",1,phishing
+"Vous êtes sélectionné pour tester iPhone 15 gratuitement",1,scam
+"Mutuelle santé: remboursement de 245€ en attente",1,scam
+"SNCF: Remboursement retard de 18€. Demandez-le ici",1,scam
+"Pole Emploi: mise à jour dossier requise sous 72h",1,phishing
+"La Poste: colis non distribué. Frais de réexpédition 2.50€",1,phishing
+"SFR: Dernière facture impayée. Ligne suspendue demain",1,scam
+"Ameli: carte vitale expirée. Renouvelez en ligne",1,phishing
+"CPAM: vous avez droit à 156€ de remboursement",1,scam
+"Livraison UPS impossible. Payez frais stockage 3€",1,phishing
+"Votre virement de 890€ est en attente de validation",1,scam
+"Salut! Ça te dit un ciné ce weekend?",0,legitimate
+"J'ai trouvé ton portefeuille. Appelle-moi",0,legitimate
+"Le médecin peut te recevoir à 16h30",0,legitimate
+"Promo McDo: 2 menus achetés = 1 offert",0,legitimate
+"Ton colis Amazon arrive aujourd'hui entre 14h-18h",0,legitimate
+"Confirmation réservation hôtel du 20 au 25 mars",0,legitimate
+"Joyeuses fêtes! Bisous de toute la famille",0,legitimate
+"Vol AF1234 décollage à l'heure. Bon voyage!",0,legitimate
+"Pharmacie de garde ce weekend: Pharmacie Centrale",0,legitimate
+"Météo: risque d'orages cet après-midi",0,legitimate
+"Match ce soir 21h. On se retrouve au bar?",0,legitimate
+"Ton compte Spotify Premium est renouvelé",0,legitimate
+"Rdv coiffeur samedi 10h. N'oublie pas!",0,legitimate
+"Le garagiste a fini la révision. Tu peux passer",0,legitimate
+"Bonne année 2026! Santé et bonheur",0,legitimate

@@ -7,6 +7,8 @@ from app.services.cache import cache_service
 from app.services.ml_service import ml_service
 from app.services.rag_service import rag_service
 from app.rag.embeddings import embedding_service
+from app.api.v1.endpoints import phone, sms, email, reports  # Ajouter reports
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -34,6 +36,7 @@ app.add_middleware(
 )
 
 app.include_router(api_router, prefix=settings.API_V1_STR)
+
 
 @app.get("/health")
 async def health_check():
