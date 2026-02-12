@@ -7,6 +7,8 @@ from app.schemas.analytics import (
     GlobalStats, TimelineStats, FraudTrends,
     Leaderboard, DetectionQuality, AdminDashboard
 )
+from app.models.user import User
+from app.api.deps.role_deps import require_organisation, require_admin
 from typing import Optional
 from datetime import datetime
 import json
@@ -20,6 +22,7 @@ CACHE_TTL_LONG = 3600     # 1 heure
 
 @router.get("/stats", response_model=GlobalStats)
 async def get_global_stats(
+    current_user: User = Depends(require_organisation),
     db: AsyncSession = Depends(get_db)
 ):
     """
@@ -33,6 +36,7 @@ async def get_global_stats(
     - Top fraudeurs
     - Performance système
 
+    **Accès:** ORGANISATION, ADMIN
     **Cache:** 5 minutes
     """
 
@@ -59,6 +63,7 @@ async def get_global_stats(
 @router.get("/timeline", response_model=TimelineStats)
 async def get_timeline_stats(
     period: str = Query("week", regex="^(day|week|month|year)$"),
+    current_user: User = Depends(require_organisation),
     db: AsyncSession = Depends(get_db)
 ):
     """
@@ -71,6 +76,7 @@ async def get_timeline_stats(
     - Signalements par jour
     - Nouveaux utilisateurs par jour
 
+    **Accès:** ORGANISATION, ADMIN
     **Cache:** 1 minute
     """
 
@@ -93,6 +99,7 @@ async def get_timeline_stats(
 
 @router.get("/trends", response_model=FraudTrends)
 async def get_fraud_trends(
+    current_user: User = Depends(require_organisation),
     db: AsyncSession = Depends(get_db)
 ):
     """
@@ -104,6 +111,7 @@ async def get_fraud_trends(
 
     Compare semaine actuelle vs précédente
 
+    **Accès:** ORGANISATION, ADMIN
     **Cache:** 5 minutes
     """
 
@@ -128,6 +136,7 @@ async def get_fraud_trends(
 async def get_leaderboard(
     period: str = Query("month", regex="^(week|month|all_time)$"),
     limit: int = Query(10, ge=5, le=100),
+    current_user: User = Depends(require_organisation),
     db: AsyncSession = Depends(get_db)
 ):
     """
@@ -138,6 +147,7 @@ async def get_leaderboard(
 
     Score = signalements vérifiés × 10
 
+    **Accès:** ORGANISATION, ADMIN
     **Cache:** 5 minutes
     """
 
@@ -160,6 +170,7 @@ async def get_leaderboard(
 
 @router.get("/dashboard", response_model=AdminDashboard)
 async def get_admin_dashboard(
+    current_user: User = Depends(require_admin),
     db: AsyncSession = Depends(get_db)
 ):
     """
@@ -172,6 +183,7 @@ async def get_admin_dashboard(
     - Qualité détection
     - Leaderboard
 
+    **Accès:** ADMIN uniquement
     **Cache:** 5 minutes
     **Usage:** Affichage dashboard admin
     """
@@ -222,14 +234,16 @@ async def get_admin_dashboard(
 
 
 @router.post("/clear-cache")
-async def clear_analytics_cache():
+async def clear_analytics_cache(
+    current_user: User = Depends(require_admin)
+):
     """
     Vider le cache analytics
 
     À utiliser après mise à jour massive de données
     ou pour forcer recalcul
 
-    **Admin only** (à protéger avec JWT admin)
+    **Accès:** ADMIN uniquement
     """
 
     # Supprimer tous les caches analytics
@@ -247,7 +261,9 @@ async def clear_analytics_cache():
 
     return {
         "message": f"Cache vidé : {cleared} entrées supprimées",
-        "patterns": patterns
+        "patterns": patterns,
+        "cleared_by": current_user.id,
+        "cleared_by_role": current_user.role
     }
 
 
@@ -262,6 +278,8 @@ async def analytics_health(
     - Connexion DB
     - Cache Redis
     - Temps de réponse
+
+    **Accès:** Public (pour monitoring externe)
     """
 
     import time

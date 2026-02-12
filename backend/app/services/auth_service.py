@@ -42,7 +42,7 @@ class AuthService:
         return hashlib.sha256(phone.encode()).hexdigest()
 
     @staticmethod
-    def create_access_token(user_id: str) -> Tuple[str, datetime]:
+    def create_access_token(user_id: str, role: str) -> Tuple[str, datetime]:
         """Crée un access token JWT"""
         expires = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
 
@@ -50,6 +50,7 @@ class AuthService:
             "sub": user_id,
             "exp": expires,
             "type": "access",
+            "role": role,
             "iat": datetime.utcnow()
         }
 
@@ -57,7 +58,7 @@ class AuthService:
         return token, expires
 
     @staticmethod
-    def create_refresh_token(user_id: str) -> Tuple[str, datetime]:
+    def create_refresh_token(user_id: str, role: str) -> Tuple[str, datetime]:
         """Crée un refresh token JWT"""
         expires = datetime.utcnow() + timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
 
@@ -137,7 +138,8 @@ class AuthService:
         password: str,
         phone: Optional[str],
         country_code: str,
-        db: AsyncSession
+        db: AsyncSession,
+        role: str = "USER"
     ) -> User:
         """
         Enregistre un nouvel utilisateur
@@ -158,6 +160,7 @@ class AuthService:
             phone_hash=AuthService.hash_phone(phone) if phone else None,
             password_hash=AuthService.hash_password(password),
             country_code=country_code,
+            role=role,
             settings={
                 "notifications": True,
                 "language": "fr",

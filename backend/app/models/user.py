@@ -3,6 +3,13 @@ from sqlalchemy.dialects.postgresql import UUID, JSONB
 from datetime import datetime
 import uuid
 from app.db.base import Base
+from enum import Enum
+
+
+class UserRole(str, Enum):
+    USER = "USER"
+    ORGANISATION = "ORGANISATION"
+    ADMIN = "ADMIN"
 
 class User(Base):
     __tablename__ = "users"
@@ -17,6 +24,7 @@ class User(Base):
     settings = Column(JSONB, default={})
     device_tokens = Column(ARRAY(String), default=[])
     report_count = Column(Integer, default=0)
+    role = Column(String(20), default="USER", nullable=False)
 
     # Optionnel : propriété pour compatibilité
     @property

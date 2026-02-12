@@ -6,23 +6,23 @@ from sqlalchemy import select, update, func
 from app.db.session import get_db
 from app.models.report import UserReport, VerificationStatus, ReportType
 from app.models.fraud import FraudulentNumber, FraudType, FraudulentDomain
+from app.models.user import User
 from app.schemas.reports import ReportResponse, SMSReportCreate, EmailReportCreate, PhoneReportCreate
+from app.api.deps.auth_deps import get_current_user_optional
+from typing import Optional
 
 from datetime import datetime
 import hashlib
 
 router = APIRouter()
 
-# === SCHEMAS ===
 
-
-
-
-# === ENDPOINTS ===
+# === REPORT PHONE ===
 
 @router.post("/report-phone", response_model=ReportResponse)
 async def report_phone(
     report: PhoneReportCreate,
+    current_user: Optional[User] = Depends(get_current_user_optional),
     db: AsyncSession = Depends(get_db)
 ):
     """
@@ -30,26 +30,34 @@ async def report_phone(
 
     - Si 10+ signalements → auto-ajout dans fraudulent_numbers
     - Vérification communautaire
+
+    **Accès:** Public (anonyme autorisé) / USER (authentifié)
     """
 
-    # 1. Créer hash du contenu
+    # 1. Déterminer l'utilisateur (connecté ou anonyme)
+    user_id = str(current_user.user_id) if current_user else None
+
+    # 2. Créer hash du contenu
     content_hash = hashlib.sha256(report.phone.encode()).hexdigest()
 
-    # 2. Vérifier si déjà signalé par cet utilisateur
-    if report.user_id:
+    # 3. Vérifier si déjà signalé par cet utilisateur (si connecté)
+    if user_id:
         existing = await db.execute(
             select(UserReport).where(
-                UserReport.user_id == report.user_id,
+                UserReport.user_id == uuid.UUID(user_id),
                 UserReport.content_hash == content_hash,
                 UserReport.report_type == ReportType.CALL
             )
         )
         if existing.scalar_one_or_none():
-            raise HTTPException(status_code=400, detail="Vous avez déjà signalé ce numéro")
+            raise HTTPException(
+                status_code=400,
+                detail="Vous avez déjà signalé ce numéro"
+            )
 
-    # 3. Créer le signalement
+    # 4. Créer le signalement
     new_report = UserReport(
-        user_id=uuid.UUID(report.user_id) if report.user_id else None,
+        user_id=uuid.UUID(user_id) if user_id else None,
         report_type=ReportType.CALL,
         content_hash=content_hash,
         phone_number=report.phone,
@@ -60,7 +68,7 @@ async def report_phone(
     await db.commit()
     await db.refresh(new_report)
 
-    # 4. Compter total signalements pour ce numéro
+    # 5. Compter total signalements pour ce numéro
     total_reports_result = await db.execute(
         select(func.count(UserReport.report_id)).where(
             UserReport.content_hash == content_hash,
@@ -69,7 +77,7 @@ async def report_phone(
     )
     total_reports = total_reports_result.scalar()
 
-    # 5. Auto-vérification si 10+ signalements
+    # 6. Auto-vérification si 10+ signalements
     verified = False
     auto_added = False
 
@@ -124,19 +132,44 @@ async def report_phone(
     )
 
 
+# === REPORT SMS ===
+
 @router.post("/report-sms", response_model=ReportResponse)
 async def report_sms(
     report: SMSReportCreate,
+    current_user: Optional[User] = Depends(get_current_user_optional),
     db: AsyncSession = Depends(get_db)
 ):
-    """Signaler un SMS frauduleux"""
+    """
+    Signaler un SMS frauduleux
+
+    **Accès:** Public (anonyme autorisé) / USER (authentifié)
+    """
+
+    # Déterminer l'utilisateur
+    user_id = str(current_user.user_id) if current_user else None
 
     # Hash contenu
     content_hash = hashlib.sha256(report.content.encode()).hexdigest()
 
+    # Vérifier si déjà signalé (si connecté)
+    if user_id:
+        existing = await db.execute(
+            select(UserReport).where(
+                UserReport.user_id == uuid.UUID(user_id),
+                UserReport.content_hash == content_hash,
+                UserReport.report_type == ReportType.SMS
+            )
+        )
+        if existing.scalar_one_or_none():
+            raise HTTPException(
+                status_code=400,
+                detail="Vous avez déjà signalé ce SMS"
+            )
+
     # Créer signalement
     new_report = UserReport(
-        user_id=report.user_id or "anonymous",
+        user_id=uuid.UUID(user_id) if user_id else None,
         report_type=ReportType.SMS,
         content_hash=content_hash,
         reported_value=report.content[:100],
@@ -178,17 +211,44 @@ async def report_sms(
     )
 
 
+# === REPORT EMAIL ===
+
 @router.post("/report-email", response_model=ReportResponse)
 async def report_email(
     report: EmailReportCreate,
+    current_user: Optional[User] = Depends(get_current_user_optional),
     db: AsyncSession = Depends(get_db)
 ):
-    """Signaler un email/domaine frauduleux"""
+    """
+    Signaler un email/domaine frauduleux
 
+    **Accès:** Public (anonyme autorisé) / USER (authentifié)
+    """
+
+    # Déterminer l'utilisateur
+    user_id = str(current_user.user_id) if current_user else None
+
+    # Hash contenu
     content_hash = hashlib.sha256(report.domain.encode()).hexdigest()
 
+    # Vérifier si déjà signalé (si connecté)
+    if user_id:
+        existing = await db.execute(
+            select(UserReport).where(
+                UserReport.user_id == uuid.UUID(user_id),
+                UserReport.content_hash == content_hash,
+                UserReport.report_type == ReportType.EMAIL
+            )
+        )
+        if existing.scalar_one_or_none():
+            raise HTTPException(
+                status_code=400,
+                detail="Vous avez déjà signalé ce domaine"
+            )
+
+    # Créer signalement
     new_report = UserReport(
-        user_id=report.user_id or "anonymous",
+        user_id=uuid.UUID(user_id) if user_id else None,
         report_type=ReportType.EMAIL,
         content_hash=content_hash,
         reported_value=report.domain,
@@ -201,6 +261,7 @@ async def report_email(
     await db.commit()
     await db.refresh(new_report)
 
+    # Compter signalements
     total_result = await db.execute(
         select(func.count(UserReport.report_id)).where(
             UserReport.content_hash == content_hash,
@@ -245,11 +306,27 @@ async def report_email(
         auto_added=auto_added
     )
 
-@router.get("/stats")
-async def get_report_stats(db: AsyncSession = Depends(get_db)):
-    """Statistiques des signalements"""
 
-    total_reports_result = await db.execute(select(func.count(UserReport.report_id)))
+# === GET REPORT STATS ===
+
+@router.get("/stats")
+async def get_report_stats(
+    current_user: Optional[User] = Depends(get_current_user_optional),
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Statistiques des signalements
+
+    - Si authentifié: Statistiques personnelles
+    - Si anonyme: Statistiques globales uniquement
+
+    **Accès:** Public / USER
+    """
+
+    # Stats globales
+    total_reports_result = await db.execute(
+        select(func.count(UserReport.report_id))
+    )
     total_reports = total_reports_result.scalar()
 
     verified_reports_result = await db.execute(
@@ -259,8 +336,34 @@ async def get_report_stats(db: AsyncSession = Depends(get_db)):
     )
     verified_reports = verified_reports_result.scalar()
 
-    return {
+    response = {
         "total_reports": total_reports,
         "verified_reports": verified_reports,
         "pending_reports": total_reports - verified_reports
     }
+
+    # Si utilisateur connecté, ajouter stats personnelles
+    if current_user:
+        user_reports_result = await db.execute(
+            select(func.count(UserReport.report_id)).where(
+                UserReport.user_id == current_user.user_id
+            )
+        )
+        user_reports = user_reports_result.scalar()
+
+        user_verified_result = await db.execute(
+            select(func.count(UserReport.report_id)).where(
+                UserReport.user_id == current_user.user_id,
+                UserReport.verification_status == VerificationStatus.VERIFIED
+            )
+        )
+        user_verified = user_verified_result.scalar()
+
+        response["user_stats"] = {
+            "user_id": str(current_user.user_id),
+            "total_reports": user_reports,
+            "verified_reports": user_verified,
+            "contribution_score": user_verified * 10
+        }
+
+    return response

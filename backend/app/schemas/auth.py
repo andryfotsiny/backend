@@ -10,6 +10,7 @@ class UserRegister(BaseModel):
     password: str = Field(..., min_length=8, max_length=100, description="Mot de passe (min 8 caractères)")
     phone: Optional[str] = Field(None, description="Numéro téléphone (optionnel)")
     country_code: str = Field("FR", max_length=2, description="Code pays")
+    role: Optional[str] = None
 
     @validator('password')
     def validate_password(cls, v):
@@ -70,6 +71,7 @@ class TokenPayload(BaseModel):
     sub: str  # user_id
     exp: int  # expiration timestamp
     type: str = "access"  # access ou refresh
+    role: str
 
 
 class RefreshTokenRequest(BaseModel):
@@ -87,6 +89,7 @@ class UserResponse(BaseModel):
     last_active: datetime
     total_reports: int = 0
     verified_reports: int = 0
+    role: str
 
     class Config:
         from_attributes = True

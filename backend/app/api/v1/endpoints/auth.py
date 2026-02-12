@@ -7,8 +7,9 @@ from app.schemas.auth import (
     UserResponse, PasswordChange, DeviceTokenCreate, AuthError
 )
 from app.models.user import User
-from app.api.deps.auth_deps import get_current_user, verify_refresh_token
+from app.api.deps.auth_deps import get_current_user, verify_refresh_token, get_current_user_optional
 from datetime import datetime
+from typing import Optional
 
 router = APIRouter()
 
@@ -20,11 +21,13 @@ router = APIRouter()
     status_code=status.HTTP_201_CREATED,
     responses={
         400: {"model": AuthError, "description": "Email déjà utilisé"},
+        403: {"model": AuthError, "description": "Permission refusée"},
         422: {"description": "Validation error"}
     }
 )
 async def register(
     user_data: UserRegister,
+    current_admin: Optional[User] = Depends(get_current_user_optional),
     db: AsyncSession = Depends(get_db)
 ):
     """
@@ -34,9 +37,31 @@ async def register(
     - **password**: Min 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre
     - **phone**: Optionnel, format E.164 (+33612345678)
     - **country_code**: Code pays (FR, US, etc.)
+    - **role**: Optionnel (USER par défaut, ORGANISATION/ADMIN nécessite admin)
 
     Retourne les informations utilisateur (sans mot de passe)
     """
+
+    # Déterminer le rôle
+    role = "USER"  # Par défaut
+
+    # Si un rôle autre que USER est demandé
+    if user_data.role and user_data.role != "USER":
+        # Vérifier que la requête vient d'un ADMIN
+        if not current_admin or current_admin.role != "ADMIN":
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Seul un administrateur peut créer des comptes ORGANISATION ou ADMIN"
+            )
+
+        # Valider le rôle demandé
+        if user_data.role not in ["USER", "ORGANISATION", "ADMIN"]:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Rôle invalide. Valeurs autorisées: USER, ORGANISATION, ADMIN"
+            )
+
+        role = user_data.role
 
     try:
         user = await auth_service.register_user(
@@ -44,6 +69,7 @@ async def register(
             password=user_data.password,
             phone=user_data.phone,
             country_code=user_data.country_code,
+            role=role,
             db=db
         )
     except ValueError as e:
@@ -60,6 +86,7 @@ async def register(
         email=user_data.email,  # On retourne l'email en clair (pas le hash)
         phone=user_data.phone,
         country_code=user.country_code,
+        role=user.role,
         created_at=user.created_at,
         last_active=user.last_active,
         total_reports=0,
@@ -89,6 +116,7 @@ async def login(
     Retourne:
     - **access_token**: Token d'accès (30 min)
     - **refresh_token**: Token de renouvellement (7 jours)
+    - Token contient le rôle utilisateur
     """
 
     # Authentifier
@@ -105,9 +133,9 @@ async def login(
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    # Créer tokens
-    access_token, access_expires = auth_service.create_access_token(user.id)
-    refresh_token, refresh_expires = auth_service.create_refresh_token(user.id)
+    # Créer tokens (avec role)
+    access_token, access_expires = auth_service.create_access_token(user.id, user.role)
+    refresh_token, refresh_expires = auth_service.create_refresh_token(user.id, user.role)
 
     return Token(
         access_token=access_token,
@@ -136,12 +164,12 @@ async def refresh_token(
     Headers:
     - **Authorization**: Bearer {refresh_token}
 
-    Retourne de nouveaux tokens
+    Retourne de nouveaux tokens (avec role à jour)
     """
 
-    # Créer nouveaux tokens
-    access_token, _ = auth_service.create_access_token(current_user.id)
-    refresh_token, _ = auth_service.create_refresh_token(current_user.id)
+    # Créer nouveaux tokens (avec role actuel)
+    access_token, _ = auth_service.create_access_token(current_user.id, current_user.role)
+    refresh_token, _ = auth_service.create_refresh_token(current_user.id, current_user.role)
 
     return Token(
         access_token=access_token,
@@ -179,6 +207,8 @@ async def get_me(
 
     Headers:
     - **Authorization**: Bearer {access_token}
+
+    Retourne le profil avec role et statistiques
     """
 
     # Récupérer stats
@@ -189,6 +219,7 @@ async def get_me(
         email="***@***",  # Masqué pour privacy (on a que le hash)
         phone="***" if current_user.phone_hash else None,
         country_code=current_user.country_code,
+        role=current_user.role,
         created_at=current_user.created_at,
         last_active=current_user.last_active,
         total_reports=stats["total_reports"],
@@ -272,12 +303,15 @@ async def get_stats(
     - Signalements vérifiés
     - Signalements par type
     - Score de contribution
+
+    Accessible à tous les utilisateurs authentifiés
     """
 
     stats = await auth_service.get_user_stats(current_user.id, db)
 
     return {
         "user_id": current_user.id,
+        "role": current_user.role,
         "stats": stats,
         "member_since": current_user.created_at.isoformat(),
         "last_active": current_user.last_active.isoformat()
@@ -299,5 +333,6 @@ async def test_protected(
     return {
         "message": "Accès autorisé !",
         "user_id": current_user.id,
+        "role": current_user.role,
         "authenticated": True
     }
