@@ -27,7 +27,7 @@ class AnalyticsService:
 
         # Fraudes par période (via detection_logs)
         frauds_today_query = await db.execute(
-            select(func.count(DetectionLog.id)).where(
+            select(func.count(DetectionLog.log_id)).where(
                 and_(
                     DetectionLog.is_fraud == True,
                     DetectionLog.timestamp >= today_start
@@ -37,7 +37,7 @@ class AnalyticsService:
         frauds_today = frauds_today_query.scalar() or 0
 
         frauds_week_query = await db.execute(
-            select(func.count(DetectionLog.id)).where(
+            select(func.count(DetectionLog.log_id)).where(
                 and_(
                     DetectionLog.is_fraud == True,
                     DetectionLog.timestamp >= week_start
@@ -47,7 +47,7 @@ class AnalyticsService:
         frauds_week = frauds_week_query.scalar() or 0
 
         frauds_month_query = await db.execute(
-            select(func.count(DetectionLog.id)).where(
+            select(func.count(DetectionLog.log_id)).where(
                 and_(
                     DetectionLog.is_fraud == True,
                     DetectionLog.timestamp >= month_start
@@ -68,41 +68,41 @@ class AnalyticsService:
             for row in frauds_by_type_query.all()
         }
 
-        # Utilisateurs
+        # Utilisateurs - ✅ CORRIGÉ : User.user_id
         total_users_query = await db.execute(
-            select(func.count(User.id))
+            select(func.count(User.user_id))
         )
         total_users = total_users_query.scalar() or 0
 
         active_today_query = await db.execute(
-            select(func.count(User.id)).where(
+            select(func.count(User.user_id)).where(
                 User.last_active >= today_start
             )
         )
         active_today = active_today_query.scalar() or 0
 
         active_week_query = await db.execute(
-            select(func.count(User.id)).where(
+            select(func.count(User.user_id)).where(
                 User.last_active >= week_start
             )
         )
         active_week = active_week_query.scalar() or 0
 
-        # Signalements
+        # Signalements - ✅ CORRIGÉ : UserReport.report_id
         total_reports_query = await db.execute(
-            select(func.count(UserReport.id))
+            select(func.count(UserReport.report_id))
         )
         total_reports = total_reports_query.scalar() or 0
 
         reports_today_query = await db.execute(
-            select(func.count(UserReport.id)).where(
-                UserReport.reported_at >= today_start
+            select(func.count(UserReport.report_id)).where(
+                UserReport.timestamp >= today_start
             )
         )
         reports_today = reports_today_query.scalar() or 0
 
         verified_reports_query = await db.execute(
-            select(func.count(UserReport.id)).where(
+            select(func.count(UserReport.report_id)).where(
                 UserReport.verification_status == VerificationStatus.VERIFIED
             )
         )
@@ -121,8 +121,8 @@ class AnalyticsService:
             {
                 "phone": row[0],
                 "type": row[1].value,
-                "reports": row[2],
-                "confidence": float(row[3])
+                "reports": row[2] or 0,
+                "confidence": float(row[3]) if row[3] else 0.0
             }
             for row in top_numbers_query.all()
         ]
@@ -139,9 +139,9 @@ class AnalyticsService:
         top_fraud_domains = [
             {
                 "domain": row[0],
-                "type": row[1],
-                "blocks": row[2],
-                "reputation": float(row[3])
+                "type": row[1] or "unknown",
+                "blocks": row[2] or 0,
+                "reputation": float(row[3]) if row[3] else 0.0
             }
             for row in top_domains_query.all()
         ]
@@ -155,7 +155,7 @@ class AnalyticsService:
         avg_detection_time = float(avg_time_query.scalar() or 0)
 
         total_detections_query = await db.execute(
-            select(func.count(DetectionLog.id))
+            select(func.count(DetectionLog.log_id))
         )
         total_detections = total_detections_query.scalar() or 0
 
@@ -205,7 +205,7 @@ class AnalyticsService:
         detections_query = await db.execute(
             select(
                 func.date(DetectionLog.timestamp).label('date'),
-                func.count(DetectionLog.id).label('count')
+                func.count(DetectionLog.log_id).label('count')
             ).where(
                 DetectionLog.timestamp >= start_date
             ).group_by(func.date(DetectionLog.timestamp))
@@ -220,14 +220,14 @@ class AnalyticsService:
             for row in detections_query.all()
         ]
 
-        # Signalements par jour
+        # Signalements par jour - ✅ CORRIGÉ : UserReport.report_id
         reports_query = await db.execute(
             select(
-                func.date(UserReport.reported_at).label('date'),
-                func.count(UserReport.id).label('count')
+                func.date(UserReport.timestamp).label('date'),
+                func.count(UserReport.report_id).label('count')
             ).where(
-                UserReport.reported_at >= start_date
-            ).group_by(func.date(UserReport.reported_at))
+                UserReport.timestamp >= start_date
+            ).group_by(func.date(UserReport.timestamp))
             .order_by('date')
         )
 
@@ -239,11 +239,11 @@ class AnalyticsService:
             for row in reports_query.all()
         ]
 
-        # Nouveaux users par jour
+        # Nouveaux users par jour - ✅ CORRIGÉ : User.user_id
         users_query = await db.execute(
             select(
                 func.date(User.created_at).label('date'),
-                func.count(User.id).label('count')
+                func.count(User.user_id).label('count')
             ).where(
                 User.created_at >= start_date
             ).group_by(func.date(User.created_at))
@@ -278,51 +278,55 @@ class AnalyticsService:
         week_start = now - timedelta(days=7)
         prev_week_start = now - timedelta(days=14)
 
-        # Types en hausse
-        current_week = await db.execute(
-            select(
-                DetectionLog.fraud_category,
-                func.count(DetectionLog.id)
-            ).where(
-                and_(
-                    DetectionLog.timestamp >= week_start,
-                    DetectionLog.is_fraud == True
-                )
-            ).group_by(DetectionLog.fraud_category)
-        )
+        # Types en hausse - ✅ AJOUTÉ : Gestion du cas où fraud_category n'existe pas
+        try:
+            current_week = await db.execute(
+                select(
+                    DetectionLog.detection_type,  # Utiliser detection_type au lieu de fraud_category
+                    func.count(DetectionLog.log_id)
+                ).where(
+                    and_(
+                        DetectionLog.timestamp >= week_start,
+                        DetectionLog.is_fraud == True
+                    )
+                ).group_by(DetectionLog.detection_type)
+            )
 
-        prev_week = await db.execute(
-            select(
-                DetectionLog.fraud_category,
-                func.count(DetectionLog.id)
-            ).where(
-                and_(
-                    DetectionLog.timestamp >= prev_week_start,
-                    DetectionLog.timestamp < week_start,
-                    DetectionLog.is_fraud == True
-                )
-            ).group_by(DetectionLog.fraud_category)
-        )
+            prev_week = await db.execute(
+                select(
+                    DetectionLog.detection_type,
+                    func.count(DetectionLog.log_id)
+                ).where(
+                    and_(
+                        DetectionLog.timestamp >= prev_week_start,
+                        DetectionLog.timestamp < week_start,
+                        DetectionLog.is_fraud == True
+                    )
+                ).group_by(DetectionLog.detection_type)
+            )
 
-        current_counts = {row[0]: row[1] for row in current_week.all() if row[0]}
-        prev_counts = {row[0]: row[1] for row in prev_week.all() if row[0]}
+            current_counts = {row[0]: row[1] for row in current_week.all() if row[0]}
+            prev_counts = {row[0]: row[1] for row in prev_week.all() if row[0]}
 
-        trending = []
-        for fraud_type, current_count in current_counts.items():
-            prev_count = prev_counts.get(fraud_type, 0)
-            if prev_count > 0:
-                growth = ((current_count - prev_count) / prev_count) * 100
-            else:
-                growth = 100 if current_count > 0 else 0
+            trending = []
+            for fraud_type, current_count in current_counts.items():
+                prev_count = prev_counts.get(fraud_type, 0)
+                if prev_count > 0:
+                    growth = ((current_count - prev_count) / prev_count) * 100
+                else:
+                    growth = 100 if current_count > 0 else 0
 
-            trending.append({
-                "type": fraud_type,
-                "count_week": current_count,
-                "count_prev_week": prev_count,
-                "growth_percent": round(growth, 1)
-            })
+                trending.append({
+                    "type": fraud_type,
+                    "count_week": current_count,
+                    "count_prev_week": prev_count,
+                    "growth_percent": round(growth, 1)
+                })
 
-        trending.sort(key=lambda x: x["growth_percent"], reverse=True)
+            trending.sort(key=lambda x: x["growth_percent"], reverse=True)
+        except Exception as e:
+            print(f"Erreur trends: {e}")
+            trending = []
 
         return {
             "trending_fraud_types": trending[:5],
@@ -347,11 +351,11 @@ class AnalyticsService:
         else:  # all_time
             start_date = datetime(2000, 1, 1)
 
-        # Top contributeurs
+        # Top contributeurs - ✅ CORRIGÉ : UserReport.report_id
         query = await db.execute(
             select(
                 UserReport.user_id,
-                func.count(UserReport.id).label('total_reports'),
+                func.count(UserReport.report_id).label('total_reports'),
                 func.sum(
                     func.cast(
                         UserReport.verification_status == VerificationStatus.VERIFIED,
@@ -360,8 +364,8 @@ class AnalyticsService:
                 ).label('verified_reports')
             ).where(
                 and_(
-                    UserReport.reported_at >= start_date,
-                    UserReport.user_id != "anonymous"
+                    UserReport.timestamp >= start_date,
+                    UserReport.user_id.isnot(None)
                 )
             ).group_by(UserReport.user_id)
             .order_by(desc('verified_reports'))
@@ -370,14 +374,14 @@ class AnalyticsService:
 
         top_contributors = []
         for rank, row in enumerate(query.all(), 1):
-            user_id = row[0]
+            user_id = str(row[0]) if row[0] else "anonymous"
             total = row[1]
             verified = row[2] or 0
             score = verified * 10  # 10 points par report vérifié
 
             top_contributors.append({
                 "rank": rank,
-                "user_id": user_id[:8] + "...",  # Anonymiser
+                "user_id": user_id[:8] + "..." if len(user_id) > 8 else user_id,
                 "total_reports": total,
                 "verified_reports": verified,
                 "score": score

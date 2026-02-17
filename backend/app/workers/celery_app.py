@@ -75,5 +75,5 @@ celery_app.conf.task_routes = {
     "app.workers.tasks.ml_tasks.*": {"queue": "ml"},
     "app.workers.tasks.db_tasks.*": {"queue": "db"},
     "app.workers.tasks.analytics_tasks.*": {"queue": "analytics"},
-    "app.workers.tasks.notification_tasks.*": {"queue": notifications"},
+    "app.workers.tasks.notification_tasks.*": {"queue": "notifications"},
 }

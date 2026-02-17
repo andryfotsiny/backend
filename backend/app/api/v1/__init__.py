@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.api.v1.endpoints import phone, sms, email, reports,auth,analytics
+from app.api.v1.endpoints import phone, sms, email, reports,auth,analytics,recent
 
 api_router = APIRouter()
 
@@ -10,6 +10,9 @@ api_router.include_router(email.router, prefix="/email", tags=["email"])
 api_router.include_router(reports.router, prefix="/reports", tags=["reports"])
 
 api_router.include_router(auth.router, prefix="/auth", tags=["auth"])
+
+api_router.include_router(auth.router, prefix="/recent", tags=["recent"])
+
 
 api_router.include_router(
     analytics.router,
