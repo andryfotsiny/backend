@@ -1,14 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.session import get_db
-from app.services.auth_service import auth_service, ACCESS_TOKEN_EXPIRE_MINUTES, REFRESH_TOKEN_EXPIRE_DAYS
+from app.services.auth_service import auth_service, ACCESS_TOKEN_EXPIRE_MINUTES
 from app.schemas.auth import (
     UserRegister, UserLogin, Token, RefreshTokenRequest,
     UserResponse, PasswordChange, DeviceTokenCreate, AuthError
 )
 from app.models.user import User
 from app.api.deps.auth_deps import get_current_user, verify_refresh_token, get_current_user_optional
-from datetime import datetime
 from typing import Optional
 
 router = APIRouter()
@@ -43,18 +42,15 @@ async def register(
     """
 
     # Déterminer le rôle
-    role = "USER"  # Par défaut
+    role = "USER"
 
-    # Si un rôle autre que USER est demandé
     if user_data.role and user_data.role != "USER":
-        # Vérifier que la requête vient d'un ADMIN
         if not current_admin or current_admin.role != "ADMIN":
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Seul un administrateur peut créer des comptes ORGANISATION ou ADMIN"
             )
 
-        # Valider le rôle demandé
         if user_data.role not in ["USER", "ORGANISATION", "ADMIN"]:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -80,11 +76,11 @@ async def register(
             )
         raise
 
-    # Retourner user info (sans password)
+    # ✅ Retourner email et phone en CLAIR
     return UserResponse(
         id=user.id,
-        email=user_data.email,  # On retourne l'email en clair (pas le hash)
-        phone=user_data.phone,
+        email=user.email,  # ✅ Email en clair depuis la DB
+        phone=user.phone,  # ✅ Téléphone en clair depuis la DB
         country_code=user.country_code,
         role=user.role,
         created_at=user.created_at,
@@ -116,10 +112,8 @@ async def login(
     Retourne:
     - **access_token**: Token d'accès (30 min)
     - **refresh_token**: Token de renouvellement (7 jours)
-    - Token contient le rôle utilisateur
     """
 
-    # Authentifier
     user = await auth_service.authenticate_user(
         email=credentials.email,
         password=credentials.password,
@@ -133,15 +127,14 @@ async def login(
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    # Créer tokens (avec role)
-    access_token, access_expires = auth_service.create_access_token(user.id, user.role)
-    refresh_token, refresh_expires = auth_service.create_refresh_token(user.id, user.role)
+    access_token, _ = auth_service.create_access_token(user.id, user.role)
+    refresh_token, _ = auth_service.create_refresh_token(user.id, user.role)
 
     return Token(
         access_token=access_token,
         refresh_token=refresh_token,
         token_type="bearer",
-        expires_in=ACCESS_TOKEN_EXPIRE_MINUTES * 60  # en secondes
+        expires_in=ACCESS_TOKEN_EXPIRE_MINUTES * 60
     )
 
 
@@ -163,11 +156,8 @@ async def refresh_token(
 
     Headers:
     - **Authorization**: Bearer {refresh_token}
-
-    Retourne de nouveaux tokens (avec role à jour)
     """
 
-    # Créer nouveaux tokens (avec role actuel)
     access_token, _ = auth_service.create_access_token(current_user.id, current_user.role)
     refresh_token, _ = auth_service.create_refresh_token(current_user.id, current_user.role)
 
@@ -185,13 +175,7 @@ async def refresh_token(
 async def logout(
     current_user: User = Depends(get_current_user)
 ):
-    """
-    Se déconnecter
-
-    Note: Avec JWT, le logout est côté client (supprimer le token)
-    Cette route sert principalement à invalider le token côté serveur si implémenté
-    """
-
+    """Se déconnecter"""
     return {"message": "Déconnexion réussie"}
 
 
@@ -207,17 +191,15 @@ async def get_me(
 
     Headers:
     - **Authorization**: Bearer {access_token}
-
-    Retourne le profil avec role et statistiques
     """
 
-    # Récupérer stats
     stats = await auth_service.get_user_stats(current_user.id, db)
 
+    # ✅ Retourner email et phone en CLAIR
     return UserResponse(
         id=current_user.id,
-        email="***@***",  # Masqué pour privacy (on a que le hash)
-        phone="***" if current_user.phone_hash else None,
+        email=current_user.email,  # ✅ Email en clair
+        phone=current_user.phone,  # ✅ Téléphone en clair
         country_code=current_user.country_code,
         role=current_user.role,
         created_at=current_user.created_at,
@@ -235,12 +217,7 @@ async def change_password(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)
 ):
-    """
-    Changer le mot de passe
-
-    - **current_password**: Mot de passe actuel
-    - **new_password**: Nouveau mot de passe (min 8 caractères)
-    """
+    """Changer le mot de passe"""
 
     success = await auth_service.change_password(
         user_id=current_user.id,
@@ -266,12 +243,7 @@ async def add_device_token(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)
 ):
-    """
-    Enregistrer un token de device pour notifications push
-
-    - **token**: Token FCM (Android) ou APNS (iOS)
-    - **platform**: "android" ou "ios"
-    """
+    """Enregistrer un token de device pour notifications push"""
 
     success = await auth_service.add_device_token(
         user_id=current_user.id,
@@ -296,16 +268,7 @@ async def get_stats(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)
 ):
-    """
-    Obtenir les statistiques de contribution de l'utilisateur
-
-    - Total signalements
-    - Signalements vérifiés
-    - Signalements par type
-    - Score de contribution
-
-    Accessible à tous les utilisateurs authentifiés
-    """
+    """Obtenir les statistiques de contribution de l'utilisateur"""
 
     stats = await auth_service.get_user_stats(current_user.id, db)
 
@@ -324,15 +287,12 @@ async def get_stats(
 async def test_protected(
     current_user: User = Depends(get_current_user)
 ):
-    """
-    Route de test pour vérifier que l'authentification fonctionne
-
-    Nécessite un token valide
-    """
+    """Route de test pour vérifier que l'authentification fonctionne"""
 
     return {
         "message": "Accès autorisé !",
         "user_id": current_user.id,
+        "email": current_user.email,  # ✅ Email en clair
         "role": current_user.role,
         "authenticated": True
     }

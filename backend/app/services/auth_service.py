@@ -10,12 +10,12 @@ from app.core.config import settings
 import hashlib
 import uuid
 
-# Configuration - ARGON2 (pas bcrypt!)
+# Configuration - ARGON2
 pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
 # Durées de validité
 ACCESS_TOKEN_EXPIRE_MINUTES = settings.ACCESS_TOKEN_EXPIRE_MINUTES
-REFRESH_TOKEN_EXPIRE_DAYS = 7   # 7 jours
+REFRESH_TOKEN_EXPIRE_DAYS = 7
 
 
 class AuthService:
@@ -33,12 +33,12 @@ class AuthService:
 
     @staticmethod
     def hash_email(email: str) -> str:
-        """Hash email pour privacy (SHA-256)"""
+        """Hash email pour backup/compatibilité (optionnel maintenant)"""
         return hashlib.sha256(email.lower().encode()).hexdigest()
 
     @staticmethod
     def hash_phone(phone: str) -> str:
-        """Hash téléphone pour privacy"""
+        """Hash téléphone pour backup/compatibilité (optionnel maintenant)"""
         return hashlib.sha256(phone.encode()).hexdigest()
 
     @staticmethod
@@ -76,61 +76,38 @@ class AuthService:
     async def get_user_by_id(user_id: str, db: AsyncSession) -> Optional[User]:
         """Récupère un utilisateur par ID"""
         try:
-            # Convertir string en UUID
             user_uuid = uuid.UUID(user_id)
-
             result = await db.execute(
                 select(User).where(User.user_id == user_uuid)
             )
             return result.scalar_one_or_none()
-
         except ValueError:
             return None
 
     @staticmethod
     def verify_token(token: str, token_type: str = "access") -> Optional[str]:
-        """
-        Vérifie un token JWT et retourne user_id
-        """
+        """Vérifie un token JWT et retourne user_id"""
         try:
-            print(f"🔍 Vérification token {token_type}")
-            print(f"📝 Token reçu: {token[:50]}...")
-            print(f"🔑 SECRET_KEY utilisée: {settings.SECRET_KEY[:10]}...")
-            print(f"🔑 ALGORITHME: {settings.ALGORITHM}")
-
             payload = jwt.decode(
                 token,
                 settings.SECRET_KEY,
                 algorithms=[settings.ALGORITHM]
             )
 
-            print(f"✅ Token décodé: {payload}")
-
             user_id: str = payload.get("sub")
             token_type_claim: str = payload.get("type")
 
-            if user_id is None:
-                print(f"❌ Pas de user_id dans le payload")
+            if user_id is None or token_type_claim != token_type:
                 return None
 
-            if token_type_claim != token_type:
-                print(f"❌ Mauvais type: {token_type_claim} au lieu de {token_type}")
-                return None
-
-            print(f"✅ Token {token_type} valide pour user: {user_id}")
             return user_id
 
         except jwt.ExpiredSignatureError:
-            print("❌ Token expiré!")
             return None
-        except jwt.JWTError as e:
-            print(f"❌ Erreur JWT: {str(e)}")
+        except jwt.JWTError:
             return None
-        except Exception as e:
-            print(f"❌ Erreur inattendue: {str(e)}")
+        except Exception:
             return None
-
-# Dans app/services/auth_service.py, modifiez la méthode register_user :
 
     @staticmethod
     async def register_user(
@@ -141,23 +118,22 @@ class AuthService:
         db: AsyncSession,
         role: str = "USER"
     ) -> User:
-        """
-        Enregistre un nouvel utilisateur
-        """
-        # Vérifier si email existe déjà
-        email_hash = AuthService.hash_email(email)
+        """Enregistre un nouvel utilisateur"""
 
+        # Vérifier si email existe déjà (maintenant on cherche sur email en clair)
         existing = await db.execute(
-            select(User).where(User.email_hash == email_hash)
+            select(User).where(User.email == email.lower())
         )
         if existing.scalar_one_or_none():
             raise ValueError("EMAIL_ALREADY_EXISTS")
 
-        # Créer utilisateur - NE PAS utiliser 'id', utiliser 'user_id'
+        # Créer utilisateur avec email et phone EN CLAIR
         user = User(
-            user_id=uuid.uuid4(),  # ⚠️ Utiliser user_id, pas id
-            email_hash=email_hash,
-            phone_hash=AuthService.hash_phone(phone) if phone else None,
+            user_id=uuid.uuid4(),
+            email=email.lower(),  # ✅ Email en clair
+            phone=phone,  # ✅ Téléphone en clair
+            email_hash=AuthService.hash_email(email),  # Optionnel: garder hash pour backup
+            phone_hash=AuthService.hash_phone(phone) if phone else None,  # Optionnel
             password_hash=AuthService.hash_password(password),
             country_code=country_code,
             role=role,
@@ -181,16 +157,11 @@ class AuthService:
         password: str,
         db: AsyncSession
     ) -> Optional[User]:
-        """
-        Authentifie un utilisateur
+        """Authentifie un utilisateur"""
 
-        Returns:
-            User si credentials valides, None sinon
-        """
-        email_hash = AuthService.hash_email(email)
-
+        # Chercher par email en clair
         result = await db.execute(
-            select(User).where(User.email_hash == email_hash)
+            select(User).where(User.email == email.lower())
         )
         user = result.scalar_one_or_none()
 
@@ -221,7 +192,8 @@ class AuthService:
             raise ValueError("USER_NOT_FOUND")
 
         if phone is not None:
-            user.phone_hash = AuthService.hash_phone(phone)
+            user.phone = phone  # ✅ Téléphone en clair
+            user.phone_hash = AuthService.hash_phone(phone)  # Optionnel: mettre à jour hash
 
         if country_code is not None:
             user.country_code = country_code
@@ -247,11 +219,9 @@ class AuthService:
         if not user:
             return False
 
-        # Vérifier ancien mot de passe
         if not AuthService.verify_password(current_password, user.password_hash):
             return False
 
-        # Mettre à jour
         user.password_hash = AuthService.hash_password(new_password)
         await db.commit()
 
@@ -270,7 +240,6 @@ class AuthService:
         if not user:
             return False
 
-        # Éviter doublons
         if token not in user.device_tokens:
             user.device_tokens.append(token)
             await db.commit()
@@ -287,7 +256,7 @@ class AuthService:
                 UserReport.user_id == user_id
             )
         )
-        total_reports = total_reports_result.scalar() or 0  # ⬅️ Extraire la valeur immédiatement
+        total_reports = total_reports_result.scalar() or 0
 
         # Signalements vérifiés
         verified_reports_result = await db.execute(
@@ -296,7 +265,7 @@ class AuthService:
                 UserReport.verification_status == VerificationStatus.VERIFIED
             )
         )
-        verified_reports = verified_reports_result.scalar() or 0  # ⬅️ Extraire la valeur immédiatement
+        verified_reports = verified_reports_result.scalar() or 0
 
         # Signalements par type
         by_type_result = await db.execute(

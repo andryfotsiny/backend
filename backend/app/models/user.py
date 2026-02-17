@@ -11,13 +11,21 @@ class UserRole(str, Enum):
     ORGANISATION = "ORGANISATION"
     ADMIN = "ADMIN"
 
+
 class User(Base):
     __tablename__ = "users"
-    
+
     user_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    email_hash = Column(String(64), unique=True, index=True, nullable=False)
+
+    # Email et téléphone en CLAIR (nouveaux)
+    email = Column(String(255), unique=True, index=True, nullable=False)
+    phone = Column(String(20), nullable=True)
+
+    # Hash gardés pour compatibilité / backup (optionnel)
+    email_hash = Column(String(64), unique=True, index=True, nullable=True)
     phone_hash = Column(String(64), unique=True, index=True, nullable=True)
-    password_hash = Column(String(255), nullable=False)  # ⬅️ AJOUTER CETTE LIGNE
+
+    password_hash = Column(String(255), nullable=False)
     country_code = Column(String(3), nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     last_active = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -26,7 +34,7 @@ class User(Base):
     report_count = Column(Integer, default=0)
     role = Column(String(20), default="USER", nullable=False)
 
-    # Optionnel : propriété pour compatibilité
+    # Propriété pour compatibilité
     @property
     def id(self):
         return str(self.user_id)
