@@ -63,7 +63,7 @@ services:
     container_name: dyleth-api
     restart: unless-stopped
     ports:
-      - "127.0.0.1:3015:8000"   # Exposé en local → Nginx s'en occupe
+      - "3015:8000"  # Exposé en local → Nginx s'en occupe
     environment:
       PROJECT_NAME: "DYLETH API"
       VERSION: "1.0.0"
