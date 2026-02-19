@@ -53,6 +53,7 @@ async def seed_database():
             )
 
             session.add(admin_user)
+            await session.commit()  # ← COMMIT ICI pour ne pas perdre le compte si les données plantent
             print("✅ Compte ORGANISATION créé")
             print(f"   Email: {email}")
             print(f"   Password: {password}")
@@ -63,6 +64,12 @@ async def seed_database():
         # ═══════════════════════════════════════════════════════════
         # 2. DONNÉES DE FRAUDE (NUMÉROS, SMS, DOMAINES)
         # ═══════════════════════════════════════════════════════════
+
+        # Vérifier si les données existent déjà
+        existing_numbers = await session.execute(select(FraudulentNumber))
+        if existing_numbers.scalars().first():
+            print("✅ Données de fraude existent déjà, skip insertion")
+            return
 
         fraud_numbers = [
             FraudulentNumber(
@@ -175,7 +182,7 @@ async def seed_database():
 
         await session.commit()
 
-        print("\n✅ Database seeded successfully!")
+        print("\n✅ Données de fraude insérées avec succès!")
         print(f"   - {len(fraud_numbers)} fraudulent numbers")
         print(f"   - {len(sms_patterns)} SMS patterns")
         print(f"   - {len(fraud_domains)} fraudulent domains")
