@@ -53,7 +53,7 @@ async def seed_database():
             )
 
             session.add(admin_user)
-            await session.commit()  # ← COMMIT ICI pour ne pas perdre le compte si les données plantent
+            await session.commit()  # ← Commit isolé pour ne pas perdre le compte
             print("✅ Compte ORGANISATION créé")
             print(f"   Email: {email}")
             print(f"   Password: {password}")
@@ -62,130 +62,144 @@ async def seed_database():
             print("✅ Compte ORGANISATION existe déjà")
 
         # ═══════════════════════════════════════════════════════════
-        # 2. DONNÉES DE FRAUDE (NUMÉROS, SMS, DOMAINES)
+        # 2. FRAUDULENT NUMBERS
         # ═══════════════════════════════════════════════════════════
 
-        # Vérifier si les données existent déjà
-        existing_numbers = await session.execute(select(FraudulentNumber))
-        if existing_numbers.scalars().first():
-            print("✅ Données de fraude existent déjà, skip insertion")
-            return
+        existing = (await session.execute(select(FraudulentNumber))).scalars().first()
+        if not existing:
+            fraud_numbers = [
+                FraudulentNumber(
+                    phone_number="+33756123456",
+                    country_code="FR",
+                    fraud_type=FraudType.SCAM,
+                    confidence_score=0.95,
+                    report_count=127,
+                    verified=True,
+                    source="crowdsource"
+                ),
+                FraudulentNumber(
+                    phone_number="+33698765432",
+                    country_code="FR",
+                    fraud_type=FraudType.SPAM,
+                    confidence_score=0.88,
+                    report_count=45,
+                    verified=True,
+                    source="crowdsource"
+                ),
+                FraudulentNumber(
+                    phone_number="+14155551234",
+                    country_code="US",
+                    fraud_type=FraudType.ROBOCALL,
+                    confidence_score=0.92,
+                    report_count=89,
+                    verified=True,
+                    source="partner"
+                ),
+                FraudulentNumber(
+                    phone_number="+261340000001",
+                    country_code="MG",
+                    fraud_type=FraudType.SCAM,
+                    confidence_score=0.87,
+                    report_count=23,
+                    verified=True,
+                    source="crowdsource"
+                ),
+            ]
+            session.add_all(fraud_numbers)
+            await session.commit()
+            print(f"✅ {len(fraud_numbers)} fraudulent numbers insérés")
+        else:
+            print("✅ Fraudulent numbers existent déjà, skip")
 
-        fraud_numbers = [
-            FraudulentNumber(
-                phone_number="+33756123456",
-                country_code="FR",
-                fraud_type=FraudType.SCAM,
-                confidence_score=0.95,
-                report_count=127,
-                verified=True,
-                source="crowdsource"
-            ),
-            FraudulentNumber(
-                phone_number="+33698765432",
-                country_code="FR",
-                fraud_type=FraudType.SPAM,
-                confidence_score=0.88,
-                report_count=45,
-                verified=True,
-                source="crowdsource"
-            ),
-            FraudulentNumber(
-                phone_number="+14155551234",
-                country_code="US",
-                fraud_type=FraudType.ROBOCALL,
-                confidence_score=0.92,
-                report_count=89,
-                verified=True,
-                source="partner"
-            ),
-            FraudulentNumber(
-                phone_number="+261340000001",
-                country_code="MG",
-                fraud_type=FraudType.SCAM,
-                confidence_score=0.87,
-                report_count=23,
-                verified=True,
-                source="crowdsource"
-            ),
-        ]
+        # ═══════════════════════════════════════════════════════════
+        # 3. SMS PATTERNS
+        # ═══════════════════════════════════════════════════════════
 
-        sms_patterns = [
-            FraudulentSMSPattern(
-                keywords=["urgent", "payez", "maintenant", "cliquez"],
-                fraud_category="phishing_livraison",
-                language="fr",
-                severity=8,
-                detection_count=234
-            ),
-            FraudulentSMSPattern(
-                keywords=["compte", "bloqué", "confirmer", "identifiants"],
-                fraud_category="phishing_bancaire",
-                language="fr",
-                severity=9,
-                detection_count=456
-            ),
-            FraudulentSMSPattern(
-                keywords=["gagné", "prix", "gratuit", "réclamez"],
-                fraud_category="arnaque_gain",
-                language="fr",
-                severity=6,
-                detection_count=123
-            ),
-            FraudulentSMSPattern(
-                keywords=["covid", "vaccination", "rendez-vous", "cliquez"],
-                fraud_category="phishing_sante",
-                language="fr",
-                severity=7,
-                detection_count=89
-            ),
-        ]
+        existing = (await session.execute(select(FraudulentSMSPattern))).scalars().first()
+        if not existing:
+            sms_patterns = [
+                FraudulentSMSPattern(
+                    keywords=["urgent", "payez", "maintenant", "cliquez"],
+                    fraud_category="phishing_livraison",
+                    language="fr",
+                    severity=8,
+                    detection_count=234
+                ),
+                FraudulentSMSPattern(
+                    keywords=["compte", "bloqué", "confirmer", "identifiants"],
+                    fraud_category="phishing_bancaire",
+                    language="fr",
+                    severity=9,
+                    detection_count=456
+                ),
+                FraudulentSMSPattern(
+                    keywords=["gagné", "prix", "gratuit", "réclamez"],
+                    fraud_category="arnaque_gain",
+                    language="fr",
+                    severity=6,
+                    detection_count=123
+                ),
+                FraudulentSMSPattern(
+                    keywords=["covid", "vaccination", "rendez-vous", "cliquez"],
+                    fraud_category="phishing_sante",
+                    language="fr",
+                    severity=7,
+                    detection_count=89
+                ),
+            ]
+            session.add_all(sms_patterns)
+            await session.commit()
+            print(f"✅ {len(sms_patterns)} SMS patterns insérés")
+        else:
+            print("✅ SMS patterns existent déjà, skip")
 
-        fraud_domains = [
-            FraudulentDomain(
-                domain="fake-bank-secure.com",
-                phishing_type="banking",
-                blocked_count=89,
-                spf_valid=False,
-                dkim_valid=False,
-                reputation_score=0.95
-            ),
-            FraudulentDomain(
-                domain="paypal-security-update.net",
-                phishing_type="payment",
-                blocked_count=156,
-                spf_valid=False,
-                dkim_valid=False,
-                reputation_score=0.98
-            ),
-            FraudulentDomain(
-                domain="amazon-delivery-fr.com",
-                phishing_type="delivery",
-                blocked_count=234,
-                spf_valid=False,
-                dkim_valid=False,
-                reputation_score=0.93
-            ),
-            FraudulentDomain(
-                domain="impots-gouv-remboursement.com",
-                phishing_type="government",
-                blocked_count=312,
-                spf_valid=False,
-                dkim_valid=False,
-                reputation_score=0.97
-            ),
-        ]
+        # ═══════════════════════════════════════════════════════════
+        # 4. FRAUDULENT DOMAINS
+        # ═══════════════════════════════════════════════════════════
 
-        session.add_all(fraud_numbers)
-        session.add_all(sms_patterns)
-        session.add_all(fraud_domains)
+        existing = (await session.execute(select(FraudulentDomain))).scalars().first()
+        if not existing:
+            fraud_domains = [
+                FraudulentDomain(
+                    domain="fake-bank-secure.com",
+                    phishing_type="banking",
+                    blocked_count=89,
+                    spf_valid=False,
+                    dkim_valid=False,
+                    reputation_score=0.95
+                ),
+                FraudulentDomain(
+                    domain="paypal-security-update.net",
+                    phishing_type="payment",
+                    blocked_count=156,
+                    spf_valid=False,
+                    dkim_valid=False,
+                    reputation_score=0.98
+                ),
+                FraudulentDomain(
+                    domain="amazon-delivery-fr.com",
+                    phishing_type="delivery",
+                    blocked_count=234,
+                    spf_valid=False,
+                    dkim_valid=False,
+                    reputation_score=0.93
+                ),
+                FraudulentDomain(
+                    domain="impots-gouv-remboursement.com",
+                    phishing_type="government",
+                    blocked_count=312,
+                    spf_valid=False,
+                    dkim_valid=False,
+                    reputation_score=0.97
+                ),
+            ]
+            session.add_all(fraud_domains)
+            await session.commit()
+            print(f"✅ {len(fraud_domains)} fraudulent domains insérés")
+        else:
+            print("✅ Fraudulent domains existent déjà, skip")
 
-        await session.commit()
-
-        print("\n✅ Données de fraude insérées avec succès!")
-        print(f"   - {len(fraud_numbers)} fraudulent numbers")
-        print(f"   - {len(sms_patterns)} SMS patterns")
-        print(f"   - {len(fraud_domains)} fraudulent domains")
+        print("\n🎉 Seed terminé avec succès!")
 
 if __name__ == "__main__":
     asyncio.run(seed_database())
