@@ -38,7 +38,7 @@ async def seed_database():
                 email_hash=email_hash,
                 phone_hash=phone_hash,
                 password_hash=password_hash,
-                role=UserRole.ORGANISATION,
+                role=UserRole.ADMIN,
                 country_code="MG",
                 settings={
                     "theme": "light",
@@ -48,18 +48,20 @@ async def seed_database():
                 },
                 device_tokens=[],
                 report_count=0,
-                created_at=datetime.utcnow(),
-                last_active=datetime.utcnow()
+                created_at=datetime.now(timezone.utc).replace(tzinfo=None),
+                last_active=datetime.now(timezone.utc).replace(tzinfo=None)
             )
 
             session.add(admin_user)
             await session.commit()
-            print("✅ Compte ORGANISATION créé")
+            print("✅ Compte ADMIN créé")
         else:
-            # Mettre à jour le hash si nécessaire (pour passer de bcrypt à argon2)
+            # Mettre à jour le hash et forcer le rôle ADMIN pour l'utilisateur existant
             existing_user.password_hash = auth_service.hash_password(password)
+            existing_user.role = UserRole.ADMIN
+            existing_user.last_active = datetime.now(timezone.utc).replace(tzinfo=None)
             await session.commit()
-            print("✅ Compte ORGANISATION mis à jour (Hash Argon2)")
+            print("✅ Compte ADMIN existant mis à jour (Rôle ADMIN + Hash Argon2)")
         
         print(f"   Email: {email}")
         print(f"   Password: {password}")
