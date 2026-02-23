@@ -6,7 +6,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from app.db.session import async_session_maker
 from app.models.fraud import FraudulentNumber, FraudulentSMSPattern, FraudulentDomain, FraudType
 from app.models.user import User, UserRole
-from app.core.security import get_password_hash
+from app.services.auth_service import auth_service
 import hashlib
 from datetime import datetime, timezone
 from sqlalchemy import select
@@ -18,19 +18,19 @@ async def seed_database():
         # 1. CRÉER COMPTE ORGANISATION PAR DÉFAUT
         # ═══════════════════════════════════════════════════════════
 
+        email = "admin@dyleth.com"
+        phone = "+261340000000"
+        password = "Admin@2026"
+
         result = await session.execute(
-            select(User).where(User.email == "admin@dyleth.com")
+            select(User).where(User.email == email)
         )
         existing_user = result.scalar_one_or_none()
 
         if not existing_user:
-            email = "admin@dyleth.com"
-            phone = "+261340000000"
-            password = "Admin@2026"  # Mot de passe temporaire
-
             email_hash = hashlib.sha256(email.encode()).hexdigest()
             phone_hash = hashlib.sha256(phone.encode()).hexdigest()
-            password_hash = get_password_hash(password)
+            password_hash = auth_service.hash_password(password)
 
             admin_user = User(
                 email=email,
@@ -48,18 +48,21 @@ async def seed_database():
                 },
                 device_tokens=[],
                 report_count=0,
-                created_at=datetime.now(timezone.utc),
-                last_active=datetime.now(timezone.utc)
+                created_at=datetime.utcnow(),
+                last_active=datetime.utcnow()
             )
 
             session.add(admin_user)
-            await session.commit()  # ← Commit isolé pour ne pas perdre le compte
+            await session.commit()
             print("✅ Compte ORGANISATION créé")
-            print(f"   Email: {email}")
-            print(f"   Password: {password}")
-            print("   ⚠️  Changez le mot de passe après la première connexion !")
         else:
-            print("✅ Compte ORGANISATION existe déjà")
+            # Mettre à jour le hash si nécessaire (pour passer de bcrypt à argon2)
+            existing_user.password_hash = auth_service.hash_password(password)
+            await session.commit()
+            print("✅ Compte ORGANISATION mis à jour (Hash Argon2)")
+        
+        print(f"   Email: {email}")
+        print(f"   Password: {password}")
 
         # ═══════════════════════════════════════════════════════════
         # 2. FRAUDULENT NUMBERS
