@@ -25,11 +25,8 @@ async def get_current_user(
 
     token = credentials.credentials
 
-    # Accepter access ET refresh tokens
+    # Accepter UNIQUEMENT access tokens
     user_id = auth_service.verify_token(token, token_type="access")
-    if user_id is None:
-        # Essayer avec refresh token
-        user_id = auth_service.verify_token(token, token_type="refresh")
 
     if user_id is None:
         raise credentials_exception

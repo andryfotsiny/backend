@@ -49,9 +49,3 @@ async def root():
         "version": settings.VERSION,
         "docs": "/docs"
     }
-
-print("\n--- REGISTERED ROUTES ---")
-for route in app.routes:
-    if hasattr(route, "path"):
-        print(f"DEBUG: Route: {route.path} | Methods: {getattr(route, 'methods', 'N/A')}")
-print("-------------------------\n")
