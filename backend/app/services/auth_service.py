@@ -73,15 +73,15 @@ class AuthService:
         return token, expires
 
     @staticmethod
-    async def get_user_by_id(user_id: str, db: AsyncSession) -> Optional[User]:
+    async def get_user_by_id(user_id: any, db: AsyncSession) -> Optional[User]:
         """Récupère un utilisateur par ID"""
         try:
-            user_uuid = uuid.UUID(user_id)
+            user_uuid = user_id if isinstance(user_id, uuid.UUID) else uuid.UUID(user_id)
             result = await db.execute(
                 select(User).where(User.user_id == user_uuid)
             )
             return result.scalar_one_or_none()
-        except ValueError:
+        except (ValueError, AttributeError):
             return None
 
     @staticmethod
