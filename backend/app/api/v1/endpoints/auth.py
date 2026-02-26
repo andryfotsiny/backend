@@ -76,11 +76,10 @@ async def register(
             )
         raise
 
-    # ✅ Retourner email et phone en CLAIR
     return UserResponse(
         id=user.id,
-        email=user.email,  # ✅ Email en clair depuis la DB
-        phone=user.phone,  # ✅ Téléphone en clair depuis la DB
+        email=user.email,
+        phone=user.phone,
         country_code=user.country_code,
         role=user.role,
         created_at=user.created_at,
@@ -195,11 +194,10 @@ async def get_me(
 
     stats = await auth_service.get_user_stats(current_user.id, db)
 
-    # ✅ Retourner email et phone en CLAIR
     return UserResponse(
         id=current_user.id,
-        email=current_user.email,  # ✅ Email en clair
-        phone=current_user.phone,  # ✅ Téléphone en clair
+        email=current_user.email,
+        phone=current_user.phone,
         country_code=current_user.country_code,
         role=current_user.role,
         created_at=current_user.created_at,
@@ -292,7 +290,7 @@ async def test_protected(
     return {
         "message": "Accès autorisé !",
         "user_id": current_user.id,
-        "email": current_user.email,  # ✅ Email en clair
+        "email": current_user.email,
         "role": current_user.role,
         "authenticated": True
     }

@@ -8,7 +8,6 @@ class Role(str, Enum):
     ORGANISATION = "ORGANISATION"
     ADMIN = "ADMIN"
 
-# Hiérarchie : ADMIN > ORGANISATION > USER
 ROLE_HIERARCHY = {
     "ADMIN": 3,
     "ORGANISATION": 2,

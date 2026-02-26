@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from typing import Tuple, Optional
+from typing import Optional
 import time
 from app.models.fraud import FraudulentNumber, FraudulentDomain
 from app.models.report import DetectionLog
