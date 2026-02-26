@@ -43,13 +43,10 @@ class DetectionService:
             }
             await cache_service.set(cache_key, response, expire=7200)
             await self._log_detection(
-                db,
-                user_id,
-                "phone",
-                True,
-                fraud_entry.confidence_score,
-                "blacklist",
+                db, user_id, "phone", True,
+                fraud_entry.confidence_score, "blacklist",
                 int((time.time() - start_time) * 1000),
+                meta_data={"phone": phone, "country": country},
             )
             return response
 
@@ -69,13 +66,9 @@ class DetectionService:
 
         await cache_service.set(cache_key, response, expire=3600)
         await self._log_detection(
-            db,
-            user_id,
-            "phone",
-            is_fraud,
-            confidence,
-            "ml",
+            db, user_id, "phone", is_fraud, confidence, "ml",
             int((time.time() - start_time) * 1000),
+            meta_data={"phone": phone, "country": country},
         )
 
         return response
@@ -107,13 +100,13 @@ class DetectionService:
         }
 
         await self._log_detection(
-            db,
-            user_id,
-            "sms",
-            is_fraud,
-            confidence,
-            "ml_rag",
+            db, user_id, "sms", is_fraud, confidence, "ml_rag",
             int((time.time() - start_time) * 1000),
+            meta_data={
+                "content": content[:500],
+                "sender": sender,
+                "category": "phishing" if is_fraud else "unknown",
+            },
         )
 
         return response
@@ -148,13 +141,14 @@ class DetectionService:
                 "response_time_ms": int((time.time() - start_time) * 1000),
             }
             await self._log_detection(
-                db,
-                user_id,
-                "email",
-                True,
-                fraud_domain.reputation_score,
-                "blacklist",
+                db, user_id, "email", True,
+                fraud_domain.reputation_score, "blacklist",
                 int((time.time() - start_time) * 1000),
+                meta_data={
+                    "sender": sender,
+                    "subject": subject,
+                    "has_attachment": False,
+                },
             )
             return response
 
@@ -173,13 +167,13 @@ class DetectionService:
         }
 
         await self._log_detection(
-            db,
-            user_id,
-            "email",
-            is_fraud,
-            confidence,
-            "ml",
+            db, user_id, "email", is_fraud, confidence, "ml",
             int((time.time() - start_time) * 1000),
+            meta_data={
+                "sender": sender,
+                "subject": subject,
+                "has_attachment": False,
+            },
         )
 
         return response
@@ -193,6 +187,7 @@ class DetectionService:
         confidence: float,
         method: str,
         response_time: int,
+        meta_data: Optional[dict] = None,
     ):
         try:
             log = DetectionLog(
@@ -203,6 +198,7 @@ class DetectionService:
                 method_used=method,
                 response_time_ms=response_time,
                 model_version="1.0",
+                meta_data=meta_data or {},
             )
             db.add(log)
             await db.commit()

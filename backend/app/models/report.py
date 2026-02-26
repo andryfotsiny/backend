@@ -1,9 +1,10 @@
-from sqlalchemy import Column, String, DateTime, Integer, Boolean, ForeignKey, Enum as SQLEnum, BigInteger,Float
+from sqlalchemy import Column, String, DateTime, Integer, Boolean, ForeignKey, Enum as SQLEnum, BigInteger, Float
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from datetime import datetime
 import uuid
 import enum
 from app.db.base import Base
+
 
 class ReportType(str, enum.Enum):
     CALL = "call"
@@ -17,7 +18,7 @@ class VerificationStatus(str, enum.Enum):
 
 class UserReport(Base):
     __tablename__ = "user_reports"
-    
+
     report_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id = Column(UUID(as_uuid=True), nullable=True)
     report_type = Column(SQLEnum(ReportType), nullable=False)
@@ -30,7 +31,7 @@ class UserReport(Base):
 
 class DetectionLog(Base):
     __tablename__ = "detection_logs"
-    
+
     log_id = Column(BigInteger, primary_key=True, autoincrement=True)
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.user_id"), nullable=True)
     detection_type = Column(String(20), index=True, nullable=False)
@@ -40,3 +41,4 @@ class DetectionLog(Base):
     response_time_ms = Column(Integer, nullable=False)
     timestamp = Column(DateTime, default=datetime.utcnow, index=True)
     model_version = Column(String(20), nullable=True)
+    meta_data = Column(JSONB, nullable=True, default={})
