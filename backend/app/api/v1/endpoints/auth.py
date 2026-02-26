@@ -3,16 +3,26 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.session import get_db
 from app.services.auth_service import auth_service, ACCESS_TOKEN_EXPIRE_MINUTES
 from app.schemas.auth import (
-    UserRegister, UserLogin, Token, RefreshTokenRequest,
-    UserResponse, PasswordChange, DeviceTokenCreate, AuthError
+    UserRegister,
+    UserLogin,
+    Token,
+    UserResponse,
+    PasswordChange,
+    DeviceTokenCreate,
+    AuthError,
 )
 from app.models.user import User
-from app.api.deps.auth_deps import get_current_user, verify_refresh_token, get_current_user_optional
+from app.api.deps.auth_deps import (
+    get_current_user,
+    verify_refresh_token,
+    get_current_user_optional,
+)
 from typing import Optional
 
 router = APIRouter()
 
 # === REGISTER ===
+
 
 @router.post(
     "/register",
@@ -21,13 +31,13 @@ router = APIRouter()
     responses={
         400: {"model": AuthError, "description": "Email déjà utilisé"},
         403: {"model": AuthError, "description": "Permission refusée"},
-        422: {"description": "Validation error"}
-    }
+        422: {"description": "Validation error"},
+    },
 )
 async def register(
     user_data: UserRegister,
     current_admin: Optional[User] = Depends(get_current_user_optional),
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
 ):
     """
     Créer un nouveau compte utilisateur
@@ -41,20 +51,19 @@ async def register(
     Retourne les informations utilisateur (sans mot de passe)
     """
 
-    # Déterminer le rôle
     role = "USER"
 
     if user_data.role and user_data.role != "USER":
         if not current_admin or current_admin.role != "ADMIN":
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="Seul un administrateur peut créer des comptes ORGANISATION ou ADMIN"
+                detail="Seul un administrateur peut créer des comptes ORGANISATION ou ADMIN",
             )
 
         if user_data.role not in ["USER", "ORGANISATION", "ADMIN"]:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Rôle invalide. Valeurs autorisées: USER, ORGANISATION, ADMIN"
+                detail="Rôle invalide. Valeurs autorisées: USER, ORGANISATION, ADMIN",
             )
 
         role = user_data.role
@@ -66,43 +75,38 @@ async def register(
             phone=user_data.phone,
             country_code=user_data.country_code,
             role=role,
-            db=db
+            db=db,
         )
     except ValueError as e:
         if str(e) == "EMAIL_ALREADY_EXISTS":
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Cet email est déjà utilisé"
+                detail="Cet email est déjà utilisé",
             )
         raise
 
-    # ✅ Retourner email et phone en CLAIR
     return UserResponse(
         id=user.id,
-        email=user.email,  # ✅ Email en clair depuis la DB
-        phone=user.phone,  # ✅ Téléphone en clair depuis la DB
+        email=user.email,
+        phone=user.phone,
         country_code=user.country_code,
         role=user.role,
         created_at=user.created_at,
         last_active=user.last_active,
         total_reports=0,
-        verified_reports=0
+        verified_reports=0,
     )
 
 
 # === LOGIN ===
 
+
 @router.post(
     "/login",
     response_model=Token,
-    responses={
-        401: {"model": AuthError, "description": "Identifiants invalides"}
-    }
+    responses={401: {"model": AuthError, "description": "Identifiants invalides"}},
 )
-async def login(
-    credentials: UserLogin,
-    db: AsyncSession = Depends(get_db)
-):
+async def login(credentials: UserLogin, db: AsyncSession = Depends(get_db)):
     """
     Se connecter et obtenir des tokens JWT
 
@@ -115,9 +119,7 @@ async def login(
     """
 
     user = await auth_service.authenticate_user(
-        email=credentials.email,
-        password=credentials.password,
-        db=db
+        email=credentials.email, password=credentials.password, db=db
     )
 
     if not user:
@@ -134,22 +136,21 @@ async def login(
         access_token=access_token,
         refresh_token=refresh_token,
         token_type="bearer",
-        expires_in=ACCESS_TOKEN_EXPIRE_MINUTES * 60
+        expires_in=ACCESS_TOKEN_EXPIRE_MINUTES * 60,
     )
 
 
 # === REFRESH TOKEN ===
 
+
 @router.post(
     "/refresh",
     response_model=Token,
-    responses={
-        401: {"model": AuthError, "description": "Refresh token invalide"}
-    }
+    responses={401: {"model": AuthError, "description": "Refresh token invalide"}},
 )
 async def refresh_token(
     current_user: User = Depends(verify_refresh_token),
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
 ):
     """
     Renouveler l'access token avec un refresh token
@@ -158,33 +159,36 @@ async def refresh_token(
     - **Authorization**: Bearer {refresh_token}
     """
 
-    access_token, _ = auth_service.create_access_token(current_user.id, current_user.role)
-    refresh_token, _ = auth_service.create_refresh_token(current_user.id, current_user.role)
+    access_token, _ = auth_service.create_access_token(
+        current_user.id, current_user.role
+    )
+    refresh_token, _ = auth_service.create_refresh_token(
+        current_user.id, current_user.role
+    )
 
     return Token(
         access_token=access_token,
         refresh_token=refresh_token,
         token_type="bearer",
-        expires_in=ACCESS_TOKEN_EXPIRE_MINUTES * 60
+        expires_in=ACCESS_TOKEN_EXPIRE_MINUTES * 60,
     )
 
 
 # === LOGOUT ===
 
+
 @router.post("/logout")
-async def logout(
-    current_user: User = Depends(get_current_user)
-):
+async def logout(current_user: User = Depends(get_current_user)):
     """Se déconnecter"""
     return {"message": "Déconnexion réussie"}
 
 
 # === GET CURRENT USER (ME) ===
 
+
 @router.get("/me", response_model=UserResponse)
 async def get_me(
-    current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db)
+    current_user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)
 ):
     """
     Obtenir les informations de l'utilisateur connecté
@@ -195,27 +199,27 @@ async def get_me(
 
     stats = await auth_service.get_user_stats(current_user.id, db)
 
-    # ✅ Retourner email et phone en CLAIR
     return UserResponse(
         id=current_user.id,
-        email=current_user.email,  # ✅ Email en clair
-        phone=current_user.phone,  # ✅ Téléphone en clair
+        email=current_user.email,
+        phone=current_user.phone,
         country_code=current_user.country_code,
         role=current_user.role,
         created_at=current_user.created_at,
         last_active=current_user.last_active,
         total_reports=stats["total_reports"],
-        verified_reports=stats["verified_reports"]
+        verified_reports=stats["verified_reports"],
     )
 
 
 # === CHANGE PASSWORD ===
 
+
 @router.post("/change-password")
 async def change_password(
     password_data: PasswordChange,
     current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
 ):
     """Changer le mot de passe"""
 
@@ -223,13 +227,13 @@ async def change_password(
         user_id=current_user.id,
         current_password=password_data.current_password,
         new_password=password_data.new_password,
-        db=db
+        db=db,
     )
 
     if not success:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Mot de passe actuel incorrect"
+            detail="Mot de passe actuel incorrect",
         )
 
     return {"message": "Mot de passe changé avec succès"}
@@ -237,11 +241,12 @@ async def change_password(
 
 # === ADD DEVICE TOKEN ===
 
+
 @router.post("/device-token")
 async def add_device_token(
     device_data: DeviceTokenCreate,
     current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
 ):
     """Enregistrer un token de device pour notifications push"""
 
@@ -249,13 +254,13 @@ async def add_device_token(
         user_id=current_user.id,
         token=device_data.token,
         platform=device_data.platform,
-        db=db
+        db=db,
     )
 
     if not success:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Impossible d'enregistrer le token"
+            detail="Impossible d'enregistrer le token",
         )
 
     return {"message": "Token enregistré"}
@@ -263,10 +268,10 @@ async def add_device_token(
 
 # === GET USER STATS ===
 
+
 @router.get("/stats")
 async def get_stats(
-    current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db)
+    current_user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)
 ):
     """Obtenir les statistiques de contribution de l'utilisateur"""
 
@@ -277,22 +282,21 @@ async def get_stats(
         "role": current_user.role,
         "stats": stats,
         "member_since": current_user.created_at.isoformat(),
-        "last_active": current_user.last_active.isoformat()
+        "last_active": current_user.last_active.isoformat(),
     }
 
 
 # === TEST PROTECTED ROUTE ===
 
+
 @router.get("/test-protected")
-async def test_protected(
-    current_user: User = Depends(get_current_user)
-):
+async def test_protected(current_user: User = Depends(get_current_user)):
     """Route de test pour vérifier que l'authentification fonctionne"""
 
     return {
         "message": "Accès autorisé !",
         "user_id": current_user.id,
-        "email": current_user.email,  # ✅ Email en clair
+        "email": current_user.email,
         "role": current_user.role,
-        "authenticated": True
+        "authenticated": True,
     }

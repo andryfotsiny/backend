@@ -9,7 +9,7 @@ from datetime import datetime
 router = APIRouter()
 
 
-@router.get("/stats")  # ✅ SANS response_model
+@router.get("/stats")
 async def get_global_stats(
     current_user: User = Depends(require_organisation),
     db: AsyncSession = Depends(get_db)
@@ -19,7 +19,7 @@ async def get_global_stats(
     return stats
 
 
-@router.get("/timeline")  # ✅ SANS response_model
+@router.get("/timeline")
 async def get_timeline_stats(
     period: str = Query("week", regex="^(day|week|month|year)$"),
     current_user: User = Depends(require_organisation),
@@ -30,7 +30,7 @@ async def get_timeline_stats(
     return stats
 
 
-@router.get("/trends")  # ✅ SANS response_model
+@router.get("/trends")
 async def get_fraud_trends(
     current_user: User = Depends(require_organisation),
     db: AsyncSession = Depends(get_db)
@@ -40,7 +40,7 @@ async def get_fraud_trends(
     return trends
 
 
-@router.get("/leaderboard")  # ✅ SANS response_model
+@router.get("/leaderboard")
 async def get_leaderboard(
     period: str = Query("month", regex="^(week|month|all_time)$"),
     limit: int = Query(10, ge=5, le=100),
@@ -52,7 +52,7 @@ async def get_leaderboard(
     return leaderboard
 
 
-@router.get("/dashboard")  # ✅ SANS response_model
+@router.get("/dashboard")
 async def get_admin_dashboard(
     current_user: User = Depends(require_admin),
     db: AsyncSession = Depends(get_db)
