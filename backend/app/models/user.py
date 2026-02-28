@@ -4,6 +4,8 @@ from datetime import datetime
 import uuid
 from app.db.base import Base
 from enum import Enum
+from sqlalchemy.orm import validates
+from app.core.security import hash_sha256
 
 
 class UserRole(str, Enum):
@@ -38,3 +40,15 @@ class User(Base):
     @property
     def id(self):
         return str(self.user_id)
+
+    @validates("email")
+    def validate_email(self, key, email):
+        if email:
+            self.email_hash = hash_sha256(email.lower())
+        return email
+
+    @validates("phone")
+    def validate_phone(self, key, phone):
+        if phone:
+            self.phone_hash = hash_sha256(phone)
+        return phone

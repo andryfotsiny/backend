@@ -18,6 +18,8 @@ from typing import Optional
 
 from datetime import datetime
 import hashlib
+from app.services.rag_service import rag_service
+from app.rag.embeddings import embedding_service
 
 router = APIRouter()
 
@@ -184,6 +186,21 @@ async def report_sms(
             .values(verification_status=VerificationStatus.VERIFIED)
         )
         await db.commit()
+
+        # === Network Effect: Add to Vector DB for community protection ===
+        vector = embedding_service.get_embedding(report.content)
+        if vector:
+            rag_service.add_vector(
+                vector=vector,
+                payload={
+                    "content": report.content[:500],
+                    "type": "sms_scam",
+                    "fraud_category": report.fraud_category,
+                    "verified": True,
+                    "report_count": total_reports,
+                    "timestamp": str(datetime.utcnow()),
+                },
+            )
 
     return ReportResponse(
         success=True,
