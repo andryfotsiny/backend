@@ -10,6 +10,7 @@ from app.services.rag_service import rag_service
 from app.rag.embeddings import embedding_service
 from sqlalchemy.exc import SQLAlchemyError
 import logging
+import dns.resolver
 
 
 class DetectionService:
@@ -43,8 +44,12 @@ class DetectionService:
             }
             await cache_service.set(cache_key, response, expire=7200)
             await self._log_detection(
-                db, user_id, "phone", True,
-                fraud_entry.confidence_score, "blacklist",
+                db,
+                user_id,
+                "phone",
+                True,
+                fraud_entry.confidence_score,
+                "blacklist",
                 int((time.time() - start_time) * 1000),
                 meta_data={"phone": phone, "country": country},
             )
@@ -66,7 +71,12 @@ class DetectionService:
 
         await cache_service.set(cache_key, response, expire=3600)
         await self._log_detection(
-            db, user_id, "phone", is_fraud, confidence, "ml",
+            db,
+            user_id,
+            "phone",
+            is_fraud,
+            confidence,
+            "ml",
             int((time.time() - start_time) * 1000),
             meta_data={"phone": phone, "country": country},
         )
@@ -100,7 +110,12 @@ class DetectionService:
         }
 
         await self._log_detection(
-            db, user_id, "sms", is_fraud, confidence, "ml_rag",
+            db,
+            user_id,
+            "sms",
+            is_fraud,
+            confidence,
+            "ml_rag",
             int((time.time() - start_time) * 1000),
             meta_data={
                 "content": content[:500],
@@ -141,8 +156,12 @@ class DetectionService:
                 "response_time_ms": int((time.time() - start_time) * 1000),
             }
             await self._log_detection(
-                db, user_id, "email", True,
-                fraud_domain.reputation_score, "blacklist",
+                db,
+                user_id,
+                "email",
+                True,
+                fraud_domain.reputation_score,
+                "blacklist",
                 int((time.time() - start_time) * 1000),
                 meta_data={
                     "sender": sender,
@@ -154,20 +173,39 @@ class DetectionService:
 
         is_fraud, confidence = ml_service.predict_email(sender, subject, body)
 
+        # Check SPF record presence for the domain
+        spf_valid = False
+        try:
+            answers = dns.resolver.resolve(domain, "TXT")
+            for rdata in answers:
+                if "v=spf1" in str(rdata):
+                    spf_valid = True
+                    break
+        except Exception:
+            spf_valid = False
+
         response = {
             "is_fraud": is_fraud,
             "confidence": confidence,
             "phishing_type": "suspected" if is_fraud else None,
             "risk_factors": ["Contenu suspect"] if is_fraud else [],
-            "sender_verified": False,
-            "spf_valid": False,
-            "dkim_valid": False,
-            "action": "warn" if is_fraud else "allow",
+            "sender_verified": spf_valid,  # Basic verification
+            "spf_valid": spf_valid,
+            "dkim_valid": False,  # Headers needed for DKIM
+            "action": "warn" if is_fraud or not spf_valid else "allow",
             "response_time_ms": int((time.time() - start_time) * 1000),
         }
 
+        if not spf_valid:
+            response["risk_factors"].append("Absence de protection SPF sur le domaine")
+
         await self._log_detection(
-            db, user_id, "email", is_fraud, confidence, "ml",
+            db,
+            user_id,
+            "email",
+            is_fraud,
+            confidence,
+            "ml",
             int((time.time() - start_time) * 1000),
             meta_data={
                 "sender": sender,

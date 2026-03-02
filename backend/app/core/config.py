@@ -29,6 +29,10 @@ class Settings(BaseSettings):
     # Rate limiting
     MAX_REQUESTS_PER_MINUTE: int = 100
 
+    USER_QUOTA: int = 5
+    ORGANISATION_QUOTA: int = 100
+    ADMIN_QUOTA: int = 0
+
     class Config:
         env_file = ".env"
         case_sensitive = True
