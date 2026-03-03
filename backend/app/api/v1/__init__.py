@@ -6,6 +6,7 @@ from app.api.v1.endpoints.reports import router as reports_router
 from app.api.v1.endpoints.auth import router as auth_router
 from app.api.v1.endpoints.users import router as users_router
 from app.api.v1.endpoints.recent import router as recent_router
+from app.api.v1.endpoints.business import router as business_router
 from app.api.v1.endpoints import analytics
 
 api_router = APIRouter()
@@ -18,10 +19,7 @@ api_router.include_router(reports_router, prefix="/reports", tags=["reports"])
 api_router.include_router(auth_router, prefix="/auth", tags=["auth"])
 api_router.include_router(users_router, prefix="/users", tags=["users"])
 api_router.include_router(recent_router, prefix="/recent", tags=["recent"])
+api_router.include_router(business_router, prefix="/business", tags=["business"])
 
 
-api_router.include_router(
-    analytics.router,
-    prefix="/analytics",
-    tags=["analytics"]
-)
+api_router.include_router(analytics.router, prefix="/analytics", tags=["analytics"])
