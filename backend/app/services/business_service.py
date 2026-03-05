@@ -1,5 +1,6 @@
 import pandas as pd
 import io
+import phonenumbers
 import logging
 from typing import List, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -57,8 +58,39 @@ class BusinessService:
                     errors=["Required column 'NOMINATION' not found in file"],
                 )
 
+            if "code_pays" not in df.columns:
+                df["code_pays"] = None
+
+            def extract_country_code(row):
+                existing_code = None
+                if (
+                    pd.notna(row.get("code_pays"))
+                    and str(row.get("code_pays")).strip()
+                    and str(row.get("code_pays")).strip() != "None"
+                ):
+                    existing_code = row["code_pays"]
+
+                tel = row.get("tel")
+                if pd.isna(tel) or not str(tel).strip() or str(tel).strip() == "None":
+                    return existing_code
+
+                try:
+                    num_str = str(tel).strip()
+                    if not num_str.startswith("+"):
+                        num_str = "+" + num_str
+                    parsed = phonenumbers.parse(num_str, None)
+                    if phonenumbers.is_valid_number(parsed):
+                        region = phonenumbers.region_code_for_number(parsed)
+                        if region:
+                            return region
+                except phonenumbers.NumberParseException:
+                    pass
+                return existing_code
+
             internal_duplicates = 0
             if "tel" in df.columns:
+                df["code_pays"] = df.apply(extract_country_code, axis=1)
+
                 df["tel"] = df["tel"].astype(str).str.strip()
                 initial_count = len(df)
                 df = df.drop_duplicates(subset=["tel"], keep="first")
