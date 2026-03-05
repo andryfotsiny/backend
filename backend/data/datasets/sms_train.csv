@@ -64,3 +64,9 @@ content,is_fraud,fraud_type
 "Rdv coiffeur samedi 10h. N'oublie pas!",0,legitimate
 "Le garagiste a fini la révision. Tu peux passer",0,legitimate
 "Bonne année 2026! Santé et bonheur",0,legitimate
+"Votre colis Chronopost n°12345 est en cours de livraison. Il sera déposé dans votre boîte aux lettres.",0,legitimate
+"Le livreur est en route avec votre commande Amazone. Code d'accès requis ?",0,legitimate
+"Votre livraison est prévue entre 14h et 16h aujourd'hui.",0,legitimate
+"Chronopost: Votre colis a été livré au point relais choisi.",0,legitimate
+"La Poste: Votre colis est bien arrivé. Bonne réception !",0,legitimate
+"Votre livraison Chronopost attend ici en bas, venez le recuperer.",0,legitimate

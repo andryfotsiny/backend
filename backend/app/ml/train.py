@@ -21,6 +21,7 @@ MODEL_DIR = BASE_DIR / "models" / "ml_models"
 # Créer dossiers si nécessaire
 MODEL_DIR.mkdir(parents=True, exist_ok=True)
 
+
 def train_sms_classifier():
     """Entraîne le classifieur SMS"""
     print("=" * 60)
@@ -31,13 +32,17 @@ def train_sms_classifier():
     print("\n📊 Chargement données...")
     df = pd.read_csv(DATA_DIR / "sms_train.csv")
     print(f"   ✓ {len(df)} SMS chargés")
-    print(f"   ✓ Frauduleux: {df['is_fraud'].sum()} ({df['is_fraud'].sum()/len(df)*100:.1f}%)")
-    print(f"   ✓ Légitimes: {(~df['is_fraud'].astype(bool)).sum()} ({(~df['is_fraud'].astype(bool)).sum()/len(df)*100:.1f}%)")
+    print(
+        f"   ✓ Frauduleux: {df['is_fraud'].sum()} ({df['is_fraud'].sum() / len(df) * 100:.1f}%)"
+    )
+    print(
+        f"   ✓ Légitimes: {(~df['is_fraud'].astype(bool)).sum()} ({(~df['is_fraud'].astype(bool)).sum() / len(df) * 100:.1f}%)"
+    )
 
     # 2. Préparation données
     print("\n🔧 Préparation features...")
-    X = df['content']
-    y = df['is_fraud']
+    X = df["content"]
+    y = df["is_fraud"]
 
     # Split train/test
     X_train, X_test, y_train, y_test = train_test_split(
@@ -52,7 +57,7 @@ def train_sms_classifier():
         max_features=1000,
         ngram_range=(1, 2),
         min_df=2,
-        stop_words=None  # On garde tout pour le français
+        stop_words=None,  # On garde tout pour le français
     )
 
     X_train_tfidf = vectorizer.fit_transform(X_train)
@@ -68,7 +73,7 @@ def train_sms_classifier():
         min_samples_leaf=2,
         random_state=42,
         n_jobs=-1,
-        verbose=0
+        verbose=0,
     )
 
     model.fit(X_train_tfidf, y_train)
@@ -80,13 +85,15 @@ def train_sms_classifier():
     y_proba = model.predict_proba(X_test_tfidf)
 
     accuracy = accuracy_score(y_test, y_pred)
-    print(f"   ✓ Accuracy: {accuracy*100:.2f}%")
+    print(f"   ✓ Accuracy: {accuracy * 100:.2f}%")
 
     # Rapport détaillé
     print("\n📊 Rapport classification:")
-    print(classification_report(y_test, y_pred,
-                                target_names=['Légitimes', 'Frauduleux'],
-                                digits=3))
+    print(
+        classification_report(
+            y_test, y_pred, target_names=["Légitimes", "Frauduleux"], digits=3
+        )
+    )
 
     # Matrice de confusion
     print("🔢 Matrice de confusion:")
@@ -111,16 +118,16 @@ def train_sms_classifier():
         "URGENT! Payez 2€ maintenant bit.ly",
         "Salut, ça va? On se voit ce soir?",
         "Votre compte bancaire sera bloqué",
-        "RDV dentiste demain 14h"
+        "RDV dentiste demain 14h",
     ]
 
     for msg in test_messages:
         features = vectorizer.transform([msg])
         pred = model.predict(features)[0]
         proba = model.predict_proba(features)[0]
-        emoji = "🚨" if pred == 1 else "✅"
-        print(f"   {emoji} '{msg[:40]}...'")
-        print(f"      → {'FRAUDE' if pred == 1 else 'LÉGITIME'} (confiance: {proba[pred]:.2%})")
+        print(
+            f"      → {'FRAUDE' if pred == 1 else 'LÉGITIME'} (confiance: {proba[pred]:.2%})"
+        )
 
     # 8. Sauvegarder modèles
     print("\n💾 Sauvegarde modèles...")
@@ -131,19 +138,19 @@ def train_sms_classifier():
 
     # 9. Métadonnées
     metadata = {
-        'accuracy': float(accuracy),
-        'n_samples_train': len(X_train),
-        'n_samples_test': len(X_test),
-        'n_features': X_train_tfidf.shape[1],
-        'model_type': 'RandomForestClassifier',
-        'version': '1.0'
+        "accuracy": float(accuracy),
+        "n_samples_train": len(X_train),
+        "n_samples_test": len(X_test),
+        "n_features": X_train_tfidf.shape[1],
+        "model_type": "RandomForestClassifier",
+        "version": "1.0",
     }
 
     joblib.dump(metadata, MODEL_DIR / "sms_metadata.pkl")
     print(f"   ✓ Métadonnées sauvegardées")
 
     print("\n" + "=" * 60)
-    print(f"✅ ENTRAÎNEMENT TERMINÉ - Accuracy: {accuracy*100:.2f}%")
+    print(f" ENTRAÎNEMENT TERMINÉ - Accuracy: {accuracy * 100:.2f}%")
     print("=" * 60)
 
     return model, vectorizer, accuracy
@@ -157,13 +164,13 @@ def train_phone_classifier():
 
 
 if __name__ == "__main__":
-    print("\n" + "🚀" * 30)
+    print("\n" + "=" * 30)
     print("   DYLETH - ML Training Pipeline")
-    print("🚀" * 30 + "\n")
+    print("=" * 30 + "\n")
 
     # Vérifier que les datasets existent
     if not (DATA_DIR / "sms_train.csv").exists():
-        print("❌ Erreur: sms_train.csv introuvable")
+        print("Erreur: sms_train.csv introuvable")
         print(f"   Cherché dans: {DATA_DIR}")
         exit(1)
 
@@ -173,8 +180,8 @@ if __name__ == "__main__":
     # Téléphone (phase 2)
     train_phone_classifier()
 
-    print("\n✅ Tous les modèles sont prêts!")
-    print("\n💡 Prochaine étape:")
+    print("\n Tous les modèles sont prêts!")
+    print("\n Prochaine étape:")
     print("   1. Redémarrer l'API: uvicorn app.main:app --reload")
     print("   2. Tester: curl -X POST http://localhost:8000/api/v1/sms/analyze-sms")
     print("")
