@@ -21,10 +21,13 @@ class MLService:
             sms_model_path = self.model_dir / "sms_model.pkl"
             vectorizer_path = self.model_dir / "vectorizer.pkl"
 
+            logging.info(
+                "Attempting to load ML models from: %s", self.model_dir.absolute()
+            )
             if sms_model_path.exists() and vectorizer_path.exists():
                 self.sms_model = joblib.load(sms_model_path)
                 self.vectorizer = joblib.load(vectorizer_path)
-                logging.info("ML models loaded successfully")
+                logging.info("ML models loaded successfully from %s", sms_model_path)
             else:
                 logging.warning("ML models not found at %s", self.model_dir)
         except Exception as e:
@@ -36,19 +39,16 @@ class MLService:
             return False, 0.0
 
         score = 0.0
-        # Suspicious length (too short or too long for standard numbers)
         clean_phone = phone.replace("+", "").replace(" ", "").replace("-", "")
         if len(clean_phone) < 8 or len(clean_phone) > 15:
             score += 0.4
 
-        # Call count features (simulating frequency detection)
         call_count = features.get("call_count", 0)
-        if call_count > 50:  # High frequency calling
+        if call_count > 50:
             score += 0.5
         elif call_count > 10:
             score += 0.2
 
-        # Suspicious hour (late night/early morning for spam bots)
         hour = features.get("hour", 0)
         if hour < 7 or hour > 21:
             score += 0.1
@@ -102,10 +102,54 @@ class MLService:
         risk_factors = []
         score = 0
 
-        urgent_keywords = ["urgent", "immédiat", "maintenant", "rapidement", "vite"]
-        money_keywords = ["payez", "paiement", "frais", "€", "argent", "remboursement"]
-        link_keywords = ["http://", "https://", "bit.ly", "cliquez", "lien"]
-        threat_keywords = ["bloqué", "suspendu", "limite", "expire", "problème"]
+        urgent_keywords = [
+            "urgent",
+            "immédiat",
+            "maintenant",
+            "rapidement",
+            "vite",
+            "sous 24h",
+            "sous 48h",
+        ]
+        money_keywords = [
+            "payez",
+            "paiement",
+            "frais",
+            "€",
+            "argent",
+            "remboursement",
+            "amende",
+            "taxe",
+        ]
+        link_keywords = [
+            "http://",
+            "https://",
+            "bit.ly",
+            "cliquez",
+            "lien",
+            "connectez",
+            "visitez",
+        ]
+        threat_keywords = [
+            "bloqué",
+            "suspendu",
+            "limite",
+            "expire",
+            "problème",
+            "sécurité",
+            "suspect",
+        ]
+        delivery_brands = ["chronopost", "dhl", "ups", "fedex", "colissimo"]
+
+        # Détection d'intentions de livraison légitime (ex: locaux)
+        legit_indicators = [
+            "ici en bas",
+            "gardien",
+            "voisin",
+            "boite aux lettres",
+            "bal",
+        ]
+        is_potentially_legit = any(kw in content_lower for kw in legit_indicators)
 
         for keyword in urgent_keywords:
             if keyword in content_lower:
@@ -115,26 +159,46 @@ class MLService:
 
         for keyword in money_keywords:
             if keyword in content_lower:
-                risk_factors.append("Demande de paiement")
+                risk_factors.append("Demande de paiement ou remboursement")
                 score += 0.3
                 break
 
         for keyword in link_keywords:
             if keyword in content_lower:
                 risk_factors.append("Lien suspect")
-                score += 0.25
+                score += 0.3
                 break
 
         for keyword in threat_keywords:
             if keyword in content_lower:
-                risk_factors.append("Message de menace")
-                score += 0.15
+                risk_factors.append("Message de menace ou alerte")
+                score += 0.2
                 break
 
-        is_fraud = score >= 0.5
-        confidence = min(score, 0.95)
+        # Les marques de livraison seules sont peu risquées
+        for keyword in delivery_brands:
+            if keyword in content_lower:
+                risk_factors.append("Mention service de livraison")
+                score += 0.1
+                break
 
-        return is_fraud, confidence, risk_factors
+        has_delivery = any(
+            kw in content_lower for kw in (delivery_brands + ["livraison", "colis"])
+        )
+        has_link = any(kw in content_lower for kw in link_keywords)
+        has_payment = any(kw in content_lower for kw in money_keywords)
+
+        if has_delivery and (has_link or has_payment):
+            score += 0.3
+            risk_factors.append("Combinaison suspecte (Livraison + Lien/Paiement)")
+
+        if is_potentially_legit:
+            score -= 0.3
+
+        is_fraud = score >= 0.5
+        confidence = max(0.0, min(score, 0.95))
+
+        return is_fraud, confidence, list(set(risk_factors))
 
 
 ml_service = MLService()

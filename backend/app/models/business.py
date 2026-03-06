@@ -10,13 +10,11 @@ class Business(Base):
     nom = Column(String(100), index=True, nullable=True)
     nomination = Column(String(255), index=True)
     adresse = Column(String(500))
-    cp = Column(String(10), index=True)
+    code_postale = Column(String(10), index=True)
     ville = Column(String(100), index=True)
-    prefixe = Column(String(10), index=True, nullable=True)
+    code_pays = Column(String(50), index=True, nullable=True)
     tel = Column(String(20), index=True)
     act = Column(String(255), index=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
-    __table_args__ = (
-        UniqueConstraint("tel", name="uq_business_identity"),
-    )
+    __table_args__ = (UniqueConstraint("tel", name="uq_business_identity"),)

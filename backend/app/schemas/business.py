@@ -6,12 +6,12 @@ from datetime import datetime
 class BusinessBase(BaseModel):
     nomination: str
     adresse: Optional[str] = None
-    cp: Optional[str] = None
+    code_postale: Optional[str] = None
     ville: Optional[str] = None
     tel: Optional[str] = None
     act: Optional[str] = None
     nom: Optional[str] = None
-    prefixe: Optional[str] = None
+    code_pays: Optional[str] = None
 
 
 class BusinessCreate(BusinessBase):
@@ -29,12 +29,12 @@ class Business(BusinessBase):
 class BusinessUpdate(BaseModel):
     nomination: Optional[str] = None
     adresse: Optional[str] = None
-    cp: Optional[str] = None
+    code_postale: Optional[str] = None
     ville: Optional[str] = None
     tel: Optional[str] = None
     act: Optional[str] = None
     nom: Optional[str] = None
-    prefixe: Optional[str] = None
+    code_pays: Optional[str] = None
 
 
 class BusinessList(BaseModel):

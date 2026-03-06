@@ -1,5 +1,6 @@
 import pandas as pd
 import io
+import phonenumbers
 import logging
 from typing import List, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -30,34 +31,26 @@ class BusinessService:
                     errors=[f"Unsupported file type: {file_type}"],
                 )
 
-            # Map columns (case-insensitive and handling potential variations)
             column_mapping = {
-                "NOMINATION": "nomination",
-                "Nomination": "nomination",
                 "nomination": "nomination",
-                "Adresse": "adresse",
                 "adresse": "adresse",
-                "CP": "cp",
-                "cp": "cp",
-                "Ville": "ville",
+                "code_postal": "code_postale",
+                "code_postale": "code_postale",
+                "cp": "code_postale",
                 "ville": "ville",
-                "TEL": "tel",
                 "tel": "tel",
-                "ACT": "act",
                 "act": "act",
-                "NOM": "nom",
                 "nom": "nom",
-                "PREFIXE": "prefixe",
-                "prefixe": "prefixe",
+                "code_pays": "code_pays",
             }
 
-            # Filter and rename columns if they exist
             existing_cols = {
-                col: column_mapping[col] for col in df.columns if col in column_mapping
+                col: column_mapping[col.lower()]
+                for col in df.columns
+                if col.lower() in column_mapping
             }
             df = df.rename(columns=existing_cols)
 
-            # Ensure required column 'nomination' exists
             if "nomination" not in df.columns:
                 return ImportResult(
                     success_count=0,
@@ -65,11 +58,39 @@ class BusinessService:
                     errors=["Required column 'NOMINATION' not found in file"],
                 )
 
-            # 1. Internal De-duplication (within the file)
-            # We keep the first occurrence of each 'tel'
+            if "code_pays" not in df.columns:
+                df["code_pays"] = None
+
+            def extract_country_code(row):
+                existing_code = None
+                if (
+                    pd.notna(row.get("code_pays"))
+                    and str(row.get("code_pays")).strip()
+                    and str(row.get("code_pays")).strip() != "None"
+                ):
+                    existing_code = row["code_pays"]
+
+                tel = row.get("tel")
+                if pd.isna(tel) or not str(tel).strip() or str(tel).strip() == "None":
+                    return existing_code
+
+                try:
+                    num_str = str(tel).strip()
+                    if not num_str.startswith("+"):
+                        num_str = "+" + num_str
+                    parsed = phonenumbers.parse(num_str, None)
+                    if phonenumbers.is_valid_number(parsed):
+                        region = phonenumbers.region_code_for_number(parsed)
+                        if region:
+                            return region
+                except phonenumbers.NumberParseException:
+                    pass
+                return existing_code
+
             internal_duplicates = 0
             if "tel" in df.columns:
-                # Convert to string now for reliable de-duplication
+                df["code_pays"] = df.apply(extract_country_code, axis=1)
+
                 df["tel"] = df["tel"].astype(str).str.strip()
                 initial_count = len(df)
                 df = df.drop_duplicates(subset=["tel"], keep="first")
@@ -79,14 +100,11 @@ class BusinessService:
                         f"Removed {internal_duplicates} duplicates within the file"
                     )
 
-            # Convert all columns to string to avoid type mismatch (e.g. CP as int)
             df = df.astype(str)
 
-            # Fill NaN values (which are now "nan" strings after astype) to avoid DB issues
             df = df.replace("nan", None)
             df = df.where(pd.notnull(df), None)
 
-            # Convert to list of dicts
             records = df.to_dict("records")
 
             if not records:
@@ -97,22 +115,18 @@ class BusinessService:
                     errors=["No unique records found in file"],
                 )
 
-            # Batch insert with ON CONFLICT DO NOTHING
             batch_size = 1000
             success_count = 0
             inserted_count = 0
             for i in range(0, len(records), batch_size):
                 batch = records[i : i + batch_size]
                 try:
-                    # Use PostgreSQL-specific insert for ON CONFLICT
                     stmt = pg_insert(BusinessModel).values(batch)
                     stmt = stmt.on_conflict_do_nothing(index_elements=["tel"])
 
                     result = await db.execute(stmt)
                     await db.commit()
 
-                    # Row count might not be accurate for asyncpg in all cases,
-                    # but it's a good estimate if supported.
                     inserted_count += result.rowcount if result.rowcount > 0 else 0
                     success_count += len(batch)
                 except Exception as batch_error:

@@ -6,8 +6,6 @@ from app.models.fraud import FraudulentNumber, FraudulentDomain
 from app.models.report import DetectionLog
 from app.services.cache import cache_service
 from app.services.ml_service import ml_service
-from app.services.rag_service import rag_service
-from app.rag.embeddings import embedding_service
 from sqlalchemy.exc import SQLAlchemyError
 import logging
 import dns.resolver
@@ -89,15 +87,6 @@ class DetectionService:
         start_time = time.time()
 
         is_fraud, confidence, risk_factors = ml_service.predict_sms(content, sender)
-
-        if confidence < 0.8:
-            vector = embedding_service.get_embedding(content)
-            if vector:
-                rag_fraud, similar_count = rag_service.check_similarity_fraud(vector)
-                if rag_fraud:
-                    is_fraud = True
-                    confidence = max(confidence, 0.9)
-                    risk_factors.append(f"{similar_count} cas similaires signalés")
 
         response = {
             "is_fraud": is_fraud,
