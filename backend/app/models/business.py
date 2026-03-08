@@ -12,9 +12,8 @@ class Business(Base):
     adresse = Column(String(500))
     code_postale = Column(String(10), index=True)
     ville = Column(String(100), index=True)
-    code_pays = Column(String(50), index=True, nullable=True)
+    prefixe = Column(String(10), index=True, nullable=True)
+    code_pays = Column(String(3), index=True, nullable=True)
     tel = Column(String(20), index=True)
     act = Column(String(255), index=True)
     created_at = Column(DateTime, default=datetime.utcnow)
-
-    __table_args__ = (UniqueConstraint("tel", name="uq_business_identity"),)
