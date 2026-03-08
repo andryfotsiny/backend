@@ -106,3 +106,36 @@ async def delete_user(
     if not success:
         raise HTTPException(status_code=404, detail="Utilisateur non trouvé")
     return {"message": "Utilisateur supprimé avec succès"}
+
+
+@router.get("/me/stats")
+async def get_my_stats(
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Statistiques personnelles de l'utilisateur connecté"""
+    from sqlalchemy import select, func
+    from app.models.report import DetectionLog, UserReport
+
+    total_detections = await db.scalar(
+        select(func.count()).where(DetectionLog.user_id == current_user.user_id)
+    ) or 0
+
+    fraud_detections = await db.scalar(
+        select(func.count()).where(
+            DetectionLog.user_id == current_user.user_id,
+            DetectionLog.is_fraud == True
+        )
+    ) or 0
+
+    total_reports = await db.scalar(
+        select(func.count()).where(UserReport.user_id == current_user.user_id)
+    ) or 0
+
+    return {
+        "total_detections": total_detections,
+        "fraud_detections": fraud_detections,
+        "total_reports": total_reports,
+        "report_count": current_user.report_count,
+        "member_since": current_user.created_at.isoformat(),
+    }

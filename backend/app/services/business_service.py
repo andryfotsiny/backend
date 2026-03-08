@@ -1,12 +1,12 @@
 import pandas as pd
 import io
-import phonenumbers
 import logging
 from typing import List, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from app.models.business import Business as BusinessModel
 from app.schemas.business import ImportResult
+from app.services.geo_service import extract_country_and_prefix
 
 logger = logging.getLogger(__name__)
 
@@ -58,40 +58,23 @@ class BusinessService:
                     errors=["Required column 'NOMINATION' not found in file"],
                 )
 
+            # Initialise les colonnes si absentes
             if "code_pays" not in df.columns:
                 df["code_pays"] = None
+            if "prefixe" not in df.columns:
+                df["prefixe"] = None
 
-            def extract_country_code(row):
-                existing_code = None
-                if (
-                    pd.notna(row.get("code_pays"))
-                    and str(row.get("code_pays")).strip()
-                    and str(row.get("code_pays")).strip() != "None"
-                ):
-                    existing_code = row["code_pays"]
+            # Normalise le tel avant traitement
+            if "tel" in df.columns:
+                df["tel"] = df["tel"].astype(str).str.strip()
 
-                tel = row.get("tel")
-                if pd.isna(tel) or not str(tel).strip() or str(tel).strip() == "None":
-                    return existing_code
-
-                try:
-                    num_str = str(tel).strip()
-                    if not num_str.startswith("+"):
-                        num_str = "+" + num_str
-                    parsed = phonenumbers.parse(num_str, None)
-                    if phonenumbers.is_valid_number(parsed):
-                        region = phonenumbers.region_code_for_number(parsed)
-                        if region:
-                            return region
-                except phonenumbers.NumberParseException:
-                    pass
-                return existing_code
+            # Détection code_pays + prefixe via geo_service
+            geo_results = df.apply(extract_country_and_prefix, axis=1)
+            df["code_pays"] = geo_results.apply(lambda x: x[0])
+            df["prefixe"] = geo_results.apply(lambda x: x[1])
 
             internal_duplicates = 0
             if "tel" in df.columns:
-                df["code_pays"] = df.apply(extract_country_code, axis=1)
-
-                df["tel"] = df["tel"].astype(str).str.strip()
                 initial_count = len(df)
                 df = df.drop_duplicates(subset=["tel"], keep="first")
                 internal_duplicates = initial_count - len(df)
@@ -101,7 +84,6 @@ class BusinessService:
                     )
 
             df = df.astype(str)
-
             df = df.replace("nan", None)
             df = df.where(pd.notnull(df), None)
 
@@ -178,12 +160,10 @@ class BusinessService:
                 )
             )
 
-        # Get total count for pagination
         count_query = select(func.count()).select_from(query.subquery())
         total = await db.execute(count_query)
         total_count = total.scalar() or 0
 
-        # Get items
         query = query.offset(skip).limit(limit)
         result = await db.execute(query)
         return result.scalars().all(), total_count
@@ -193,7 +173,6 @@ class BusinessService:
     ) -> Optional[BusinessModel]:
         from sqlalchemy import update
 
-        # Filter out None values for partial update
         update_data = {k: v for k, v in obj_in.items() if v is not None}
         if not update_data:
             from sqlalchemy import select

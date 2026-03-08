@@ -43,8 +43,8 @@ def upgrade() -> None:
     op.alter_column('users', 'email_hash',
                existing_type=sa.VARCHAR(length=64),
                nullable=True)
-    op.drop_index('idx_users_role', table_name='users')
-    # ### end Alembic commands ###
+    op.execute("DROP INDEX IF EXISTS idx_users_role")
+    # ### end Alembcic commands ###
 
 
 def downgrade() -> None:

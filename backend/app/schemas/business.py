@@ -8,10 +8,11 @@ class BusinessBase(BaseModel):
     adresse: Optional[str] = None
     code_postale: Optional[str] = None
     ville: Optional[str] = None
+    prefixe: Optional[str] = None
+    code_pays: Optional[str] = None
     tel: Optional[str] = None
     act: Optional[str] = None
     nom: Optional[str] = None
-    code_pays: Optional[str] = None
 
 
 class BusinessCreate(BusinessBase):
@@ -31,10 +32,11 @@ class BusinessUpdate(BaseModel):
     adresse: Optional[str] = None
     code_postale: Optional[str] = None
     ville: Optional[str] = None
+    prefixe: Optional[str] = None
+    code_pays: Optional[str] = None
     tel: Optional[str] = None
     act: Optional[str] = None
     nom: Optional[str] = None
-    code_pays: Optional[str] = None
 
 
 class BusinessList(BaseModel):
