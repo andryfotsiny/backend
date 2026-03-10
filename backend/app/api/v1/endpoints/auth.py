@@ -44,8 +44,14 @@ Permet de créer un compte utilisateur.
 """,
     responses={
         201: {"description": "Compte créé avec succès"},
-        400: {"model": AuthError, "description": "Données invalides ou email déjà utilisé"},
-        403: {"model": AuthError, "description": "Permission refusée (nécessite un rôle ADMIN pour certains rôles)"},
+        400: {
+            "model": AuthError,
+            "description": "Données invalides ou email déjà utilisé",
+        },
+        403: {
+            "model": AuthError,
+            "description": "Permission refusée (nécessite un rôle ADMIN pour certains rôles)",
+        },
         422: {"description": "Erreur de validation des champs"},
     },
 )
