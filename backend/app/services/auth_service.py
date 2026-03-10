@@ -115,9 +115,14 @@ class AuthService:
     ) -> User:
         """Enregistre un nouvel utilisateur"""
 
-        existing = await db.execute(select(User).where(User.email == email.lower()))
-        if existing.scalar_one_or_none():
+        existing_email = await db.execute(select(User).where(User.email == email.lower()))
+        if existing_email.scalar_one_or_none():
             raise ValueError("EMAIL_ALREADY_EXISTS")
+
+        if phone:
+            existing_phone = await db.execute(select(User).where(User.phone == phone))
+            if existing_phone.scalar_one_or_none():
+                raise ValueError("PHONE_ALREADY_EXISTS")
 
         user = User(
             user_id=uuid.uuid4(),

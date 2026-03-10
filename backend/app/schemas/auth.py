@@ -6,11 +6,34 @@ import re
 # === REGISTER ===
 
 class UserRegister(BaseModel):
-    email: EmailStr = Field(..., description="Email utilisateur")
-    password: str = Field(..., min_length=8, max_length=100, description="Mot de passe (min 8 caractères)")
-    phone: Optional[str] = Field(None, description="Numéro téléphone (optionnel)")
-    country_code: str = Field("FR", max_length=2, description="Code pays")
-    role: Optional[str] = None
+    email: EmailStr = Field(
+        ..., 
+        description="Adresse email de l'utilisateur. Doit être unique.",
+        example="user@example.com"
+    )
+    password: str = Field(
+        ..., 
+        min_length=8, 
+        max_length=100, 
+        description="Mot de passe (min 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre).",
+        example="SecurePass123"
+    )
+    phone: Optional[str] = Field(
+        None, 
+        description="Numéro de téléphone au format international (E.164). Optionnel.",
+        example="+33612345678"
+    )
+    country_code: str = Field(
+        "FR", 
+        max_length=2, 
+        description="Code pays sur 2 lettres (ISO 3166-1 alpha-2).",
+        example="FR"
+    )
+    role: Optional[str] = Field(
+        "USER",
+        description="Rôle de l'utilisateur. 'USER' par défaut. 'ADMIN' ou 'ORGANISATION' nécessite un token administrateur.",
+        example="USER"
+    )
 
     @validator('password')
     def validate_password(cls, v):
@@ -35,10 +58,11 @@ class UserRegister(BaseModel):
     class Config:
         json_schema_extra = {
             "example": {
-                "email": "user@example.com",
+                "email": "user@exle.com",
                 "password": "SecurePass123",
-                "phone": "+33612345678",
-                "country_code": "FR"
+                "phone": "+33612345671",
+                "country_code": "FR",
+                "role": "USER"
             }
         }
 

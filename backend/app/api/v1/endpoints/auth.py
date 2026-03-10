@@ -28,10 +28,25 @@ router = APIRouter()
     "/register",
     response_model=UserResponse,
     status_code=status.HTTP_201_CREATED,
+    summary="Créer un nouveau compte utilisateur",
+    description="""
+Permet de créer un compte utilisateur. 
+
+**Note sur l'authentification :**
+- L'authentification est **optionnelle** pour créer un compte avec le rôle `USER`.
+- L'authentification est **obligatoire** (token ADMIN requis) pour créer un compte avec le rôle `ORGANISATION` ou `ADMIN`.
+
+**Champs importants :**
+- `email` : Doit être unique dans le système.
+- `password` : Doit respecter les règles de complexité (min 8 chars, 1 maj, 1 min, 1 chiffre).
+- `phone` : Format international E.164 (ex: +33612345678).
+- `country_code` : Code ISO 2 lettres du pays (ex: FR, US).
+""",
     responses={
-        400: {"model": AuthError, "description": "Email déjà utilisé"},
-        403: {"model": AuthError, "description": "Permission refusée"},
-        422: {"description": "Validation error"},
+        201: {"description": "Compte créé avec succès"},
+        400: {"model": AuthError, "description": "Données invalides ou email déjà utilisé"},
+        403: {"model": AuthError, "description": "Permission refusée (nécessite un rôle ADMIN pour certains rôles)"},
+        422: {"description": "Erreur de validation des champs"},
     },
 )
 async def register(
@@ -40,15 +55,7 @@ async def register(
     db: AsyncSession = Depends(get_db),
 ):
     """
-    Créer un nouveau compte utilisateur
-
-    - **email**: Email valide (unique)
-    - **password**: Min 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre
-    - **phone**: Optionnel, format E.164 (+33612345678)
-    - **country_code**: Code pays (FR, US, etc.)
-    - **role**: Optionnel (USER par défaut, ORGANISATION/ADMIN nécessite admin)
-
-    Retourne les informations utilisateur (sans mot de passe)
+    Endpoint de création de compte
     """
 
     role = "USER"
@@ -78,10 +85,16 @@ async def register(
             db=db,
         )
     except ValueError as e:
-        if str(e) == "EMAIL_ALREADY_EXISTS":
+        error_msg = str(e)
+        if error_msg == "EMAIL_ALREADY_EXISTS":
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Cet email est déjà utilisé",
+            )
+        if error_msg == "PHONE_ALREADY_EXISTS":
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Ce numéro de téléphone est déjà utilisé",
             )
         raise
 
