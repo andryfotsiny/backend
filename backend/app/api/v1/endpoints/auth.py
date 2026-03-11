@@ -16,6 +16,7 @@ from app.api.deps.auth_deps import (
     get_current_user,
     verify_refresh_token,
     get_current_user_optional,
+    security,
 )
 from typing import Optional
 
@@ -197,8 +198,13 @@ async def refresh_token(
 
 
 @router.post("/logout")
-async def logout(current_user: User = Depends(get_current_user)):
-    """Se déconnecter"""
+async def logout(
+    current_user: User = Depends(get_current_user),
+    credentials: Optional[str] = Depends(security)
+):
+    """Se déconnecter et révoquer le token"""
+    if credentials:
+        await auth_service.revoke_token(credentials.credentials)
     return {"message": "Déconnexion réussie"}
 
 

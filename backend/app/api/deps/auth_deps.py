@@ -26,7 +26,7 @@ async def get_current_user(
     token = credentials.credentials
 
     # Accepter UNIQUEMENT access tokens
-    user_id = auth_service.verify_token(token, token_type="access")
+    user_id = await auth_service.verify_token(token, token_type="access")
 
     if user_id is None:
         raise credentials_exception
@@ -60,7 +60,7 @@ async def get_current_user_optional(
         return None
 
     token = credentials.credentials
-    user_id = auth_service.verify_token(token, token_type="access")
+    user_id = await auth_service.verify_token(token, token_type="access")
 
     if user_id is None:
         return None
@@ -86,7 +86,7 @@ async def verify_refresh_token(
     )
 
     token = credentials.credentials
-    user_id = auth_service.verify_token(token, token_type="refresh")
+    user_id = await auth_service.verify_token(token, token_type="refresh")
 
     if user_id is None:
         raise credentials_exception
