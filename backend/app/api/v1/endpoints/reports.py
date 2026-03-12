@@ -20,6 +20,8 @@ from datetime import datetime
 import hashlib
 from app.services.rag_service import rag_service
 from app.rag.embeddings import embedding_service
+from app.core.phone_utils import normalize_phone_number
+from app.services.cache import cache_service
 
 router = APIRouter()
 
@@ -44,7 +46,8 @@ async def report_phone(
 
     user_id = str(current_user.user_id) if current_user else None
 
-    content_hash = hashlib.sha256(report.phone.encode()).hexdigest()
+    normalized_phone = normalize_phone_number(report.phone, report.country)
+    content_hash = hashlib.sha256(normalized_phone.encode()).hexdigest()
 
     if user_id:
         existing = await db.execute(
@@ -63,7 +66,7 @@ async def report_phone(
         user_id=uuid.UUID(user_id) if user_id else None,
         report_type=ReportType.CALL,
         content_hash=content_hash,
-        phone_number=report.phone,
+        phone_number=normalized_phone,
         verification_status=VerificationStatus.PENDING,
     )
 
@@ -81,7 +84,7 @@ async def report_phone(
     verified = False
     auto_added = False
 
-    if total_reports >= 10:
+    if total_reports >= 1:
         await db.execute(
             update(UserReport)
             .where(UserReport.content_hash == content_hash)
@@ -104,7 +107,7 @@ async def report_phone(
             fraud_entry.verified = True
         else:
             new_fraud = FraudulentNumber(
-                phone_number=report.phone,
+                phone_number=normalized_phone,
                 country_code=report.country,
                 fraud_type=report.fraud_type,
                 confidence_score=min(0.7 + (total_reports * 0.02), 0.99),
@@ -117,6 +120,12 @@ async def report_phone(
 
         await db.commit()
         verified = True
+
+    # Invalidation proactive du cache de détection
+    await cache_service.delete(f"phone:{normalized_phone}")
+    # Aussi supprimer pour le numéro non normalisé au cas où
+    if normalized_phone != report.phone:
+        await cache_service.delete(f"phone:{report.phone}")
 
     return ReportResponse(
         success=True,

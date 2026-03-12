@@ -200,7 +200,7 @@ async def refresh_token(
 @router.post("/logout")
 async def logout(
     current_user: User = Depends(get_current_user),
-    credentials: Optional[str] = Depends(security)
+    credentials: Optional[str] = Depends(security),
 ):
     """Se déconnecter et révoquer le token"""
     if credentials:
