@@ -84,7 +84,7 @@ async def report_phone(
     verified = False
     auto_added = False
 
-    if total_reports >= 1:
+    if total_reports >= 10:
         await db.execute(
             update(UserReport)
             .where(UserReport.content_hash == content_hash)
