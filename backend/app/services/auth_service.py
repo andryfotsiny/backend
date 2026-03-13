@@ -7,7 +7,11 @@ from sqlalchemy import select, func
 from app.models.user import User
 from app.models.report import UserReport, VerificationStatus
 from app.core.config import settings
+from app.services.redis_service import redis_service
 import uuid
+import logging
+
+logger = logging.getLogger(__name__)
 
 ACCESS_TOKEN_EXPIRE_MINUTES = settings.ACCESS_TOKEN_EXPIRE_MINUTES
 REFRESH_TOKEN_EXPIRE_DAYS = 7
@@ -43,8 +47,10 @@ class AuthService:
         """Crée un access token JWT"""
         expires = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
 
+        jti = str(uuid.uuid4())
         payload = {
             "sub": user_id,
+            "jti": jti,
             "exp": expires,
             "type": "access",
             "role": role,
@@ -59,8 +65,10 @@ class AuthService:
         """Crée un refresh token JWT"""
         expires = datetime.utcnow() + timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
 
+        jti = str(uuid.uuid4())
         payload = {
             "sub": user_id,
+            "jti": jti,
             "exp": expires,
             "type": "refresh",
             "iat": datetime.utcnow(),
@@ -82,7 +90,7 @@ class AuthService:
             return None
 
     @staticmethod
-    def verify_token(token: str, token_type: str = "access") -> Optional[str]:
+    async def verify_token(token: str, token_type: str = "access") -> Optional[str]:
         """Vérifie un token JWT et retourne user_id"""
         try:
             payload = jwt.decode(
@@ -91,8 +99,13 @@ class AuthService:
 
             user_id: str = payload.get("sub")
             token_type_claim: str = payload.get("type")
+            jti: str = payload.get("jti")
 
             if user_id is None or token_type_claim != token_type:
+                return None
+
+            # Vérification de la blacklist Redis
+            if jti and await redis_service.is_token_blacklisted(jti):
                 return None
 
             return user_id
@@ -105,6 +118,24 @@ class AuthService:
             return None
 
     @staticmethod
+    async def revoke_token(token: str):
+        """Révoque un token en l'ajoutant à la blacklist Redis"""
+        try:
+            payload = jwt.decode(
+                token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
+            )
+            jti = payload.get("jti")
+            exp = payload.get("exp")
+            
+            if jti and exp:
+                now = datetime.utcnow().timestamp()
+                expire_seconds = int(exp - now)
+                if expire_seconds > 0:
+                    await redis_service.blacklist_token(jti, expire_seconds)
+        except Exception as e:
+            logger.error(f"Error revoking token: {e}")
+
+    @staticmethod
     async def register_user(
         email: str,
         password: str,
@@ -115,9 +146,14 @@ class AuthService:
     ) -> User:
         """Enregistre un nouvel utilisateur"""
 
-        existing = await db.execute(select(User).where(User.email == email.lower()))
-        if existing.scalar_one_or_none():
+        existing_email = await db.execute(select(User).where(User.email == email.lower()))
+        if existing_email.scalar_one_or_none():
             raise ValueError("EMAIL_ALREADY_EXISTS")
+
+        if phone:
+            existing_phone = await db.execute(select(User).where(User.phone == phone))
+            if existing_phone.scalar_one_or_none():
+                raise ValueError("PHONE_ALREADY_EXISTS")
 
         user = User(
             user_id=uuid.uuid4(),

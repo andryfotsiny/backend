@@ -7,6 +7,7 @@ from app.models.report import DetectionLog
 from app.services.cache import cache_service
 from app.services.ml_service import ml_service
 from sqlalchemy.exc import SQLAlchemyError
+from app.core.phone_utils import normalize_phone_number
 import logging
 import dns.resolver
 
@@ -17,7 +18,9 @@ class DetectionService:
     ) -> dict:
         start_time = time.time()
 
-        cache_key = f"phone:{phone}"
+        # Normalisation
+        normalized_phone = normalize_phone_number(phone, country)
+        cache_key = f"phone:{normalized_phone}"
         cached = await cache_service.get(cache_key)
         if cached:
             return {
@@ -26,7 +29,7 @@ class DetectionService:
             }
 
         result = await db.execute(
-            select(FraudulentNumber).where(FraudulentNumber.phone_number == phone)
+            select(FraudulentNumber).where(FraudulentNumber.phone_number == normalized_phone)
         )
         fraud_entry = result.scalar_one_or_none()
 
@@ -46,10 +49,10 @@ class DetectionService:
                 user_id,
                 "phone",
                 True,
-                fraud_entry.confidence_score,
-                "blacklist",
-                int((time.time() - start_time) * 1000),
-                meta_data={"phone": phone, "country": country},
+                confidence=fraud_entry.confidence_score,
+                method="blacklist",
+                response_time=int((time.time() - start_time) * 1000),
+                meta_data={"phone": normalized_phone, "country": country},
             )
             return response
 
@@ -76,7 +79,7 @@ class DetectionService:
             confidence,
             "ml",
             int((time.time() - start_time) * 1000),
-            meta_data={"phone": phone, "country": country},
+            meta_data={"phone": normalized_phone, "country": country},
         )
 
         return response
@@ -162,7 +165,6 @@ class DetectionService:
 
         is_fraud, confidence = ml_service.predict_email(sender, subject, body)
 
-        # Check SPF record presence for the domain
         spf_valid = False
         try:
             answers = dns.resolver.resolve(domain, "TXT")
@@ -178,9 +180,9 @@ class DetectionService:
             "confidence": confidence,
             "phishing_type": "suspected" if is_fraud else None,
             "risk_factors": ["Contenu suspect"] if is_fraud else [],
-            "sender_verified": spf_valid,  # Basic verification
+            "sender_verified": spf_valid,
             "spf_valid": spf_valid,
-            "dkim_valid": False,  # Headers needed for DKIM
+            "dkim_valid": False,
             "action": "warn" if is_fraud or not spf_valid else "allow",
             "response_time_ms": int((time.time() - start_time) * 1000),
         }

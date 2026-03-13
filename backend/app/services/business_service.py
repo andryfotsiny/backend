@@ -83,6 +83,23 @@ class BusinessService:
                         f"Removed {internal_duplicates} duplicates within the file"
                     )
 
+            # Filter only valid columns that exist in BusinessModel
+            valid_columns = {
+                "nom",
+                "nomination",
+                "adresse",
+                "code_postale",
+                "ville",
+                "prefixe",
+                "code_pays",
+                "tel",
+                "act",
+            }
+
+            # On ne garde que les colonnes valides pour l'insertion
+            cols_to_keep = [col for col in df.columns if col in valid_columns]
+            df = df[cols_to_keep]
+
             df = df.astype(str)
             df = df.replace("nan", None)
             df = df.where(pd.notnull(df), None)
@@ -97,7 +114,7 @@ class BusinessService:
                     errors=["No unique records found in file"],
                 )
 
-            batch_size = 1000
+            batch_size = 500 
             success_count = 0
             inserted_count = 0
             for i in range(0, len(records), batch_size):

@@ -163,6 +163,23 @@ def train_phone_classifier():
     print("   ℹ️  ML téléphone sera entraîné en Phase 2")
 
 
+def trigger_training():
+    """
+    Déclenche l'entraînement complet et retourne les métadonnées.
+    Cette fonction est conçue pour être appelée par l'API.
+    """
+    if not (DATA_DIR / "sms_train.csv").exists():
+        raise FileNotFoundError(f"Dataset introuvable dans {DATA_DIR}")
+
+    _, _, accuracy = train_sms_classifier()
+    train_phone_classifier()
+
+    metadata_path = MODEL_DIR / "sms_metadata.pkl"
+    if metadata_path.exists():
+        return joblib.load(metadata_path)
+    return {"accuracy": accuracy, "status": "success"}
+
+
 if __name__ == "__main__":
     print("\n" + "=" * 30)
     print("   DYLETH - ML Training Pipeline")

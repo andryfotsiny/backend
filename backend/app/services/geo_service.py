@@ -23,13 +23,13 @@ def _get_nominatim(country: str) -> Optional[pgeocode.Nominatim]:
     return _nominatim_cache[country]
 
 
-def _detect_from_tel(tel: str) -> Optional[Tuple[str, str]]:
+def _detect_from_tel(tel: str, country_hint: Optional[str] = None) -> Optional[Tuple[str, str]]:
     """
     Étape 1 : Détecte le pays et le préfixe depuis le numéro de téléphone.
     Retourne (code_pays, prefixe) ou None si échec.
 
     Exemple :
-        "465856371" → parse avec hint "FR" → pays: "FR", préfixe: "+33"
+        "465856371", "FR" → parse avec hint "FR" → pays: "FR", préfixe: "+33"
         "+12025551234" → parse direct → pays: "US", préfixe: "+1"
     """
     if not tel or str(tel).strip() in ["", "None", "nan"]:
@@ -48,13 +48,14 @@ def _detect_from_tel(tel: str) -> Optional[Tuple[str, str]]:
         except phonenumbers.NumberParseException:
             pass
 
-    # Essai 2 : parse avec hint "FR" (numéros locaux sans préfixe)
+    # Essai 2 : parse avec hint (ou "FR" par défaut)
     try:
-        parsed = phonenumbers.parse(num_str, "FR")
+        hint = (country_hint or "FR").upper()
+        parsed = phonenumbers.parse(num_str, hint)
         if phonenumbers.is_valid_number(parsed):
             region = phonenumbers.region_code_for_number(parsed)
             prefix = f"+{parsed.country_code}"
-            return region or "FR", prefix
+            return region or hint, prefix
     except phonenumbers.NumberParseException:
         pass
 
@@ -108,24 +109,35 @@ def extract_country_and_prefix(row: dict) -> Tuple[str, str]:
     Fonction principale appelée pour chaque ligne du DataFrame.
 
     Priorité :
-        1. phonenumbers depuis le tel     → le plus fiable
-        2. pgeocode depuis CP + ville     → si tel manquant ou invalide
-        3. fallback "FR" / "+33"          → si tout échoue
+        1. phonenumbers depuis le tel (avec hint code_pays si présent)
+        2. code_pays déjà présent (on cherche juste le préfixe)
+        3. pgeocode depuis CP + ville
+        4. fallback "FR" / "+33"
 
     Retourne toujours un tuple (code_pays, prefixe).
-
-    Exemple :
-        row = {"tel": "465856371", "code_postale": "13003", "ville": "Marseille"}
-        → étape 1 : phonenumbers("465856371", "FR") → ("FR", "+33") ✓
     """
 
     # Étape 1 — Détection depuis le numéro de téléphone
     tel = row.get("tel")
-    result = _detect_from_tel(str(tel) if tel else "")
+    provided_country = row.get("code_pays")
+    if provided_country and str(provided_country).strip() in ["", "None", "nan"]:
+        provided_country = None
+
+    result = _detect_from_tel(
+        str(tel) if tel else "",
+        country_hint=str(provided_country) if provided_country else None
+    )
     if result:
         return result
 
-    # Étape 2 — Détection depuis le code postal + ville
+    # Étape 2 — Si code_pays fourni mais tel non détectable, on essaie de trouver le préfixe
+    if provided_country:
+        country_code = str(provided_country).strip().upper()
+        prefix_code = phonenumbers.country_code_for_region(country_code)
+        if prefix_code:
+            return country_code, f"+{prefix_code}"
+
+    # Étape 3 — Détection depuis le code postal + ville
     cp = row.get("code_postale")
     ville = row.get("ville")
     result = _detect_from_cp(
@@ -135,5 +147,5 @@ def extract_country_and_prefix(row: dict) -> Tuple[str, str]:
     if result:
         return result
 
-    # Étape 3 — Fallback France par défaut
+    # Étape 4 — Fallback France par défaut
     return "FR", "+33"
