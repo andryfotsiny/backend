@@ -2,7 +2,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from typing import Optional
 import time
-from app.models.fraud import FraudulentNumber, FraudulentDomain
+from datetime import datetime
+from app.models.fraud import FraudulentNumber, FraudulentDomain, FraudType
 from app.models.report import DetectionLog
 from app.services.cache import cache_service
 from app.services.ml_service import ml_service
@@ -91,6 +92,43 @@ class DetectionService:
 
         is_fraud, confidence, risk_factors = ml_service.predict_sms(content, sender)
 
+        if is_fraud:
+            try:
+                normalized_sender = normalize_phone_number(sender)
+                result_fn = await db.execute(
+                    select(FraudulentNumber).where(FraudulentNumber.phone_number == normalized_sender)
+                )
+                existing_fn = result_fn.scalar_one_or_none()
+
+                if existing_fn:
+                    existing_fn.report_count += 1
+                    existing_fn.last_reported = datetime.utcnow()
+                    if confidence > existing_fn.confidence_score:
+                        existing_fn.confidence_score = confidence
+                else:
+                    # Try to extract country from phone if parsed, else default to MG
+                    country_code = "MG"
+                    try:
+                        import phonenumbers
+                        parsed_sender = phonenumbers.parse(sender, "MG")
+                        country_code = phonenumbers.region_code_for_number(parsed_sender) or "MG"
+                    except Exception:
+                        pass
+
+                    new_fn = FraudulentNumber(
+                        phone_number=normalized_sender,
+                        country_code=country_code,
+                        fraud_type=FraudType.PHISHING,
+                        confidence_score=confidence,
+                        source="ai_detection",
+                        report_count=1
+                    )
+                    db.add(new_fn)
+                await db.commit()
+            except Exception as e:
+                logging.exception("Failed to auto-report fraudulent SMS sender: %s", e)
+                await db.rollback()
+
         response = {
             "is_fraud": is_fraud,
             "confidence": confidence,
@@ -174,6 +212,32 @@ class DetectionService:
                     break
         except Exception:
             spf_valid = False
+
+        if is_fraud:
+            try:
+                result_fd = await db.execute(
+                    select(FraudulentDomain).where(FraudulentDomain.domain == domain)
+                )
+                existing_fd = result_fd.scalar_one_or_none()
+
+                if existing_fd:
+                    existing_fd.blocked_count += 1
+                    if confidence > existing_fd.reputation_score:
+                        existing_fd.reputation_score = confidence
+                else:
+                    new_fd = FraudulentDomain(
+                        domain=domain,
+                        phishing_type="suspected",
+                        spf_valid=spf_valid,
+                        dkim_valid=False,
+                        reputation_score=confidence,
+                        blocked_count=1
+                    )
+                    db.add(new_fd)
+                await db.commit()
+            except Exception as e:
+                logging.exception("Failed to auto-report fraudulent email domain: %s", e)
+                await db.rollback()
 
         response = {
             "is_fraud": is_fraud,
