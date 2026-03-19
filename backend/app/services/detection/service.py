@@ -301,3 +301,4 @@ class DetectionService:
 
 
 detection_service = DetectionService()
+    

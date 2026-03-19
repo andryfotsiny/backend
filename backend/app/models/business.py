@@ -14,6 +14,6 @@ class Business(Base):
     ville = Column(String(100), index=True)
     prefixe = Column(String(10), index=True, nullable=True)
     code_pays = Column(String(3), index=True, nullable=True)
-    tel = Column(String(20), index=True)
+    tel = Column(String(20), unique=True, index=True)
     act = Column(String(255), index=True)
     created_at = Column(DateTime, default=datetime.utcnow)
