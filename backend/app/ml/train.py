@@ -159,8 +159,8 @@ def train_sms_classifier():
 def train_phone_classifier():
     """Entraîne le classifieur téléphone (simple pour MVP)"""
     print("\n📞 Entraînement modèle téléphone...")
-    print("   ⚠️  Pour MVP: utilisation règles + base de données")
-    print("   ℹ️  ML téléphone sera entraîné en Phase 2")
+    print("Pour MVP: utilisation règles + base de données")
+    print("ML téléphone sera entraîné en Phase 2")
 
 
 def trigger_training():
@@ -185,16 +185,13 @@ if __name__ == "__main__":
     print("   DYLETH - ML Training Pipeline")
     print("=" * 30 + "\n")
 
-    # Vérifier que les datasets existent
     if not (DATA_DIR / "sms_train.csv").exists():
         print("Erreur: sms_train.csv introuvable")
         print(f"   Cherché dans: {DATA_DIR}")
         exit(1)
 
-    # Entraîner SMS (priorité 1)
     model, vectorizer, accuracy = train_sms_classifier()
 
-    # Téléphone (phase 2)
     train_phone_classifier()
 
     print("\n Tous les modèles sont prêts!")
