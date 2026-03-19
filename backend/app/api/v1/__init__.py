@@ -9,6 +9,7 @@ from app.api.v1.endpoints.recent import router as recent_router
 from app.api.v1.endpoints.business import router as business_router
 from app.api.v1.endpoints.ai import router as ai_router
 from app.api.v1.endpoints import analytics
+from app.api.v1.endpoints.blacklist import router as blacklist_router
 
 api_router = APIRouter()
 
@@ -22,5 +23,5 @@ api_router.include_router(users_router, prefix="/users", tags=["users"])
 api_router.include_router(recent_router, prefix="/recent", tags=["recent"])
 api_router.include_router(business_router, prefix="/business", tags=["business"])
 api_router.include_router(ai_router, prefix="/ai", tags=["ai"])
-
 api_router.include_router(analytics.router, prefix="/analytics", tags=["analytics"])
+api_router.include_router(blacklist_router, prefix="/blacklist", tags=["blacklist"])
