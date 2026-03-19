@@ -188,15 +188,43 @@ class BusinessService:
     async def update(
         self, db: AsyncSession, *, business_id: int, obj_in: dict
     ) -> Optional[BusinessModel]:
-        from sqlalchemy import update
+        from sqlalchemy import update, select
+
+        # Fetch existing object to have full context for geolocation if needed
+        query = select(BusinessModel).where(BusinessModel.id == business_id)
+        result = await db.execute(query)
+        db_obj = result.scalar_one_or_none()
+        if not db_obj:
+            return None
 
         update_data = {k: v for k, v in obj_in.items() if v is not None}
-        if not update_data:
-            from sqlalchemy import select
+        
+        # Geolocation and normalization if relevant fields change
+        geo_fields = {"tel", "code_postale", "ville", "code_pays"}
+        if any(field in update_data for field in geo_fields):
+            # Normalization of tel
+            if "tel" in update_data:
+                update_data["tel"] = str(update_data["tel"]).strip()
+            
+            # Prepare data for extraction (mix of new and old)
+            extraction_data = {
+                "tel": update_data.get("tel", db_obj.tel),
+                "code_postale": update_data.get("code_postale", db_obj.code_postale),
+                "ville": update_data.get("ville", db_obj.ville),
+                "code_pays": update_data.get("code_pays", db_obj.code_pays)
+            }
+            
+            # Use geo_service (it's already imported at top level as extract_country_and_prefix)
+            new_country, new_prefix = extract_country_and_prefix(extraction_data)
+            
+            # Update data with detected values if not explicitly provided
+            if "code_pays" not in update_data:
+                update_data["code_pays"] = new_country
+            if "prefixe" not in update_data:
+                update_data["prefixe"] = new_prefix
 
-            query = select(BusinessModel).where(BusinessModel.id == business_id)
-            result = await db.execute(query)
-            return result.scalar_one_or_none()
+        if not update_data:
+            return db_obj
 
         stmt = (
             update(BusinessModel)

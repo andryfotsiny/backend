@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Optional, List
 from datetime import datetime
 
@@ -9,7 +9,7 @@ class BusinessBase(BaseModel):
     code_postale: Optional[str] = None
     ville: Optional[str] = None
     prefixe: Optional[str] = None
-    code_pays: Optional[str] = None
+    code_pays: Optional[str] = Field(None, max_length=3)
     tel: Optional[str] = None
     act: Optional[str] = None
     nom: Optional[str] = None
@@ -33,7 +33,7 @@ class BusinessUpdate(BaseModel):
     code_postale: Optional[str] = None
     ville: Optional[str] = None
     prefixe: Optional[str] = None
-    code_pays: Optional[str] = None
+    code_pays: Optional[str] = Field(None, max_length=3)
     tel: Optional[str] = None
     act: Optional[str] = None
     nom: Optional[str] = None
