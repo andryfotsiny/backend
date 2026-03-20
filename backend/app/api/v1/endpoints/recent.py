@@ -250,47 +250,6 @@ async def get_recent_emails_logs(
     return recent_emails
 
 
-@router.get("/sms/recent-simple", response_model=List[RecentSms])
-async def get_recent_sms_simple(
-    limit: int = Query(10, ge=1, le=50),
-    db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
-):
-    """Version simplifiée : derniers SMS frauduleux détectés"""
-    query = (
-        select(DetectionLog)
-        .where(DetectionLog.detection_type == "sms")
-        .where(DetectionLog.is_fraud)
-        .order_by(desc(DetectionLog.timestamp))
-        .limit(limit)
-    )
-    result = await db.execute(query)
-    detections = result.scalars().all()
-
-    recent_sms = []
-    for detection in detections:
-        # Extraire les données directement des meta_data du log si présentes
-        meta = detection.meta_data or {}
-        content = meta.get("content", "Pas de contenu")
-        
-        has_link = any(
-            word in content.lower() for word in ["http", "bit.ly", "www.", ".com"]
-        )
-
-        recent_sms.append(
-            RecentSms(
-                preview=content[:100],
-                type=meta.get("category", "phishing"),
-                sender=meta.get("sender", "Inconnu"),
-                hasLink=has_link,
-                riskLevel=_confidence_to_risk(detection.is_fraud, detection.confidence),
-                timestamp=detection.timestamp.isoformat() if detection.timestamp else "",
-            )
-        )
-
-    return recent_sms
-
-
 @router.get("/phone/recent-simple", response_model=List[RecentCall])
 async def get_recent_calls_simple(
     limit: int = Query(10, ge=1, le=50),

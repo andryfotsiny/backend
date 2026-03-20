@@ -10,6 +10,7 @@ class ChatRequest(BaseModel):
 class ChatResponse(BaseModel):
     response: str
     context: Optional[List[str]] = None
+    response_time_s: Optional[float] = None
 
 
 class TrainingDataRequest(BaseModel):

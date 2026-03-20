@@ -25,6 +25,8 @@ class Settings(BaseSettings):
     # ML Configuration
     ML_MODEL_PATH: str = "/app/models/ml_models"
     FRAUD_CONFIDENCE_THRESHOLD: float = 0.7
+    OLLAMA_URL: str = "http://localhost:11434/api/generate"
+    OLLAMA_MODEL: str = "mistral"
 
     # Rate limiting
     MAX_REQUESTS_PER_MINUTE: int = 100

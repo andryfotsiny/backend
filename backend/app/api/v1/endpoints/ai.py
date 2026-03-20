@@ -21,10 +21,21 @@ async def chat_with_ai(
     current_user: User = Depends(get_current_user),
 ):
     """
-    Interagir avec l'IA de DYLETH.
-    Permet de poser des questions sur les détections, les statistiques ou le fonctionnement du système.
+    Interagir avec l'IA de DYLETH (Version Classique).
     """
     result = await ai_service.get_response(db, request.message, request.user_id)
+    return ChatResponse(**result)
+
+
+@router.post("/chat/ollama", response_model=ChatResponse)
+async def chat_with_ollama(
+    request: ChatRequest,
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Interagir avec l'IA via Ollama (Sans authentification).
+    """
+    result = await ai_service.get_ollama_response(db, request.message, request.user_id)
     return ChatResponse(**result)
 
 
