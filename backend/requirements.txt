@@ -35,3 +35,4 @@ phonenumbers==8.13.50
 email-validator==2.2.0
 pgeocode==0.4.1
 pycountry==24.6.1
+flower==2.0.1

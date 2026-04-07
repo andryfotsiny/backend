@@ -3,7 +3,6 @@ import json
 from typing import Optional
 from app.core.config import settings
 
-
 class CacheService:
     def __init__(self):
         self.redis_client = None
@@ -18,15 +17,9 @@ class CacheService:
             await self.redis_client.close()
 
     async def check_rate_limit(self, user_id: str, role: str) -> bool:
-        """Check per‑user rate limit based on role quota.
-        A quota of 0 means unlimited.
-        """
         if not self.redis_client:
             return False
-        # Determine quota from settings
-        quota = getattr(
-            settings, f"{role.upper()}_QUOTA", settings.MAX_REQUESTS_PER_MINUTE
-        )
+        quota = getattr(settings, f"{role.upper()}_QUOTA", settings.MAX_REQUESTS_PER_MINUTE)
         if quota == 0:
             return True
         key = f"rate_limit:{role}:{user_id}"
@@ -44,11 +37,12 @@ class CacheService:
         except Exception:
             return None
 
-    async def set(self, key: str, value: dict, expire: int = 3600):
+    async def set(self, key: str, value: dict, expire: int = 3600, ttl: int = None):
         if not self.redis_client:
             return
         try:
-            await self.redis_client.setex(key, expire, json.dumps(value))
+            expiry = ttl if ttl is not None else expire
+            await self.redis_client.setex(key, expiry, json.dumps(value))
         except Exception:
             pass
 
@@ -67,6 +61,5 @@ class CacheService:
             return await self.redis_client.incr(key)
         except Exception:
             return 0
-
 
 cache_service = CacheService()

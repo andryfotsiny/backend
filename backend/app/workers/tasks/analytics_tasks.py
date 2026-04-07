@@ -3,115 +3,83 @@ from app.db.session import AsyncSessionLocal
 from app.services.analytics_service import analytics_service
 from app.services.cache import cache_service
 from datetime import datetime
+import asyncio
 import logging
 import json
 
 logger = logging.getLogger(__name__)
 
-
 @celery_app.task(name="app.workers.tasks.analytics_tasks.compute_metrics")
 def compute_metrics():
-    """
-    Pré-calculer métriques analytics et mettre en cache
-    
-    Exécuté : Toutes les 10 minutes
-    Avantage : endpoints /stats répondent instantanément (depuis cache)
-    """
-    
-    logger.info("📊 Calcul métriques analytics...")
-    
+    logger.info("Calcul metriques analytics...")
+
     async def _compute():
         async with AsyncSessionLocal() as db:
-            # Calculer stats globales
             global_stats = await analytics_service.get_global_stats(db)
-            
-            # Mettre en cache
             await cache_service.set(
                 "analytics:global_stats",
                 json.dumps(global_stats, default=str),
-                ttl=600  # 10 minutes
+                ttl=600
             )
-            
-            # Timeline semaine
             timeline = await analytics_service.get_timeline_stats(db, "week")
             await cache_service.set(
                 "analytics:timeline:week",
                 json.dumps(timeline, default=str),
                 ttl=600
             )
-            
-            # Tendances
             trends = await analytics_service.get_fraud_trends(db)
             await cache_service.set(
                 "analytics:trends",
                 json.dumps(trends, default=str),
                 ttl=600
             )
-            
             return {
                 "global_stats": global_stats,
                 "timeline": timeline,
                 "trends": trends
             }
-    
+
     try:
-        import asyncio
-        metrics = asyncio.run(_compute())
-        
-        logger.info("✅ Métriques calculées et mises en cache")
-        
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        metrics = loop.run_until_complete(_compute())
+        loop.close()
+        logger.info("Metriques calculees et mises en cache")
         return {
             "success": True,
-            "total_frauds": metrics["global_stats"]["total_frauds"],
+            "total_frauds": metrics["global_stats"].get("total_frauds", 0),
             "timestamp": str(datetime.utcnow())
         }
-        
     except Exception as e:
-        logger.error(f"❌ Erreur calcul métriques: {e}")
+        logger.error(f"Erreur calcul metriques: {e}")
         return {"success": False, "error": str(e)}
-
 
 @celery_app.task(name="app.workers.tasks.analytics_tasks.generate_report")
 def generate_report(period: str = "week"):
-    """
-    Générer rapport analytics (PDF ou JSON)
-    
-    Peut être appelé manuellement : celery_app.send_task(...)
-    """
-    
-    logger.info(f"📄 Génération rapport {period}...")
-    
+    logger.info(f"Generation rapport {period}...")
+
     async def _generate():
         async with AsyncSessionLocal() as db:
             timeline = await analytics_service.get_timeline_stats(db, period)
             global_stats = await analytics_service.get_global_stats(db)
-            
-            report = {
+            return {
                 "period": period,
                 "generated_at": datetime.utcnow().isoformat(),
                 "stats": global_stats,
                 "timeline": timeline
             }
-            
-            # Sauvegarder rapport
-            filename = f"report_{period}_{datetime.utcnow().date()}.json"
-            # with open(f"/tmp/{filename}", "w") as f:
-            #     json.dump(report, f, indent=2, default=str)
-            
-            return report
-    
+
     try:
-        import asyncio
-        report = asyncio.run(_generate())
-        
-        logger.info("✅ Rapport généré")
-        
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        report = loop.run_until_complete(_generate())
+        loop.close()
+        logger.info("Rapport genere")
         return {
             "success": True,
             "report": report,
             "timestamp": str(datetime.utcnow())
         }
-        
     except Exception as e:
-        logger.error(f"❌ Erreur génération rapport: {e}")
+        logger.error(f"Erreur generation rapport: {e}")
         return {"success": False, "error": str(e)}
