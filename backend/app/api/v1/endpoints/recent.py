@@ -1,7 +1,3 @@
-# backend/app/api/v1/endpoints/recent.py
-"""
-"""
-
 from typing import List, Optional
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -14,9 +10,6 @@ from app.models.fraud import FraudulentNumber, FraudulentDomain
 from app.models.report import DetectionLog, UserReport
 
 router = APIRouter()
-
-
-# === SCHEMAS ===
 
 
 class RecentCall(BaseModel):
@@ -46,8 +39,6 @@ class RecentEmail(BaseModel):
     timestamp: str
 
 
-# === HELPERS ===
-
 def _confidence_to_status(is_fraud: bool, confidence: float) -> str:
     if is_fraud and confidence > 0.8:
         return "blocked"
@@ -66,21 +57,14 @@ def _confidence_to_risk(is_fraud: bool, confidence: float) -> str:
     return "low"
 
 
-# === ENDPOINTS ===
-
-
 @router.get("/phone/recent-logs", response_model=List[RecentCall])
 async def get_recent_calls_logs(
     limit: int = Query(10, ge=1, le=50),
     offset: int = Query(0, ge=0),
+    user_id: Optional[str] = Query(None),
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    """
-    Récupérer les appels récents détectés
-    Fix: jointure avec UserReport pour récupérer le numéro de téléphone
-    """
-    # Récupérer les DetectionLog de type phone
     query = (
         select(DetectionLog)
         .where(DetectionLog.detection_type == "phone")
@@ -88,12 +72,14 @@ async def get_recent_calls_logs(
         .limit(limit)
         .offset(offset)
     )
+    if user_id:
+        query = query.where(DetectionLog.user_id == user_id)
+
     result = await db.execute(query)
     detections = result.scalars().all()
 
     recent_calls = []
     for detection in detections:
-        # Récupérer le UserReport associé pour avoir le numéro (meta_data est sur UserReport)
         report_query = (
             select(UserReport)
             .where(UserReport.user_id == detection.user_id)
@@ -104,7 +90,6 @@ async def get_recent_calls_logs(
         report_result = await db.execute(report_query)
         user_report = report_result.scalar_one_or_none()
 
-        # Extraire le numéro depuis UserReport.meta_data ou UserReport.phone_number
         phone = "Unknown"
         if user_report:
             if user_report.phone_number:
@@ -112,7 +97,6 @@ async def get_recent_calls_logs(
             elif user_report.meta_data:
                 phone = user_report.meta_data.get("phone", "Unknown")
 
-        # Chercher dans fraudulent_numbers pour enrichir
         fraud_query = select(FraudulentNumber).where(
             FraudulentNumber.phone_number == phone
         )
@@ -137,13 +121,10 @@ async def get_recent_calls_logs(
 async def get_recent_sms_logs(
     limit: int = Query(10, ge=1, le=50),
     offset: int = Query(0, ge=0),
+    user_id: Optional[str] = Query(None),
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    """
-    Récupérer les SMS récents détectés
-    Fix: meta_data est sur UserReport, pas sur DetectionLog
-    """
     query = (
         select(DetectionLog)
         .where(DetectionLog.detection_type == "sms")
@@ -151,12 +132,14 @@ async def get_recent_sms_logs(
         .limit(limit)
         .offset(offset)
     )
+    if user_id:
+        query = query.where(DetectionLog.user_id == user_id)
+
     result = await db.execute(query)
     detections = result.scalars().all()
 
     recent_sms = []
     for detection in detections:
-        # Récupérer le UserReport associé pour avoir le contenu SMS
         report_query = (
             select(UserReport)
             .where(UserReport.user_id == detection.user_id)
@@ -167,7 +150,6 @@ async def get_recent_sms_logs(
         report_result = await db.execute(report_query)
         user_report = report_result.scalar_one_or_none()
 
-        # Extraire les données depuis UserReport.meta_data
         meta = {}
         if user_report and user_report.meta_data:
             meta = user_report.meta_data
@@ -195,13 +177,10 @@ async def get_recent_sms_logs(
 async def get_recent_emails_logs(
     limit: int = Query(10, ge=1, le=50),
     offset: int = Query(0, ge=0),
+    user_id: Optional[str] = Query(None),
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    """
-    Récupérer les emails récents détectés
-    Fix: meta_data est sur UserReport, pas sur DetectionLog
-    """
     query = (
         select(DetectionLog)
         .where(DetectionLog.detection_type == "email")
@@ -209,12 +188,14 @@ async def get_recent_emails_logs(
         .limit(limit)
         .offset(offset)
     )
+    if user_id:
+        query = query.where(DetectionLog.user_id == user_id)
+
     result = await db.execute(query)
     detections = result.scalars().all()
 
     recent_emails = []
     for detection in detections:
-        # Récupérer le UserReport associé
         report_query = (
             select(UserReport)
             .where(UserReport.user_id == detection.user_id)
@@ -231,7 +212,6 @@ async def get_recent_emails_logs(
         sender = meta.get("sender", "unknown@example.com")
         domain = sender.split("@")[1] if "@" in sender else sender
 
-        # Vérifier si le domaine est dans fraudulent_domains
         domain_query = select(FraudulentDomain).where(FraudulentDomain.domain == domain)
         domain_result = await db.execute(domain_query)
         fraud_domain = domain_result.scalar_one_or_none()
@@ -253,10 +233,10 @@ async def get_recent_emails_logs(
 @router.get("/sms/recent-simple", response_model=List[RecentSms])
 async def get_recent_sms_simple(
     limit: int = Query(10, ge=1, le=50),
+    user_id: Optional[str] = Query(None),
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    """Version simplifiée : derniers SMS frauduleux détectés"""
     query = (
         select(DetectionLog)
         .where(DetectionLog.detection_type == "sms")
@@ -264,19 +244,19 @@ async def get_recent_sms_simple(
         .order_by(desc(DetectionLog.timestamp))
         .limit(limit)
     )
+    if user_id:
+        query = query.where(DetectionLog.user_id == user_id)
+
     result = await db.execute(query)
     detections = result.scalars().all()
 
     recent_sms = []
     for detection in detections:
-        # Extraire les données directement des meta_data du log si présentes
         meta = detection.meta_data or {}
         content = meta.get("content", "Pas de contenu")
-        
         has_link = any(
             word in content.lower() for word in ["http", "bit.ly", "www.", ".com"]
         )
-
         recent_sms.append(
             RecentSms(
                 preview=content[:100],
@@ -294,10 +274,41 @@ async def get_recent_sms_simple(
 @router.get("/phone/recent-simple", response_model=List[RecentCall])
 async def get_recent_calls_simple(
     limit: int = Query(10, ge=1, le=50),
+    user_id: Optional[str] = Query(None),
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    """Version simplifiée : derniers numéros frauduleux ajoutés"""
+    if user_id:
+        query = (
+            select(UserReport, FraudulentNumber)
+            .outerjoin(
+                FraudulentNumber,
+                UserReport.phone_number == FraudulentNumber.phone_number
+            )
+            .where(UserReport.user_id == user_id)
+            .where(UserReport.report_type == "call")
+            .order_by(desc(UserReport.timestamp))
+            .limit(limit)
+        )
+        result = await db.execute(query)
+        rows = result.all()
+
+        recent_calls = []
+        for user_report, fraud_data in rows:
+            phone = user_report.phone_number or "Unknown"
+            status = "blocked" if fraud_data and fraud_data.confidence_score > 0.8 else "suspicious"
+            recent_calls.append(
+                RecentCall(
+                    number=phone,
+                    country=fraud_data.country_code if fraud_data else "??",
+                    type=fraud_data.fraud_type.value if fraud_data else "unknown",
+                    status=status,
+                    reports=fraud_data.report_count if fraud_data else 0,
+                    timestamp=user_report.timestamp.isoformat() if user_report.timestamp else "",
+                )
+            )
+        return recent_calls
+
     query = (
         select(FraudulentNumber)
         .order_by(desc(FraudulentNumber.last_reported))
@@ -308,12 +319,10 @@ async def get_recent_calls_simple(
 
     recent_calls = []
     for number in numbers:
-        phone_masked = number.phone_number[:6] + " ** ** " + number.phone_number[-2:]
         status = "blocked" if number.confidence_score > 0.8 else "suspicious"
-
         recent_calls.append(
             RecentCall(
-                number=phone_masked,
+                number=number.phone_number,
                 country=number.country_code,
                 type=number.fraud_type.value,
                 status=status,
@@ -328,10 +337,10 @@ async def get_recent_calls_simple(
 @router.get("/email/recent-simple", response_model=List[RecentEmail])
 async def get_recent_emails_simple(
     limit: int = Query(10, ge=1, le=50),
+    user_id: Optional[str] = Query(None),
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    """Version simplifiée : derniers domaines frauduleux"""
     query = (
         select(FraudulentDomain)
         .order_by(desc(FraudulentDomain.first_seen))
@@ -348,7 +357,6 @@ async def get_recent_emails_simple(
             if domain.reputation_score and domain.reputation_score < 0.3
             else "high"
         )
-
         recent_emails.append(
             RecentEmail(
                 subject=f"Suspicious email from {domain.domain}",

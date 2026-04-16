@@ -18,14 +18,22 @@ async def list_businesses(
     search: Optional[str] = None,
     current_user: User = Depends(get_current_user),
 ):
-    """
-    Liste les entreprises avec recherche (iLike) et pagination.
-    Recherche sur : nomination, ville, act, tel.
-    """
     items, total = await business_service.get_multi(
         db, skip=skip, limit=limit, search=search
     )
     return BusinessList(items=items, total=total)
+
+
+@router.get("/{business_id}", response_model=Business)
+async def get_business(
+    business_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    db_obj = await business_service.get_by_id(db, business_id=business_id)
+    if not db_obj:
+        raise HTTPException(status_code=404, detail="Business not found")
+    return db_obj
 
 
 @router.patch("/{business_id}", response_model=Business)
@@ -35,9 +43,6 @@ async def update_business(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    """
-    Met à jour une entreprise.
-    """
     db_obj = await business_service.update(
         db, business_id=business_id, obj_in=obj_in.dict()
     )
@@ -52,9 +57,6 @@ async def delete_business(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    """
-    Supprime une entreprise.
-    """
     success = await business_service.remove(db, business_id=business_id)
     if not success:
         raise HTTPException(status_code=404, detail="Business not found")
@@ -67,11 +69,6 @@ async def import_businesses(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    """
-    Importe des entreprises depuis un fichier CSV ou Excel.
-    Colonnes attendues : NOMINATION, Adresse, CP, Ville, TEL, ACT
-    """
-    # Check file extension
     filename = file.filename.lower()
     if filename.endswith(".csv"):
         file_type = "csv"
@@ -81,11 +78,8 @@ async def import_businesses(
         raise HTTPException(
             status_code=400, detail="Only CSV or Excel files are supported"
         )
-
     content = await file.read()
     result = await business_service.import_from_file(content, file_type, db)
-
     if result.errors:
         raise HTTPException(status_code=400, detail=", ".join(result.errors))
-
     return result

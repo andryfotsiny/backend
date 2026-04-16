@@ -20,9 +20,7 @@ class BusinessService:
                 logger.info("Starting CSV parsing")
                 df = pd.read_csv(io.BytesIO(file_content))
             elif file_type in ["xlsx", "xls"]:
-                logger.info(
-                    "Starting Excel parsing (this may take a while for large files)"
-                )
+                logger.info("Starting Excel parsing")
                 df = pd.read_excel(io.BytesIO(file_content))
             else:
                 return ImportResult(
@@ -58,17 +56,14 @@ class BusinessService:
                     errors=["Required column 'NOMINATION' not found in file"],
                 )
 
-            # Initialise les colonnes si absentes
             if "code_pays" not in df.columns:
                 df["code_pays"] = None
             if "prefixe" not in df.columns:
                 df["prefixe"] = None
 
-            # Normalise le tel avant traitement
             if "tel" in df.columns:
                 df["tel"] = df["tel"].astype(str).str.strip()
 
-            # Détection code_pays + prefixe via geo_service
             geo_results = df.apply(extract_country_and_prefix, axis=1)
             df["code_pays"] = geo_results.apply(lambda x: x[0])
             df["prefixe"] = geo_results.apply(lambda x: x[1])
@@ -78,12 +73,7 @@ class BusinessService:
                 initial_count = len(df)
                 df = df.drop_duplicates(subset=["tel"], keep="first")
                 internal_duplicates = initial_count - len(df)
-                if internal_duplicates > 0:
-                    logger.info(
-                        f"Removed {internal_duplicates} duplicates within the file"
-                    )
 
-            # Filter only valid columns that exist in BusinessModel
             valid_columns = {
                 "nom",
                 "nomination",
@@ -96,7 +86,6 @@ class BusinessService:
                 "act",
             }
 
-            # On ne garde que les colonnes valides pour l'insertion
             cols_to_keep = [col for col in df.columns if col in valid_columns]
             df = df[cols_to_keep]
 
@@ -114,33 +103,26 @@ class BusinessService:
                     errors=["No unique records found in file"],
                 )
 
-            batch_size = 500 
+            batch_size = 500
             success_count = 0
             inserted_count = 0
             for i in range(0, len(records), batch_size):
-                batch = records[i : i + batch_size]
+                batch = records[i: i + batch_size]
                 try:
                     stmt = pg_insert(BusinessModel).values(batch)
                     stmt = stmt.on_conflict_do_nothing(index_elements=["tel"])
-
                     result = await db.execute(stmt)
                     await db.commit()
-
                     inserted_count += result.rowcount if result.rowcount > 0 else 0
                     success_count += len(batch)
                 except Exception as batch_error:
                     await db.rollback()
-                    logger.error(
-                        f"Error in batch {i // batch_size}: {str(batch_error)}"
-                    )
+                    logger.error(f"Error in batch {i // batch_size}: {str(batch_error)}")
                     return ImportResult(
                         success_count=inserted_count,
-                        skipped_count=internal_duplicates
-                        + (success_count - inserted_count),
+                        skipped_count=internal_duplicates + (success_count - inserted_count),
                         failure_count=len(records) - success_count,
-                        errors=[
-                            f"Batch error at row {success_count}: {str(batch_error)}"
-                        ],
+                        errors=[f"Batch error at row {success_count}: {str(batch_error)}"],
                     )
 
             skipped_count = len(records) - inserted_count + internal_duplicates
@@ -185,12 +167,20 @@ class BusinessService:
         result = await db.execute(query)
         return result.scalars().all(), total_count
 
+    async def get_by_id(
+        self, db: AsyncSession, *, business_id: int
+    ) -> Optional[BusinessModel]:
+        from sqlalchemy import select
+
+        query = select(BusinessModel).where(BusinessModel.id == business_id)
+        result = await db.execute(query)
+        return result.scalar_one_or_none()
+
     async def update(
         self, db: AsyncSession, *, business_id: int, obj_in: dict
     ) -> Optional[BusinessModel]:
         from sqlalchemy import update, select
 
-        # Fetch existing object to have full context for geolocation if needed
         query = select(BusinessModel).where(BusinessModel.id == business_id)
         result = await db.execute(query)
         db_obj = result.scalar_one_or_none()
@@ -198,26 +188,21 @@ class BusinessService:
             return None
 
         update_data = {k: v for k, v in obj_in.items() if v is not None}
-        
-        # Geolocation and normalization if relevant fields change
+
         geo_fields = {"tel", "code_postale", "ville", "code_pays"}
         if any(field in update_data for field in geo_fields):
-            # Normalization of tel
             if "tel" in update_data:
                 update_data["tel"] = str(update_data["tel"]).strip()
-            
-            # Prepare data for extraction (mix of new and old)
+
             extraction_data = {
                 "tel": update_data.get("tel", db_obj.tel),
                 "code_postale": update_data.get("code_postale", db_obj.code_postale),
                 "ville": update_data.get("ville", db_obj.ville),
-                "code_pays": update_data.get("code_pays", db_obj.code_pays)
+                "code_pays": update_data.get("code_pays", db_obj.code_pays),
             }
-            
-            # Use geo_service (it's already imported at top level as extract_country_and_prefix)
+
             new_country, new_prefix = extract_country_and_prefix(extraction_data)
-            
-            # Update data with detected values if not explicitly provided
+
             if "code_pays" not in update_data:
                 update_data["code_pays"] = new_country
             if "prefixe" not in update_data:
