@@ -4,6 +4,7 @@ from typing import Optional
 import time
 from datetime import datetime
 from app.models.fraud import FraudulentNumber, FraudulentDomain, FraudType
+from app.models.business import Business
 from app.models.report import DetectionLog
 from app.services.cache import cache_service
 from app.services.ml_service import ml_service
@@ -29,6 +30,7 @@ class DetectionService:
                 "response_time_ms": int((time.time() - start_time) * 1000),
             }
 
+        # 1. Vérification blacklist
         result = await db.execute(
             select(FraudulentNumber).where(FraudulentNumber.phone_number == normalized_phone)
         )
@@ -43,6 +45,8 @@ class DetectionService:
                 "action": "block",
                 "similar_cases": fraud_entry.report_count,
                 "response_time_ms": int((time.time() - start_time) * 1000),
+                "status": "blacklist",
+                "business": None,
             }
             await cache_service.set(cache_key, response, expire=7200)
             await self._log_detection(
@@ -57,6 +61,66 @@ class DetectionService:
             )
             return response
 
+        # 2. Vérification business
+        # On génère plusieurs variantes pour matcher peu importe le format stocké en DB :
+        # - normalized E.164 : +33465856370
+        # - sans le + : 33465856370
+        # - numéro brut envoyé : 465856370
+        # - numéro brut nettoyé (chiffres seulement)
+        digits_only = "".join(filter(str.isdigit, phone))
+        normalized_digits = normalized_phone.lstrip("+")
+
+        business_result = await db.execute(
+            select(Business).where(
+                Business.tel.in_([
+                    normalized_phone,   # +33465856370
+                    normalized_digits,  # 33465856370
+                    phone,              # tel quel
+                    digits_only,        # chiffres bruts
+                ])
+            )
+        )
+        business_entry = business_result.scalar_one_or_none()
+
+        if business_entry:
+            business_profile = {
+                "id": business_entry.id,
+                "nomination": business_entry.nomination,
+                "nom": business_entry.nom,
+                "adresse": business_entry.adresse,
+                "ville": business_entry.ville,
+                "code_postale": business_entry.code_postale,
+                "prefixe": business_entry.prefixe,
+                "code_pays": business_entry.code_pays,
+                "tel": business_entry.tel,
+                "act": business_entry.act,
+                "created_at": business_entry.created_at.isoformat() if business_entry.created_at else None,
+            }
+            response = {
+                "is_fraud": False,
+                "confidence": 0.0,
+                "category": None,
+                "reason": "Numéro appartenant à un business enregistré",
+                "action": "allow",
+                "similar_cases": 0,
+                "response_time_ms": int((time.time() - start_time) * 1000),
+                "status": "business",
+                "business": business_profile,
+            }
+            await cache_service.set(cache_key, response, expire=3600)
+            await self._log_detection(
+                db,
+                user_id,
+                "phone",
+                False,
+                confidence=0.0,
+                method="business",
+                response_time=int((time.time() - start_time) * 1000),
+                meta_data={"phone": normalized_phone, "country": country},
+            )
+            return response
+
+        # 3. Analyse ML (numéro inconnu)
         is_fraud, confidence = ml_service.predict_phone(
             phone, {"hour": 14, "call_count": 1}
         )
@@ -69,6 +133,8 @@ class DetectionService:
             "action": "block" if is_fraud else "allow",
             "similar_cases": 0,
             "response_time_ms": int((time.time() - start_time) * 1000),
+            "status": "blacklist" if is_fraud else "unknown",
+            "business": None,
         }
 
         await cache_service.set(cache_key, response, expire=3600)
@@ -106,7 +172,6 @@ class DetectionService:
                     if confidence > existing_fn.confidence_score:
                         existing_fn.confidence_score = confidence
                 else:
-                    # Try to extract country from phone if parsed, else default to MG
                     country_code = "MG"
                     try:
                         import phonenumbers
@@ -301,4 +366,3 @@ class DetectionService:
 
 
 detection_service = DetectionService()
-    
