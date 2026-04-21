@@ -1,2441 +1,296 @@
-content,is_fraud,fraud_type
-URGENT! Votre colis attend. Payez 2€ maintenant: http://bit.ly/abc123,1,phishing
-Félicitations! Vous avez gagné 5000€. Cliquez ici: http://bit.ly/win,1,scam
-Votre compte bancaire sera bloqué. Confirmez vos infos: http://secure-bank.ru,1,phishing
-ALERTE SECURITE: Connexion suspecte détectée. Changez mot de passe ici,1,phishing
-Remboursement impôts de 450€. Réclamez maintenant sur impots-gouv.net,1,scam
-Votre livraison Chronopost attend. Frais de 1.99€ à payer,1,phishing
-Gagnez un iPhone 15 GRATUIT! Participez maintenant,1,scam
-Netflix: Votre abonnement expire. Mettez à jour paiement,1,phishing
-Amazon: Problème avec votre commande. Cliquez pour résoudre,1,phishing
-Paypal: Activité inhabituelle. Confirmez identité immédiatement,1,phishing
-CAF: Vous avez droit à 380€ d'aide. Réclamez vite,1,scam
-Amende impayée de 75€. Payez sous 48h sinon majoration,1,scam
-Votre colis DHL bloqué en douane. Payez 3€ de frais,1,phishing
-Crédit rapide 5000€ sans justificatif. Réponse en 2h,1,scam
-URGENT: Carte bancaire expirée. Renouvelez maintenant,1,phishing
-"Bonjour, comment ça va?",0,legitimate
-RDV dentiste demain 14h. Confirmez par SMS,0,legitimate
-Merci pour votre achat. Livraison prévue lundi,0,legitimate
-Votre code de vérification: 123456,0,legitimate
-Réunion reportée à 15h. A tout à l'heure,0,legitimate
-Papa rentre tard ce soir. Bisous,0,legitimate
-N'oublie pas le pain. Merci,0,legitimate
-Joyeux anniversaire! Gros bisous,0,legitimate
-Le train a 10min de retard. J'arrive bientôt,0,legitimate
-Super soirée hier! On remet ça quand?,0,legitimate
-Rappelle-moi quand tu peux,0,legitimate
-J'ai reçu le colis. Merci beaucoup!,0,legitimate
-Rendez-vous confirmé pour le 15/02 à 10h,0,legitimate
-Bon courage pour ton exam!,0,legitimate
-Tu veux qu'on mange ensemble ce midi?,0,legitimate
-PROMO -50% sur tout le site jusqu'à dimanche,0,legitimate
-Votre commande #12345 est expédiée,0,legitimate
-Cours annulé demain matin,0,legitimate
-Ta pizza arrive dans 15min,0,legitimate
-Soldes d'hiver: jusqu'à -70% en magasin,0,legitimate
-Appel de 12€ inclus. Votre forfait Free Mobile est activé,1,scam
-Windows a détecté un virus. Appelez le 08 XX XX XX XX,1,scam
-Votre facture EDF impayée. Coupure d'électricité prévue,1,scam
-FreeBox: Votre ligne sera coupée. Régularisez vite,1,scam
-Colissimo: échec livraison. Reprogrammez sur colissimo-fr.com,1,phishing
-Vous êtes sélectionné pour tester iPhone 15 gratuitement,1,scam
-Mutuelle santé: remboursement de 245€ en attente,1,scam
-SNCF: Remboursement retard de 18€. Demandez-le ici,1,scam
-Pole Emploi: mise à jour dossier requise sous 72h,1,phishing
-La Poste: colis non distribué. Frais de réexpédition 2.50€,1,phishing
-SFR: Dernière facture impayée. Ligne suspendue demain,1,scam
-Ameli: carte vitale expirée. Renouvelez en ligne,1,phishing
-CPAM: vous avez droit à 156€ de remboursement,1,scam
-Livraison UPS impossible. Payez frais stockage 3€,1,phishing
-Votre virement de 890€ est en attente de validation,1,scam
-Salut! Ça te dit un ciné ce weekend?,0,legitimate
-J'ai trouvé ton portefeuille. Appelle-moi,0,legitimate
-Le médecin peut te recevoir à 16h30,0,legitimate
-Promo McDo: 2 menus achetés = 1 offert,0,legitimate
-Ton colis Amazon arrive aujourd'hui entre 14h-18h,0,legitimate
-Confirmation réservation hôtel du 20 au 25 mars,0,legitimate
-Joyeuses fêtes! Bisous de toute la famille,0,legitimate
-Vol AF1234 décollage à l'heure. Bon voyage!,0,legitimate
-Pharmacie de garde ce weekend: Pharmacie Centrale,0,legitimate
-Météo: risque d'orages cet après-midi,0,legitimate
-Match ce soir 21h. On se retrouve au bar?,0,legitimate
-Ton compte Spotify Premium est renouvelé,0,legitimate
-Rdv coiffeur samedi 10h. N'oublie pas!,0,legitimate
-Le garagiste a fini la révision. Tu peux passer,0,legitimate
-Bonne année 2026! Santé et bonheur,0,legitimate
-Votre colis Chronopost n°12345 est en cours de livraison. Il sera déposé dans votre boîte aux lettres.,0,legitimate
-Le livreur est en route avec votre commande Amazone. Code d'accès requis ?,0,legitimate
-Votre livraison est prévue entre 14h et 16h aujourd'hui.,0,legitimate
-Chronopost: Votre colis a été livré au point relais choisi.,0,legitimate
-La Poste: Votre colis est bien arrivé. Bonne réception !,0,legitimate
-"Votre livraison Chronopost attend ici en bas, venez le recuperer.",0,legitimate
-URGENT! Votre colis attend. Payez 2€ maintenant: http://bit.ly/abc123,1,phishing
-Félicitations! Vous avez gagné 5000€. Cliquez ici: http://bit.ly/win,1,scam
-Votre compte bancaire sera bloqué. Confirmez vos infos: http://secure-bank.ru,1,phishing
-ALERTE SECURITE: Connexion suspecte détectée. Changez mot de passe ici,1,phishing
-Remboursement impôts de 450€. Réclamez maintenant sur impots-gouv.net,1,scam
-Votre livraison Chronopost attend. Frais de 1.99€ à payer,1,phishing
-Gagnez un iPhone 15 GRATUIT! Participez maintenant,1,scam
-Netflix: Votre abonnement expire. Mettez à jour paiement,1,phishing
-Amazon: Problème avec votre commande. Cliquez pour résoudre,1,phishing
-Paypal: Activité inhabituelle. Confirmez identité immédiatement,1,phishing
-CAF: Vous avez droit à 380€ d'aide. Réclamez vite,1,scam
-Amende impayée de 75€. Payez sous 48h sinon majoration,1,scam
-Votre colis DHL bloqué en douane. Payez 3€ de frais,1,phishing
-Crédit rapide 5000€ sans justificatif. Réponse en 2h,1,scam
-URGENT: Carte bancaire expirée. Renouvelez maintenant,1,phishing
-"Bonjour, comment ça va?",0,legitimate
-RDV dentiste demain 14h. Confirmez par SMS,0,legitimate
-Merci pour votre achat. Livraison prévue lundi,0,legitimate
-Votre code de vérification: 123456,0,legitimate
-Réunion reportée à 15h. A tout à l'heure,0,legitimate
-Papa rentre tard ce soir. Bisous,0,legitimate
-N'oublie pas le pain. Merci,0,legitimate
-Joyeux anniversaire! Gros bisous,0,legitimate
-Le train a 10min de retard. J'arrive bientôt,0,legitimate
-Super soirée hier! On remet ça quand?,0,legitimate
-Rappelle-moi quand tu peux,0,legitimate
-J'ai reçu le colis. Merci beaucoup!,0,legitimate
-Rendez-vous confirmé pour le 15/02 à 10h,0,legitimate
-Bon courage pour ton exam!,0,legitimate
-Tu veux qu'on mange ensemble ce midi?,0,legitimate
-PROMO -50% sur tout le site jusqu'à dimanche,0,legitimate
-Votre commande #12345 est expédiée,0,legitimate
-Cours annulé demain matin,0,legitimate
-Ta pizza arrive dans 15min,0,legitimate
-Soldes d'hiver: jusqu'à -70% en magasin,0,legitimate
-Appel de 12€ inclus. Votre forfait Free Mobile est activé,1,scam
-Windows a détecté un virus. Appelez le 08 XX XX XX XX,1,scam
-Votre facture EDF impayée. Coupure d'électricité prévue,1,scam
-FreeBox: Votre ligne sera coupée. Régularisez vite,1,scam
-Colissimo: échec livraison. Reprogrammez sur colissimo-fr.com,1,phishing
-Vous êtes sélectionné pour tester iPhone 15 gratuitement,1,scam
-Mutuelle santé: remboursement de 245€ en attente,1,scam
-SNCF: Remboursement retard de 18€. Demandez-le ici,1,scam
-Pole Emploi: mise à jour dossier requise sous 72h,1,phishing
-La Poste: colis non distribué. Frais de réexpédition 2.50€,1,phishing
-SFR: Dernière facture impayée. Ligne suspendue demain,1,scam
-Ameli: carte vitale expirée. Renouvelez en ligne,1,phishing
-CPAM: vous avez droit à 156€ de remboursement,1,scam
-Livraison UPS impossible. Payez frais stockage 3€,1,phishing
-Votre virement de 890€ est en attente de validation,1,scam
-Salut! Ça te dit un ciné ce weekend?,0,legitimate
-J'ai trouvé ton portefeuille. Appelle-moi,0,legitimate
-Le médecin peut te recevoir à 16h30,0,legitimate
-Promo McDo: 2 menus achetés = 1 offert,0,legitimate
-Ton colis Amazon arrive aujourd'hui entre 14h-18h,0,legitimate
-Confirmation réservation hôtel du 20 au 25 mars,0,legitimate
-Joyeuses fêtes! Bisous de toute la famille,0,legitimate
-Vol AF1234 décollage à l'heure. Bon voyage!,0,legitimate
-Pharmacie de garde ce weekend: Pharmacie Centrale,0,legitimate
-Météo: risque d'orages cet après-midi,0,legitimate
-Match ce soir 21h. On se retrouve au bar?,0,legitimate
-Ton compte Spotify Premium est renouvelé,0,legitimate
-Rdv coiffeur samedi 10h. N'oublie pas!,0,legitimate
-Le garagiste a fini la révision. Tu peux passer,0,legitimate
-Bonne année 2026! Santé et bonheur,0,legitimate
-Votre colis Chronopost n°12345 est en cours de livraison. Il sera déposé dans votre boîte aux lettres.,0,legitimate
-Le livreur est en route avec votre commande Amazone. Code d'accès requis ?,0,legitimate
-Votre livraison est prévue entre 14h et 16h aujourd'hui.,0,legitimate
-Chronopost: Votre colis a été livré au point relais choisi.,0,legitimate
-La Poste: Votre colis est bien arrivé. Bonne réception !,0,legitimate
-"Votre livraison Chronopost attend ici en bas, venez le recuperer.",0,legitimate
-Merci pour votre achat,0,none
-Votre facture est disponible,0,none
-Compte vérifié avec succès,0,none
-Votre rendez-vous est confirmé,0,none
-Envoyez de l'argent pour débloquer votre récompense,1,mobile_money_scam
-Votre rendez-vous est confirmé,0,none
-Votre compte sera suspendu si vous n'agissez pas,1,identity_fraud
-"Offre urgente, doublez votre argent rapidement",1,investment_scam
-Confirmez vos informations bancaires maintenant,1,scam
-Votre compte sera suspendu si vous n'agissez pas,1,scam
-Cliquez ici pour vérifier votre compte immédiatement,1,investment_scam
-"Offre urgente, doublez votre argent rapidement",1,phishing
-Merci pour votre achat,0,none
-Bienvenue sur notre plateforme,0,none
-Votre facture est disponible,0,none
-"Erreur de transfert, renvoyez l'argent immédiatement",1,mobile_money_scam
-"Vous avez gagné de l'argent, envoyez vos informations",1,social_engineering
-Merci pour votre achat,0,none
-Votre commande a été expédiée,0,none
-"Erreur de transfert, renvoyez l'argent immédiatement",1,advance_fee
-Votre paiement a été confirmé,0,none
-Transaction réussie,0,none
-Votre facture est disponible,0,none
-Votre paiement a été confirmé,0,none
-Votre facture est disponible,0,none
-Votre compte sera suspendu si vous n'agissez pas,1,otp_fraud
-"Vous avez gagné de l'argent, envoyez vos informations",1,phishing
-Merci pour votre achat,0,none
-Votre facture est disponible,0,none
-"Erreur de transfert, renvoyez l'argent immédiatement",1,scam
-Votre paiement a été confirmé,0,none
-Envoyez de l'argent pour débloquer votre récompense,1,social_engineering
-"Erreur de transfert, renvoyez l'argent immédiatement",1,phishing
-Cliquez ici pour vérifier votre compte immédiatement,1,phishing
-Votre rendez-vous est confirmé,0,none
-Votre facture est disponible,0,none
-Merci pour votre achat,0,none
-Votre facture est disponible,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,investment_scam
-Transaction réussie,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,mobile_money_scam
-Votre commande a été expédiée,0,none
-"Erreur de transfert, renvoyez l'argent immédiatement",1,otp_fraud
-Bienvenue sur notre plateforme,0,none
-Votre commande a été expédiée,0,none
-Votre compte sera suspendu si vous n'agissez pas,1,otp_fraud
-Votre rendez-vous est confirmé,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,advance_fee
-Compte vérifié avec succès,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,identity_fraud
-Votre compte sera suspendu si vous n'agissez pas,1,identity_fraud
-Compte vérifié avec succès,0,none
-Votre commande a été expédiée,0,none
-Transaction réussie,0,none
-Envoyez votre code OTP pour sécuriser votre compte,1,otp_fraud
-Votre paiement a été confirmé,0,none
-Votre rendez-vous est confirmé,0,none
-Votre commande a été expédiée,0,none
-Compte vérifié avec succès,0,none
-Votre paiement a été confirmé,0,none
-Envoyez votre code OTP pour sécuriser votre compte,1,mobile_money_scam
-Compte vérifié avec succès,0,none
-Votre commande a été expédiée,0,none
-Votre rendez-vous est confirmé,0,none
-Merci pour votre achat,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,phishing
-Votre paiement a été confirmé,0,none
-Votre facture est disponible,0,none
-Confirmez vos informations bancaires maintenant,1,identity_fraud
-Votre compte sera suspendu si vous n'agissez pas,1,investment_scam
-"Offre urgente, doublez votre argent rapidement",1,scam
-Merci pour votre achat,0,none
-Votre compte sera suspendu si vous n'agissez pas,1,otp_fraud
-"Erreur de transfert, renvoyez l'argent immédiatement",1,credential_theft
-"Vous avez gagné de l'argent, envoyez vos informations",1,advance_fee
-"Erreur de transfert, renvoyez l'argent immédiatement",1,investment_scam
-Compte vérifié avec succès,0,none
-Envoyez votre code OTP pour sécuriser votre compte,1,investment_scam
-Compte vérifié avec succès,0,none
-Votre rendez-vous est confirmé,0,none
-Envoyez votre code OTP pour sécuriser votre compte,1,credential_theft
-Merci pour votre achat,0,none
-Bienvenue sur notre plateforme,0,none
-Confirmez vos informations bancaires maintenant,1,phishing
-Transaction réussie,0,none
-Votre compte sera suspendu si vous n'agissez pas,1,otp_fraud
-Envoyez votre code OTP pour sécuriser votre compte,1,investment_scam
-Envoyez de l'argent pour débloquer votre récompense,1,advance_fee
-"Erreur de transfert, renvoyez l'argent immédiatement",1,social_engineering
-"Vous avez gagné de l'argent, envoyez vos informations",1,scam
-Votre rendez-vous est confirmé,0,none
-"Vous avez gagné de l'argent, envoyez vos informations",1,scam
-Votre paiement a été confirmé,0,none
-Envoyez de l'argent pour débloquer votre récompense,1,identity_fraud
-Votre facture est disponible,0,none
-Transaction réussie,0,none
-Envoyez de l'argent pour débloquer votre récompense,1,phishing
-Envoyez votre code OTP pour sécuriser votre compte,1,otp_fraud
-Transaction réussie,0,none
-Votre compte sera suspendu si vous n'agissez pas,1,investment_scam
-Compte vérifié avec succès,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,advance_fee
-Votre commande a été expédiée,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,investment_scam
-"Offre urgente, doublez votre argent rapidement",1,scam
-Votre compte sera suspendu si vous n'agissez pas,1,social_engineering
-"Erreur de transfert, renvoyez l'argent immédiatement",1,social_engineering
-Votre rendez-vous est confirmé,0,none
-"Offre urgente, doublez votre argent rapidement",1,advance_fee
-Votre facture est disponible,0,none
-"Vous avez gagné de l'argent, envoyez vos informations",1,phishing
-Transaction réussie,0,none
-Compte vérifié avec succès,0,none
-Votre compte sera suspendu si vous n'agissez pas,1,social_engineering
-Transaction réussie,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,otp_fraud
-Votre rendez-vous est confirmé,0,none
-Votre facture est disponible,0,none
-Votre rendez-vous est confirmé,0,none
-Votre commande a été expédiée,0,none
-Votre rendez-vous est confirmé,0,none
-"Offre urgente, doublez votre argent rapidement",1,identity_fraud
-Transaction réussie,0,none
-Votre facture est disponible,0,none
-Bienvenue sur notre plateforme,0,none
-Bienvenue sur notre plateforme,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,credential_theft
-Compte vérifié avec succès,0,none
-Envoyez votre code OTP pour sécuriser votre compte,1,social_engineering
-Cliquez ici pour vérifier votre compte immédiatement,1,scam
-Cliquez ici pour vérifier votre compte immédiatement,1,scam
-Votre paiement a été confirmé,0,none
-Envoyez de l'argent pour débloquer votre récompense,1,social_engineering
-Votre compte sera suspendu si vous n'agissez pas,1,phishing
-Envoyez de l'argent pour débloquer votre récompense,1,investment_scam
-Transaction réussie,0,none
-Confirmez vos informations bancaires maintenant,1,credential_theft
-Bienvenue sur notre plateforme,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,identity_fraud
-"Erreur de transfert, renvoyez l'argent immédiatement",1,scam
-Votre facture est disponible,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,social_engineering
-Compte vérifié avec succès,0,none
-Bienvenue sur notre plateforme,0,none
-"Vous avez gagné de l'argent, envoyez vos informations",1,credential_theft
-"Vous avez gagné de l'argent, envoyez vos informations",1,mobile_money_scam
-Votre paiement a été confirmé,0,none
-Votre paiement a été confirmé,0,none
-"Offre urgente, doublez votre argent rapidement",1,phishing
-Envoyez votre code OTP pour sécuriser votre compte,1,advance_fee
-Votre paiement a été confirmé,0,none
-"Offre urgente, doublez votre argent rapidement",1,mobile_money_scam
-"Offre urgente, doublez votre argent rapidement",1,scam
-"Offre urgente, doublez votre argent rapidement",1,social_engineering
-"Vous avez gagné de l'argent, envoyez vos informations",1,scam
-Transaction réussie,0,none
-Bienvenue sur notre plateforme,0,none
-Compte vérifié avec succès,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,credential_theft
-"Erreur de transfert, renvoyez l'argent immédiatement",1,social_engineering
-Votre compte sera suspendu si vous n'agissez pas,1,scam
-"Vous avez gagné de l'argent, envoyez vos informations",1,otp_fraud
-"Erreur de transfert, renvoyez l'argent immédiatement",1,scam
-Merci pour votre achat,0,none
-Votre rendez-vous est confirmé,0,none
-Compte vérifié avec succès,0,none
-"Offre urgente, doublez votre argent rapidement",1,otp_fraud
-"Offre urgente, doublez votre argent rapidement",1,identity_fraud
-Envoyez votre code OTP pour sécuriser votre compte,1,mobile_money_scam
-Confirmez vos informations bancaires maintenant,1,advance_fee
-"Offre urgente, doublez votre argent rapidement",1,identity_fraud
-Envoyez votre code OTP pour sécuriser votre compte,1,identity_fraud
-Votre facture est disponible,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,credential_theft
-Cliquez ici pour vérifier votre compte immédiatement,1,social_engineering
-Cliquez ici pour vérifier votre compte immédiatement,1,investment_scam
-"Vous avez gagné de l'argent, envoyez vos informations",1,scam
-Transaction réussie,0,none
-Votre compte sera suspendu si vous n'agissez pas,1,advance_fee
-"Offre urgente, doublez votre argent rapidement",1,investment_scam
-Votre paiement a été confirmé,0,none
-Confirmez vos informations bancaires maintenant,1,otp_fraud
-Bienvenue sur notre plateforme,0,none
-Votre facture est disponible,0,none
-Envoyez votre code OTP pour sécuriser votre compte,1,otp_fraud
-"Offre urgente, doublez votre argent rapidement",1,scam
-"Offre urgente, doublez votre argent rapidement",1,credential_theft
-Bienvenue sur notre plateforme,0,none
-Transaction réussie,0,none
-"Vous avez gagné de l'argent, envoyez vos informations",1,identity_fraud
-Votre compte sera suspendu si vous n'agissez pas,1,investment_scam
-Votre commande a été expédiée,0,none
-Votre rendez-vous est confirmé,0,none
-Merci pour votre achat,0,none
-Bienvenue sur notre plateforme,0,none
-Envoyez votre code OTP pour sécuriser votre compte,1,advance_fee
-Envoyez votre code OTP pour sécuriser votre compte,1,phishing
-Confirmez vos informations bancaires maintenant,1,scam
-Envoyez votre code OTP pour sécuriser votre compte,1,investment_scam
-Votre paiement a été confirmé,0,none
-Compte vérifié avec succès,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,investment_scam
-"Erreur de transfert, renvoyez l'argent immédiatement",1,identity_fraud
-"Erreur de transfert, renvoyez l'argent immédiatement",1,social_engineering
-"Vous avez gagné de l'argent, envoyez vos informations",1,mobile_money_scam
-Votre rendez-vous est confirmé,0,none
-Votre compte sera suspendu si vous n'agissez pas,1,mobile_money_scam
-"Erreur de transfert, renvoyez l'argent immédiatement",1,mobile_money_scam
-Votre commande a été expédiée,0,none
-Merci pour votre achat,0,none
-Votre commande a été expédiée,0,none
-Transaction réussie,0,none
-Votre facture est disponible,0,none
-Votre compte sera suspendu si vous n'agissez pas,1,scam
-Votre rendez-vous est confirmé,0,none
-Votre rendez-vous est confirmé,0,none
-Merci pour votre achat,0,none
-Compte vérifié avec succès,0,none
-Votre commande a été expédiée,0,none
-Votre paiement a été confirmé,0,none
-"Vous avez gagné de l'argent, envoyez vos informations",1,mobile_money_scam
-Votre compte sera suspendu si vous n'agissez pas,1,identity_fraud
-Confirmez vos informations bancaires maintenant,1,advance_fee
-Compte vérifié avec succès,0,none
-Bienvenue sur notre plateforme,0,none
-"Erreur de transfert, renvoyez l'argent immédiatement",1,otp_fraud
-Bienvenue sur notre plateforme,0,none
-Merci pour votre achat,0,none
-Votre commande a été expédiée,0,none
-Compte vérifié avec succès,0,none
-Votre paiement a été confirmé,0,none
-Votre compte sera suspendu si vous n'agissez pas,1,advance_fee
-Envoyez votre code OTP pour sécuriser votre compte,1,phishing
-Envoyez de l'argent pour débloquer votre récompense,1,advance_fee
-Merci pour votre achat,0,none
-Votre paiement a été confirmé,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,otp_fraud
-Confirmez vos informations bancaires maintenant,1,credential_theft
-Envoyez votre code OTP pour sécuriser votre compte,1,advance_fee
-Envoyez votre code OTP pour sécuriser votre compte,1,phishing
-Votre compte sera suspendu si vous n'agissez pas,1,advance_fee
-Votre compte sera suspendu si vous n'agissez pas,1,identity_fraud
-Bienvenue sur notre plateforme,0,none
-Merci pour votre achat,0,none
-Confirmez vos informations bancaires maintenant,1,phishing
-Votre commande a été expédiée,0,none
-Envoyez de l'argent pour débloquer votre récompense,1,mobile_money_scam
-Envoyez de l'argent pour débloquer votre récompense,1,phishing
-Votre paiement a été confirmé,0,none
-Votre paiement a été confirmé,0,none
-Votre compte sera suspendu si vous n'agissez pas,1,identity_fraud
-Envoyez de l'argent pour débloquer votre récompense,1,identity_fraud
-Envoyez votre code OTP pour sécuriser votre compte,1,phishing
-Votre paiement a été confirmé,0,none
-Votre commande a été expédiée,0,none
-"Erreur de transfert, renvoyez l'argent immédiatement",1,social_engineering
-Transaction réussie,0,none
-Confirmez vos informations bancaires maintenant,1,phishing
-Confirmez vos informations bancaires maintenant,1,mobile_money_scam
-"Offre urgente, doublez votre argent rapidement",1,advance_fee
-Votre rendez-vous est confirmé,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,identity_fraud
-Envoyez de l'argent pour débloquer votre récompense,1,identity_fraud
-Bienvenue sur notre plateforme,0,none
-"Offre urgente, doublez votre argent rapidement",1,phishing
-"Erreur de transfert, renvoyez l'argent immédiatement",1,mobile_money_scam
-Merci pour votre achat,0,none
-Votre facture est disponible,0,none
-Votre compte sera suspendu si vous n'agissez pas,1,advance_fee
-"Vous avez gagné de l'argent, envoyez vos informations",1,credential_theft
-Votre compte sera suspendu si vous n'agissez pas,1,advance_fee
-"Erreur de transfert, renvoyez l'argent immédiatement",1,advance_fee
-Votre compte sera suspendu si vous n'agissez pas,1,advance_fee
-Transaction réussie,0,none
-Merci pour votre achat,0,none
-Envoyez de l'argent pour débloquer votre récompense,1,phishing
-Votre rendez-vous est confirmé,0,none
-Transaction réussie,0,none
-Votre paiement a été confirmé,0,none
-Bienvenue sur notre plateforme,0,none
-"Offre urgente, doublez votre argent rapidement",1,phishing
-"Erreur de transfert, renvoyez l'argent immédiatement",1,scam
-"Erreur de transfert, renvoyez l'argent immédiatement",1,scam
-Compte vérifié avec succès,0,none
-Votre paiement a été confirmé,0,none
-"Offre urgente, doublez votre argent rapidement",1,identity_fraud
-Votre compte sera suspendu si vous n'agissez pas,1,scam
-Envoyez votre code OTP pour sécuriser votre compte,1,credential_theft
-Cliquez ici pour vérifier votre compte immédiatement,1,advance_fee
-Votre compte sera suspendu si vous n'agissez pas,1,phishing
-"Erreur de transfert, renvoyez l'argent immédiatement",1,advance_fee
-Bienvenue sur notre plateforme,0,none
-Merci pour votre achat,0,none
-Confirmez vos informations bancaires maintenant,1,advance_fee
-Votre compte sera suspendu si vous n'agissez pas,1,mobile_money_scam
-Votre paiement a été confirmé,0,none
-Merci pour votre achat,0,none
-Votre commande a été expédiée,0,none
-Votre paiement a été confirmé,0,none
-"Offre urgente, doublez votre argent rapidement",1,identity_fraud
-Envoyez votre code OTP pour sécuriser votre compte,1,investment_scam
-Votre commande a été expédiée,0,none
-Compte vérifié avec succès,0,none
-Bienvenue sur notre plateforme,0,none
-Bienvenue sur notre plateforme,0,none
-Votre commande a été expédiée,0,none
-Envoyez votre code OTP pour sécuriser votre compte,1,advance_fee
-Merci pour votre achat,0,none
-Confirmez vos informations bancaires maintenant,1,identity_fraud
-Votre commande a été expédiée,0,none
-"Offre urgente, doublez votre argent rapidement",1,credential_theft
-"Erreur de transfert, renvoyez l'argent immédiatement",1,identity_fraud
-Cliquez ici pour vérifier votre compte immédiatement,1,identity_fraud
-Bienvenue sur notre plateforme,0,none
-Bienvenue sur notre plateforme,0,none
-Envoyez de l'argent pour débloquer votre récompense,1,mobile_money_scam
-Envoyez votre code OTP pour sécuriser votre compte,1,advance_fee
-Cliquez ici pour vérifier votre compte immédiatement,1,social_engineering
-Confirmez vos informations bancaires maintenant,1,phishing
-Votre compte sera suspendu si vous n'agissez pas,1,identity_fraud
-Compte vérifié avec succès,0,none
-Confirmez vos informations bancaires maintenant,1,identity_fraud
-Bienvenue sur notre plateforme,0,none
-Votre rendez-vous est confirmé,0,none
-Compte vérifié avec succès,0,none
-"Offre urgente, doublez votre argent rapidement",1,investment_scam
-Compte vérifié avec succès,0,none
-"Vous avez gagné de l'argent, envoyez vos informations",1,phishing
-Merci pour votre achat,0,none
-Votre commande a été expédiée,0,none
-Merci pour votre achat,0,none
-Bienvenue sur notre plateforme,0,none
-Votre commande a été expédiée,0,none
-Envoyez de l'argent pour débloquer votre récompense,1,identity_fraud
-"Erreur de transfert, renvoyez l'argent immédiatement",1,social_engineering
-Votre paiement a été confirmé,0,none
-Votre rendez-vous est confirmé,0,none
-"Erreur de transfert, renvoyez l'argent immédiatement",1,investment_scam
-"Offre urgente, doublez votre argent rapidement",1,credential_theft
-Envoyez votre code OTP pour sécuriser votre compte,1,credential_theft
-Envoyez votre code OTP pour sécuriser votre compte,1,otp_fraud
-"Vous avez gagné de l'argent, envoyez vos informations",1,credential_theft
-"Offre urgente, doublez votre argent rapidement",1,advance_fee
-Votre rendez-vous est confirmé,0,none
-"Vous avez gagné de l'argent, envoyez vos informations",1,otp_fraud
-Confirmez vos informations bancaires maintenant,1,investment_scam
-Votre rendez-vous est confirmé,0,none
-"Erreur de transfert, renvoyez l'argent immédiatement",1,social_engineering
-Votre commande a été expédiée,0,none
-Votre compte sera suspendu si vous n'agissez pas,1,identity_fraud
-"Erreur de transfert, renvoyez l'argent immédiatement",1,advance_fee
-Votre rendez-vous est confirmé,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,mobile_money_scam
-Bienvenue sur notre plateforme,0,none
-Compte vérifié avec succès,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,scam
-Envoyez votre code OTP pour sécuriser votre compte,1,mobile_money_scam
-"Offre urgente, doublez votre argent rapidement",1,phishing
-Votre rendez-vous est confirmé,0,none
-Bienvenue sur notre plateforme,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,scam
-Confirmez vos informations bancaires maintenant,1,otp_fraud
-Envoyez votre code OTP pour sécuriser votre compte,1,mobile_money_scam
-Merci pour votre achat,0,none
-"Erreur de transfert, renvoyez l'argent immédiatement",1,investment_scam
-Compte vérifié avec succès,0,none
-Votre compte sera suspendu si vous n'agissez pas,1,mobile_money_scam
-Merci pour votre achat,0,none
-Envoyez de l'argent pour débloquer votre récompense,1,credential_theft
-Votre rendez-vous est confirmé,0,none
-"Vous avez gagné de l'argent, envoyez vos informations",1,advance_fee
-"Erreur de transfert, renvoyez l'argent immédiatement",1,identity_fraud
-Votre commande a été expédiée,0,none
-Votre paiement a été confirmé,0,none
-Confirmez vos informations bancaires maintenant,1,scam
-Transaction réussie,0,none
-Bienvenue sur notre plateforme,0,none
-Envoyez votre code OTP pour sécuriser votre compte,1,identity_fraud
-Bienvenue sur notre plateforme,0,none
-Compte vérifié avec succès,0,none
-Votre commande a été expédiée,0,none
-Votre rendez-vous est confirmé,0,none
-Merci pour votre achat,0,none
-Votre facture est disponible,0,none
-Votre facture est disponible,0,none
-Confirmez vos informations bancaires maintenant,1,phishing
-Envoyez de l'argent pour débloquer votre récompense,1,otp_fraud
-Cliquez ici pour vérifier votre compte immédiatement,1,phishing
-Compte vérifié avec succès,0,none
-Votre commande a été expédiée,0,none
-Votre compte sera suspendu si vous n'agissez pas,1,phishing
-Transaction réussie,0,none
-Votre commande a été expédiée,0,none
-"Offre urgente, doublez votre argent rapidement",1,advance_fee
-Envoyez de l'argent pour débloquer votre récompense,1,identity_fraud
-"Vous avez gagné de l'argent, envoyez vos informations",1,investment_scam
-"Erreur de transfert, renvoyez l'argent immédiatement",1,social_engineering
-Votre commande a été expédiée,0,none
-Confirmez vos informations bancaires maintenant,1,phishing
-Votre paiement a été confirmé,0,none
-Transaction réussie,0,none
-"Offre urgente, doublez votre argent rapidement",1,investment_scam
-Compte vérifié avec succès,0,none
-Votre facture est disponible,0,none
-Votre compte sera suspendu si vous n'agissez pas,1,social_engineering
-"Offre urgente, doublez votre argent rapidement",1,mobile_money_scam
-Votre facture est disponible,0,none
-Bienvenue sur notre plateforme,0,none
-Bienvenue sur notre plateforme,0,none
-Transaction réussie,0,none
-"Vous avez gagné de l'argent, envoyez vos informations",1,social_engineering
-Transaction réussie,0,none
-"Vous avez gagné de l'argent, envoyez vos informations",1,credential_theft
-Votre commande a été expédiée,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,credential_theft
-Votre paiement a été confirmé,0,none
-"Vous avez gagné de l'argent, envoyez vos informations",1,phishing
-"Vous avez gagné de l'argent, envoyez vos informations",1,mobile_money_scam
-"Vous avez gagné de l'argent, envoyez vos informations",1,advance_fee
-Votre facture est disponible,0,none
-Envoyez votre code OTP pour sécuriser votre compte,1,scam
-Votre facture est disponible,0,none
-Votre rendez-vous est confirmé,0,none
-"Offre urgente, doublez votre argent rapidement",1,advance_fee
-"Erreur de transfert, renvoyez l'argent immédiatement",1,social_engineering
-Merci pour votre achat,0,none
-Merci pour votre achat,0,none
-Votre commande a été expédiée,0,none
-Confirmez vos informations bancaires maintenant,1,scam
-"Vous avez gagné de l'argent, envoyez vos informations",1,scam
-Votre rendez-vous est confirmé,0,none
-Votre commande a été expédiée,0,none
-Votre paiement a été confirmé,0,none
-Bienvenue sur notre plateforme,0,none
-Merci pour votre achat,0,none
-Votre compte sera suspendu si vous n'agissez pas,1,mobile_money_scam
-Votre compte sera suspendu si vous n'agissez pas,1,otp_fraud
-Votre rendez-vous est confirmé,0,none
-"Erreur de transfert, renvoyez l'argent immédiatement",1,scam
-Merci pour votre achat,0,none
-Merci pour votre achat,0,none
-Envoyez de l'argent pour débloquer votre récompense,1,investment_scam
-Bienvenue sur notre plateforme,0,none
-Merci pour votre achat,0,none
-Votre rendez-vous est confirmé,0,none
-Votre facture est disponible,0,none
-"Vous avez gagné de l'argent, envoyez vos informations",1,investment_scam
-Votre commande a été expédiée,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,scam
-Confirmez vos informations bancaires maintenant,1,credential_theft
-Votre commande a été expédiée,0,none
-Votre compte sera suspendu si vous n'agissez pas,1,mobile_money_scam
-Votre rendez-vous est confirmé,0,none
-Transaction réussie,0,none
-Envoyez de l'argent pour débloquer votre récompense,1,phishing
-Confirmez vos informations bancaires maintenant,1,mobile_money_scam
-Envoyez de l'argent pour débloquer votre récompense,1,otp_fraud
-Votre compte sera suspendu si vous n'agissez pas,1,identity_fraud
-Votre commande a été expédiée,0,none
-Votre compte sera suspendu si vous n'agissez pas,1,social_engineering
-Cliquez ici pour vérifier votre compte immédiatement,1,credential_theft
-Votre compte sera suspendu si vous n'agissez pas,1,advance_fee
-Votre compte sera suspendu si vous n'agissez pas,1,investment_scam
-Votre rendez-vous est confirmé,0,none
-Compte vérifié avec succès,0,none
-Compte vérifié avec succès,0,none
-Confirmez vos informations bancaires maintenant,1,advance_fee
-Bienvenue sur notre plateforme,0,none
-Votre rendez-vous est confirmé,0,none
-Votre facture est disponible,0,none
-Votre rendez-vous est confirmé,0,none
-Bienvenue sur notre plateforme,0,none
-Votre facture est disponible,0,none
-Compte vérifié avec succès,0,none
-Transaction réussie,0,none
-Confirmez vos informations bancaires maintenant,1,advance_fee
-"Offre urgente, doublez votre argent rapidement",1,investment_scam
-Bienvenue sur notre plateforme,0,none
-Transaction réussie,0,none
-"Vous avez gagné de l'argent, envoyez vos informations",1,otp_fraud
-Confirmez vos informations bancaires maintenant,1,credential_theft
-Votre commande a été expédiée,0,none
-Bienvenue sur notre plateforme,0,none
-Votre paiement a été confirmé,0,none
-Envoyez de l'argent pour débloquer votre récompense,1,mobile_money_scam
-Envoyez de l'argent pour débloquer votre récompense,1,credential_theft
-Envoyez de l'argent pour débloquer votre récompense,1,otp_fraud
-Envoyez de l'argent pour débloquer votre récompense,1,mobile_money_scam
-"Vous avez gagné de l'argent, envoyez vos informations",1,otp_fraud
-Compte vérifié avec succès,0,none
-Votre facture est disponible,0,none
-Votre commande a été expédiée,0,none
-Merci pour votre achat,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,social_engineering
-Confirmez vos informations bancaires maintenant,1,identity_fraud
-"Vous avez gagné de l'argent, envoyez vos informations",1,advance_fee
-Bienvenue sur notre plateforme,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,credential_theft
-Compte vérifié avec succès,0,none
-"Offre urgente, doublez votre argent rapidement",1,identity_fraud
-Bienvenue sur notre plateforme,0,none
-Transaction réussie,0,none
-Envoyez de l'argent pour débloquer votre récompense,1,otp_fraud
-Transaction réussie,0,none
-"Offre urgente, doublez votre argent rapidement",1,phishing
-Envoyez de l'argent pour débloquer votre récompense,1,phishing
-Votre rendez-vous est confirmé,0,none
-Transaction réussie,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,credential_theft
-Merci pour votre achat,0,none
-Compte vérifié avec succès,0,none
-Envoyez de l'argent pour débloquer votre récompense,1,identity_fraud
-Cliquez ici pour vérifier votre compte immédiatement,1,identity_fraud
-Transaction réussie,0,none
-Votre compte sera suspendu si vous n'agissez pas,1,credential_theft
-Confirmez vos informations bancaires maintenant,1,social_engineering
-Votre paiement a été confirmé,0,none
-"Offre urgente, doublez votre argent rapidement",1,mobile_money_scam
-"Vous avez gagné de l'argent, envoyez vos informations",1,credential_theft
-Envoyez de l'argent pour débloquer votre récompense,1,mobile_money_scam
-Votre rendez-vous est confirmé,0,none
-Votre paiement a été confirmé,0,none
-Votre paiement a été confirmé,0,none
-Votre rendez-vous est confirmé,0,none
-Bienvenue sur notre plateforme,0,none
-Votre rendez-vous est confirmé,0,none
-Votre commande a été expédiée,0,none
-Votre commande a été expédiée,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,phishing
-Confirmez vos informations bancaires maintenant,1,otp_fraud
-Transaction réussie,0,none
-"Vous avez gagné de l'argent, envoyez vos informations",1,otp_fraud
-"Erreur de transfert, renvoyez l'argent immédiatement",1,investment_scam
-Votre compte sera suspendu si vous n'agissez pas,1,social_engineering
-Votre commande a été expédiée,0,none
-Envoyez votre code OTP pour sécuriser votre compte,1,advance_fee
-Votre facture est disponible,0,none
-"Offre urgente, doublez votre argent rapidement",1,credential_theft
-Votre compte sera suspendu si vous n'agissez pas,1,credential_theft
-Envoyez de l'argent pour débloquer votre récompense,1,investment_scam
-Votre commande a été expédiée,0,none
-Votre compte sera suspendu si vous n'agissez pas,1,identity_fraud
-Transaction réussie,0,none
-Merci pour votre achat,0,none
-Votre facture est disponible,0,none
-"Erreur de transfert, renvoyez l'argent immédiatement",1,identity_fraud
-Votre rendez-vous est confirmé,0,none
-Votre facture est disponible,0,none
-Votre commande a été expédiée,0,none
-Votre paiement a été confirmé,0,none
-"Offre urgente, doublez votre argent rapidement",1,social_engineering
-"Vous avez gagné de l'argent, envoyez vos informations",1,scam
-Votre paiement a été confirmé,0,none
-Envoyez votre code OTP pour sécuriser votre compte,1,scam
-Votre rendez-vous est confirmé,0,none
-Bienvenue sur notre plateforme,0,none
-Envoyez de l'argent pour débloquer votre récompense,1,scam
-Merci pour votre achat,0,none
-"Erreur de transfert, renvoyez l'argent immédiatement",1,social_engineering
-Votre compte sera suspendu si vous n'agissez pas,1,scam
-Bienvenue sur notre plateforme,0,none
-Confirmez vos informations bancaires maintenant,1,mobile_money_scam
-Votre paiement a été confirmé,0,none
-Confirmez vos informations bancaires maintenant,1,scam
-Compte vérifié avec succès,0,none
-Envoyez de l'argent pour débloquer votre récompense,1,credential_theft
-Merci pour votre achat,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,credential_theft
-Votre commande a été expédiée,0,none
-Envoyez de l'argent pour débloquer votre récompense,1,credential_theft
-Votre compte sera suspendu si vous n'agissez pas,1,advance_fee
-Votre facture est disponible,0,none
-Envoyez votre code OTP pour sécuriser votre compte,1,otp_fraud
-Votre rendez-vous est confirmé,0,none
-"Offre urgente, doublez votre argent rapidement",1,investment_scam
-Compte vérifié avec succès,0,none
-Envoyez votre code OTP pour sécuriser votre compte,1,social_engineering
-Votre commande a été expédiée,0,none
-Votre facture est disponible,0,none
-Votre facture est disponible,0,none
-Votre paiement a été confirmé,0,none
-Votre compte sera suspendu si vous n'agissez pas,1,identity_fraud
-"Erreur de transfert, renvoyez l'argent immédiatement",1,phishing
-Votre commande a été expédiée,0,none
-"Erreur de transfert, renvoyez l'argent immédiatement",1,phishing
-Bienvenue sur notre plateforme,0,none
-Confirmez vos informations bancaires maintenant,1,mobile_money_scam
-Transaction réussie,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,phishing
-Merci pour votre achat,0,none
-"Erreur de transfert, renvoyez l'argent immédiatement",1,social_engineering
-Votre compte sera suspendu si vous n'agissez pas,1,advance_fee
-Votre compte sera suspendu si vous n'agissez pas,1,credential_theft
-Votre paiement a été confirmé,0,none
-Envoyez de l'argent pour débloquer votre récompense,1,otp_fraud
-"Vous avez gagné de l'argent, envoyez vos informations",1,social_engineering
-Envoyez votre code OTP pour sécuriser votre compte,1,advance_fee
-Votre rendez-vous est confirmé,0,none
-Envoyez de l'argent pour débloquer votre récompense,1,social_engineering
-Merci pour votre achat,0,none
-Confirmez vos informations bancaires maintenant,1,scam
-Votre compte sera suspendu si vous n'agissez pas,1,investment_scam
-Votre rendez-vous est confirmé,0,none
-"Vous avez gagné de l'argent, envoyez vos informations",1,investment_scam
-Compte vérifié avec succès,0,none
-Transaction réussie,0,none
-"Vous avez gagné de l'argent, envoyez vos informations",1,phishing
-Bienvenue sur notre plateforme,0,none
-Bienvenue sur notre plateforme,0,none
-Envoyez de l'argent pour débloquer votre récompense,1,phishing
-Votre rendez-vous est confirmé,0,none
-Votre paiement a été confirmé,0,none
-Envoyez de l'argent pour débloquer votre récompense,1,phishing
-Votre compte sera suspendu si vous n'agissez pas,1,social_engineering
-Envoyez de l'argent pour débloquer votre récompense,1,social_engineering
-Votre commande a été expédiée,0,none
-Merci pour votre achat,0,none
-"Erreur de transfert, renvoyez l'argent immédiatement",1,mobile_money_scam
-Bienvenue sur notre plateforme,0,none
-Votre rendez-vous est confirmé,0,none
-Envoyez votre code OTP pour sécuriser votre compte,1,mobile_money_scam
-"Offre urgente, doublez votre argent rapidement",1,advance_fee
-"Vous avez gagné de l'argent, envoyez vos informations",1,mobile_money_scam
-"Offre urgente, doublez votre argent rapidement",1,otp_fraud
-Compte vérifié avec succès,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,phishing
-Envoyez de l'argent pour débloquer votre récompense,1,scam
-"Vous avez gagné de l'argent, envoyez vos informations",1,scam
-Compte vérifié avec succès,0,none
-Votre rendez-vous est confirmé,0,none
-"Erreur de transfert, renvoyez l'argent immédiatement",1,scam
-Envoyez de l'argent pour débloquer votre récompense,1,phishing
-Votre paiement a été confirmé,0,none
-Confirmez vos informations bancaires maintenant,1,otp_fraud
-Confirmez vos informations bancaires maintenant,1,otp_fraud
-Votre compte sera suspendu si vous n'agissez pas,1,mobile_money_scam
-"Vous avez gagné de l'argent, envoyez vos informations",1,mobile_money_scam
-"Offre urgente, doublez votre argent rapidement",1,mobile_money_scam
-Votre facture est disponible,0,none
-Envoyez de l'argent pour débloquer votre récompense,1,advance_fee
-Votre compte sera suspendu si vous n'agissez pas,1,advance_fee
-Cliquez ici pour vérifier votre compte immédiatement,1,advance_fee
-Votre rendez-vous est confirmé,0,none
-"Offre urgente, doublez votre argent rapidement",1,mobile_money_scam
-"Vous avez gagné de l'argent, envoyez vos informations",1,mobile_money_scam
-"Offre urgente, doublez votre argent rapidement",1,phishing
-"Erreur de transfert, renvoyez l'argent immédiatement",1,advance_fee
-Envoyez votre code OTP pour sécuriser votre compte,1,advance_fee
-Envoyez de l'argent pour débloquer votre récompense,1,identity_fraud
-Merci pour votre achat,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,investment_scam
-Confirmez vos informations bancaires maintenant,1,social_engineering
-Transaction réussie,0,none
-Votre facture est disponible,0,none
-Votre commande a été expédiée,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,scam
-Compte vérifié avec succès,0,none
-Transaction réussie,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,mobile_money_scam
-Compte vérifié avec succès,0,none
-Votre commande a été expédiée,0,none
-Transaction réussie,0,none
-"Offre urgente, doublez votre argent rapidement",1,credential_theft
-Votre paiement a été confirmé,0,none
-Votre compte sera suspendu si vous n'agissez pas,1,scam
-Confirmez vos informations bancaires maintenant,1,phishing
-Votre facture est disponible,0,none
-"Vous avez gagné de l'argent, envoyez vos informations",1,otp_fraud
-Confirmez vos informations bancaires maintenant,1,investment_scam
-Bienvenue sur notre plateforme,0,none
-Envoyez votre code OTP pour sécuriser votre compte,1,advance_fee
-Votre compte sera suspendu si vous n'agissez pas,1,otp_fraud
-Votre paiement a été confirmé,0,none
-Votre paiement a été confirmé,0,none
-Compte vérifié avec succès,0,none
-Votre compte sera suspendu si vous n'agissez pas,1,identity_fraud
-Envoyez de l'argent pour débloquer votre récompense,1,identity_fraud
-Votre facture est disponible,0,none
-Votre paiement a été confirmé,0,none
-Votre commande a été expédiée,0,none
-Merci pour votre achat,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,otp_fraud
-"Offre urgente, doublez votre argent rapidement",1,otp_fraud
-Compte vérifié avec succès,0,none
-"Offre urgente, doublez votre argent rapidement",1,scam
-Merci pour votre achat,0,none
-Votre rendez-vous est confirmé,0,none
-"Offre urgente, doublez votre argent rapidement",1,scam
-"Erreur de transfert, renvoyez l'argent immédiatement",1,scam
-Transaction réussie,0,none
-Envoyez votre code OTP pour sécuriser votre compte,1,mobile_money_scam
-Votre paiement a été confirmé,0,none
-Votre paiement a été confirmé,0,none
-Merci pour votre achat,0,none
-Votre commande a été expédiée,0,none
-"Vous avez gagné de l'argent, envoyez vos informations",1,mobile_money_scam
-"Erreur de transfert, renvoyez l'argent immédiatement",1,social_engineering
-"Offre urgente, doublez votre argent rapidement",1,credential_theft
-Merci pour votre achat,0,none
-Confirmez vos informations bancaires maintenant,1,credential_theft
-Votre compte sera suspendu si vous n'agissez pas,1,phishing
-Cliquez ici pour vérifier votre compte immédiatement,1,otp_fraud
-Votre paiement a été confirmé,0,none
-Envoyez de l'argent pour débloquer votre récompense,1,scam
-Compte vérifié avec succès,0,none
-Merci pour votre achat,0,none
-Transaction réussie,0,none
-"Erreur de transfert, renvoyez l'argent immédiatement",1,credential_theft
-Compte vérifié avec succès,0,none
-Votre paiement a été confirmé,0,none
-"Erreur de transfert, renvoyez l'argent immédiatement",1,investment_scam
-Cliquez ici pour vérifier votre compte immédiatement,1,phishing
-Votre paiement a été confirmé,0,none
-Confirmez vos informations bancaires maintenant,1,scam
-"Offre urgente, doublez votre argent rapidement",1,social_engineering
-Cliquez ici pour vérifier votre compte immédiatement,1,identity_fraud
-Transaction réussie,0,none
-"Erreur de transfert, renvoyez l'argent immédiatement",1,advance_fee
-Votre facture est disponible,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,social_engineering
-Transaction réussie,0,none
-Votre paiement a été confirmé,0,none
-Transaction réussie,0,none
-Votre compte sera suspendu si vous n'agissez pas,1,scam
-Confirmez vos informations bancaires maintenant,1,scam
-"Erreur de transfert, renvoyez l'argent immédiatement",1,otp_fraud
-Envoyez de l'argent pour débloquer votre récompense,1,investment_scam
-"Vous avez gagné de l'argent, envoyez vos informations",1,credential_theft
-"Offre urgente, doublez votre argent rapidement",1,social_engineering
-Envoyez de l'argent pour débloquer votre récompense,1,mobile_money_scam
-Envoyez de l'argent pour débloquer votre récompense,1,social_engineering
-"Vous avez gagné de l'argent, envoyez vos informations",1,advance_fee
-Envoyez de l'argent pour débloquer votre récompense,1,investment_scam
-"Erreur de transfert, renvoyez l'argent immédiatement",1,social_engineering
-Votre facture est disponible,0,none
-Votre facture est disponible,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,scam
-Cliquez ici pour vérifier votre compte immédiatement,1,mobile_money_scam
-Compte vérifié avec succès,0,none
-Compte vérifié avec succès,0,none
-Confirmez vos informations bancaires maintenant,1,social_engineering
-Envoyez votre code OTP pour sécuriser votre compte,1,scam
-Votre compte sera suspendu si vous n'agissez pas,1,advance_fee
-"Erreur de transfert, renvoyez l'argent immédiatement",1,scam
-Votre rendez-vous est confirmé,0,none
-"Erreur de transfert, renvoyez l'argent immédiatement",1,investment_scam
-Votre commande a été expédiée,0,none
-Votre compte sera suspendu si vous n'agissez pas,1,credential_theft
-Votre compte sera suspendu si vous n'agissez pas,1,scam
-Merci pour votre achat,0,none
-Votre facture est disponible,0,none
-Envoyez de l'argent pour débloquer votre récompense,1,otp_fraud
-Envoyez de l'argent pour débloquer votre récompense,1,otp_fraud
-Envoyez votre code OTP pour sécuriser votre compte,1,advance_fee
-Votre facture est disponible,0,none
-Confirmez vos informations bancaires maintenant,1,advance_fee
-Votre facture est disponible,0,none
-Merci pour votre achat,0,none
-"Erreur de transfert, renvoyez l'argent immédiatement",1,otp_fraud
-Confirmez vos informations bancaires maintenant,1,otp_fraud
-"Erreur de transfert, renvoyez l'argent immédiatement",1,social_engineering
-Votre facture est disponible,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,investment_scam
-Votre rendez-vous est confirmé,0,none
-Votre rendez-vous est confirmé,0,none
-Compte vérifié avec succès,0,none
-Envoyez votre code OTP pour sécuriser votre compte,1,investment_scam
-Cliquez ici pour vérifier votre compte immédiatement,1,otp_fraud
-Envoyez votre code OTP pour sécuriser votre compte,1,social_engineering
-Votre compte sera suspendu si vous n'agissez pas,1,otp_fraud
-"Offre urgente, doublez votre argent rapidement",1,advance_fee
-Votre commande a été expédiée,0,none
-Votre rendez-vous est confirmé,0,none
-Envoyez votre code OTP pour sécuriser votre compte,1,investment_scam
-Votre rendez-vous est confirmé,0,none
-Votre commande a été expédiée,0,none
-Confirmez vos informations bancaires maintenant,1,identity_fraud
-Votre commande a été expédiée,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,credential_theft
-Compte vérifié avec succès,0,none
-Envoyez de l'argent pour débloquer votre récompense,1,mobile_money_scam
-Cliquez ici pour vérifier votre compte immédiatement,1,investment_scam
-Compte vérifié avec succès,0,none
-Votre paiement a été confirmé,0,none
-Merci pour votre achat,0,none
-Transaction réussie,0,none
-Merci pour votre achat,0,none
-Confirmez vos informations bancaires maintenant,1,identity_fraud
-Compte vérifié avec succès,0,none
-Bienvenue sur notre plateforme,0,none
-Bienvenue sur notre plateforme,0,none
-Votre compte sera suspendu si vous n'agissez pas,1,otp_fraud
-Cliquez ici pour vérifier votre compte immédiatement,1,mobile_money_scam
-Confirmez vos informations bancaires maintenant,1,investment_scam
-Merci pour votre achat,0,none
-Compte vérifié avec succès,0,none
-Compte vérifié avec succès,0,none
-Bienvenue sur notre plateforme,0,none
-"Offre urgente, doublez votre argent rapidement",1,identity_fraud
-Envoyez votre code OTP pour sécuriser votre compte,1,investment_scam
-Transaction réussie,0,none
-Bienvenue sur notre plateforme,0,none
-"Erreur de transfert, renvoyez l'argent immédiatement",1,advance_fee
-Cliquez ici pour vérifier votre compte immédiatement,1,social_engineering
-Votre compte sera suspendu si vous n'agissez pas,1,scam
-Compte vérifié avec succès,0,none
-"Offre urgente, doublez votre argent rapidement",1,identity_fraud
-Votre rendez-vous est confirmé,0,none
-Votre paiement a été confirmé,0,none
-"Offre urgente, doublez votre argent rapidement",1,otp_fraud
-Bienvenue sur notre plateforme,0,none
-"Offre urgente, doublez votre argent rapidement",1,scam
-Transaction réussie,0,none
-Votre facture est disponible,0,none
-Merci pour votre achat,0,none
-Bienvenue sur notre plateforme,0,none
-"Erreur de transfert, renvoyez l'argent immédiatement",1,mobile_money_scam
-"Offre urgente, doublez votre argent rapidement",1,mobile_money_scam
-Votre facture est disponible,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,credential_theft
-"Offre urgente, doublez votre argent rapidement",1,social_engineering
-"Erreur de transfert, renvoyez l'argent immédiatement",1,phishing
-"Vous avez gagné de l'argent, envoyez vos informations",1,credential_theft
-"Offre urgente, doublez votre argent rapidement",1,credential_theft
-Confirmez vos informations bancaires maintenant,1,investment_scam
-Bienvenue sur notre plateforme,0,none
-Merci pour votre achat,0,none
-"Erreur de transfert, renvoyez l'argent immédiatement",1,identity_fraud
-Envoyez votre code OTP pour sécuriser votre compte,1,otp_fraud
-Envoyez votre code OTP pour sécuriser votre compte,1,otp_fraud
-"Erreur de transfert, renvoyez l'argent immédiatement",1,social_engineering
-Compte vérifié avec succès,0,none
-Votre facture est disponible,0,none
-Envoyez de l'argent pour débloquer votre récompense,1,investment_scam
-Transaction réussie,0,none
-Merci pour votre achat,0,none
-Envoyez de l'argent pour débloquer votre récompense,1,identity_fraud
-Merci pour votre achat,0,none
-Compte vérifié avec succès,0,none
-"Vous avez gagné de l'argent, envoyez vos informations",1,identity_fraud
-Envoyez votre code OTP pour sécuriser votre compte,1,advance_fee
-Cliquez ici pour vérifier votre compte immédiatement,1,mobile_money_scam
-Votre paiement a été confirmé,0,none
-"Erreur de transfert, renvoyez l'argent immédiatement",1,otp_fraud
-Votre paiement a été confirmé,0,none
-Votre compte sera suspendu si vous n'agissez pas,1,social_engineering
-Transaction réussie,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,credential_theft
-Confirmez vos informations bancaires maintenant,1,social_engineering
-Votre facture est disponible,0,none
-Merci pour votre achat,0,none
-Merci pour votre achat,0,none
-Votre commande a été expédiée,0,none
-Votre rendez-vous est confirmé,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,scam
-Compte vérifié avec succès,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,otp_fraud
-Votre rendez-vous est confirmé,0,none
-Votre facture est disponible,0,none
-Votre rendez-vous est confirmé,0,none
-Envoyez de l'argent pour débloquer votre récompense,1,social_engineering
-Compte vérifié avec succès,0,none
-Votre compte sera suspendu si vous n'agissez pas,1,phishing
-Votre paiement a été confirmé,0,none
-Compte vérifié avec succès,0,none
-"Erreur de transfert, renvoyez l'argent immédiatement",1,phishing
-Bienvenue sur notre plateforme,0,none
-Votre rendez-vous est confirmé,0,none
-Votre paiement a été confirmé,0,none
-Votre compte sera suspendu si vous n'agissez pas,1,otp_fraud
-Transaction réussie,0,none
-Confirmez vos informations bancaires maintenant,1,mobile_money_scam
-Cliquez ici pour vérifier votre compte immédiatement,1,identity_fraud
-Votre commande a été expédiée,0,none
-Votre compte sera suspendu si vous n'agissez pas,1,phishing
-Votre compte sera suspendu si vous n'agissez pas,1,mobile_money_scam
-Votre paiement a été confirmé,0,none
-Compte vérifié avec succès,0,none
-Votre compte sera suspendu si vous n'agissez pas,1,investment_scam
-Envoyez votre code OTP pour sécuriser votre compte,1,mobile_money_scam
-Confirmez vos informations bancaires maintenant,1,phishing
-Envoyez de l'argent pour débloquer votre récompense,1,otp_fraud
-Votre paiement a été confirmé,0,none
-Transaction réussie,0,none
-Votre rendez-vous est confirmé,0,none
-"Erreur de transfert, renvoyez l'argent immédiatement",1,scam
-Votre facture est disponible,0,none
-Envoyez votre code OTP pour sécuriser votre compte,1,mobile_money_scam
-"Vous avez gagné de l'argent, envoyez vos informations",1,identity_fraud
-Cliquez ici pour vérifier votre compte immédiatement,1,social_engineering
-Bienvenue sur notre plateforme,0,none
-Votre paiement a été confirmé,0,none
-Confirmez vos informations bancaires maintenant,1,scam
-Votre rendez-vous est confirmé,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,scam
-Merci pour votre achat,0,none
-Votre rendez-vous est confirmé,0,none
-Votre rendez-vous est confirmé,0,none
-Bienvenue sur notre plateforme,0,none
-"Erreur de transfert, renvoyez l'argent immédiatement",1,otp_fraud
-Confirmez vos informations bancaires maintenant,1,phishing
-Bienvenue sur notre plateforme,0,none
-Bienvenue sur notre plateforme,0,none
-Votre facture est disponible,0,none
-Merci pour votre achat,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,identity_fraud
-Cliquez ici pour vérifier votre compte immédiatement,1,identity_fraud
-Votre facture est disponible,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,identity_fraud
-"Vous avez gagné de l'argent, envoyez vos informations",1,advance_fee
-Compte vérifié avec succès,0,none
-Envoyez votre code OTP pour sécuriser votre compte,1,otp_fraud
-Bienvenue sur notre plateforme,0,none
-"Offre urgente, doublez votre argent rapidement",1,scam
-"Vous avez gagné de l'argent, envoyez vos informations",1,social_engineering
-Votre rendez-vous est confirmé,0,none
-Merci pour votre achat,0,none
-Votre commande a été expédiée,0,none
-"Vous avez gagné de l'argent, envoyez vos informations",1,otp_fraud
-Votre commande a été expédiée,0,none
-Votre paiement a été confirmé,0,none
-Transaction réussie,0,none
-Envoyez votre code OTP pour sécuriser votre compte,1,phishing
-Merci pour votre achat,0,none
-"Erreur de transfert, renvoyez l'argent immédiatement",1,investment_scam
-Cliquez ici pour vérifier votre compte immédiatement,1,credential_theft
-Compte vérifié avec succès,0,none
-Votre rendez-vous est confirmé,0,none
-Compte vérifié avec succès,0,none
-Compte vérifié avec succès,0,none
-Bienvenue sur notre plateforme,0,none
-Envoyez votre code OTP pour sécuriser votre compte,1,social_engineering
-Envoyez de l'argent pour débloquer votre récompense,1,investment_scam
-Votre rendez-vous est confirmé,0,none
-Envoyez de l'argent pour débloquer votre récompense,1,advance_fee
-Envoyez votre code OTP pour sécuriser votre compte,1,scam
-Envoyez votre code OTP pour sécuriser votre compte,1,scam
-"Erreur de transfert, renvoyez l'argent immédiatement",1,scam
-Envoyez votre code OTP pour sécuriser votre compte,1,phishing
-"Erreur de transfert, renvoyez l'argent immédiatement",1,advance_fee
-Bienvenue sur notre plateforme,0,none
-"Erreur de transfert, renvoyez l'argent immédiatement",1,identity_fraud
-Compte vérifié avec succès,0,none
-"Vous avez gagné de l'argent, envoyez vos informations",1,social_engineering
-Votre facture est disponible,0,none
-Transaction réussie,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,credential_theft
-"Vous avez gagné de l'argent, envoyez vos informations",1,social_engineering
-Cliquez ici pour vérifier votre compte immédiatement,1,advance_fee
-Votre rendez-vous est confirmé,0,none
-"Erreur de transfert, renvoyez l'argent immédiatement",1,credential_theft
-Votre compte sera suspendu si vous n'agissez pas,1,identity_fraud
-Confirmez vos informations bancaires maintenant,1,advance_fee
-"Offre urgente, doublez votre argent rapidement",1,investment_scam
-Confirmez vos informations bancaires maintenant,1,mobile_money_scam
-Votre compte sera suspendu si vous n'agissez pas,1,advance_fee
-"Vous avez gagné de l'argent, envoyez vos informations",1,identity_fraud
-Votre rendez-vous est confirmé,0,none
-Envoyez votre code OTP pour sécuriser votre compte,1,scam
-Confirmez vos informations bancaires maintenant,1,advance_fee
-Votre compte sera suspendu si vous n'agissez pas,1,mobile_money_scam
-"Offre urgente, doublez votre argent rapidement",1,advance_fee
-Votre rendez-vous est confirmé,0,none
-"Erreur de transfert, renvoyez l'argent immédiatement",1,scam
-"Erreur de transfert, renvoyez l'argent immédiatement",1,social_engineering
-Envoyez votre code OTP pour sécuriser votre compte,1,identity_fraud
-Confirmez vos informations bancaires maintenant,1,phishing
-"Offre urgente, doublez votre argent rapidement",1,identity_fraud
-Envoyez votre code OTP pour sécuriser votre compte,1,social_engineering
-Votre paiement a été confirmé,0,none
-Envoyez votre code OTP pour sécuriser votre compte,1,investment_scam
-Bienvenue sur notre plateforme,0,none
-Transaction réussie,0,none
-Envoyez de l'argent pour débloquer votre récompense,1,phishing
-Votre rendez-vous est confirmé,0,none
-Merci pour votre achat,0,none
-Bienvenue sur notre plateforme,0,none
-Votre rendez-vous est confirmé,0,none
-Bienvenue sur notre plateforme,0,none
-Merci pour votre achat,0,none
-Envoyez votre code OTP pour sécuriser votre compte,1,otp_fraud
-Confirmez vos informations bancaires maintenant,1,social_engineering
-"Vous avez gagné de l'argent, envoyez vos informations",1,advance_fee
-Votre paiement a été confirmé,0,none
-Votre compte sera suspendu si vous n'agissez pas,1,identity_fraud
-Confirmez vos informations bancaires maintenant,1,otp_fraud
-Bienvenue sur notre plateforme,0,none
-Bienvenue sur notre plateforme,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,credential_theft
-Cliquez ici pour vérifier votre compte immédiatement,1,investment_scam
-"Offre urgente, doublez votre argent rapidement",1,advance_fee
-Bienvenue sur notre plateforme,0,none
-Votre paiement a été confirmé,0,none
-Envoyez de l'argent pour débloquer votre récompense,1,phishing
-Bienvenue sur notre plateforme,0,none
-Votre commande a été expédiée,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,identity_fraud
-"Offre urgente, doublez votre argent rapidement",1,phishing
-Envoyez votre code OTP pour sécuriser votre compte,1,advance_fee
-Votre paiement a été confirmé,0,none
-Compte vérifié avec succès,0,none
-Transaction réussie,0,none
-Votre paiement a été confirmé,0,none
-Bienvenue sur notre plateforme,0,none
-"Vous avez gagné de l'argent, envoyez vos informations",1,otp_fraud
-Cliquez ici pour vérifier votre compte immédiatement,1,phishing
-Votre facture est disponible,0,none
-"Erreur de transfert, renvoyez l'argent immédiatement",1,identity_fraud
-Merci pour votre achat,0,none
-"Offre urgente, doublez votre argent rapidement",1,investment_scam
-Bienvenue sur notre plateforme,0,none
-Votre compte sera suspendu si vous n'agissez pas,1,phishing
-Transaction réussie,0,none
-"Vous avez gagné de l'argent, envoyez vos informations",1,otp_fraud
-"Offre urgente, doublez votre argent rapidement",1,social_engineering
-Transaction réussie,0,none
-Envoyez de l'argent pour débloquer votre récompense,1,advance_fee
-Votre facture est disponible,0,none
-"Vous avez gagné de l'argent, envoyez vos informations",1,credential_theft
-Bienvenue sur notre plateforme,0,none
-Votre commande a été expédiée,0,none
-"Erreur de transfert, renvoyez l'argent immédiatement",1,phishing
-Votre compte sera suspendu si vous n'agissez pas,1,investment_scam
-Transaction réussie,0,none
-Compte vérifié avec succès,0,none
-"Vous avez gagné de l'argent, envoyez vos informations",1,investment_scam
-Bienvenue sur notre plateforme,0,none
-Transaction réussie,0,none
-"Vous avez gagné de l'argent, envoyez vos informations",1,social_engineering
-Cliquez ici pour vérifier votre compte immédiatement,1,scam
-"Offre urgente, doublez votre argent rapidement",1,mobile_money_scam
-Bienvenue sur notre plateforme,0,none
-Bienvenue sur notre plateforme,0,none
-Envoyez votre code OTP pour sécuriser votre compte,1,phishing
-Compte vérifié avec succès,0,none
-Merci pour votre achat,0,none
-Compte vérifié avec succès,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,advance_fee
-"Erreur de transfert, renvoyez l'argent immédiatement",1,advance_fee
-Transaction réussie,0,none
-Votre compte sera suspendu si vous n'agissez pas,1,credential_theft
-Envoyez de l'argent pour débloquer votre récompense,1,credential_theft
-"Vous avez gagné de l'argent, envoyez vos informations",1,credential_theft
-"Erreur de transfert, renvoyez l'argent immédiatement",1,scam
-"Erreur de transfert, renvoyez l'argent immédiatement",1,social_engineering
-Confirmez vos informations bancaires maintenant,1,phishing
-Votre rendez-vous est confirmé,0,none
-Votre paiement a été confirmé,0,none
-Envoyez de l'argent pour débloquer votre récompense,1,credential_theft
-Compte vérifié avec succès,0,none
-Bienvenue sur notre plateforme,0,none
-Bienvenue sur notre plateforme,0,none
-Transaction réussie,0,none
-Confirmez vos informations bancaires maintenant,1,credential_theft
-Confirmez vos informations bancaires maintenant,1,mobile_money_scam
-"Vous avez gagné de l'argent, envoyez vos informations",1,mobile_money_scam
-Merci pour votre achat,0,none
-"Erreur de transfert, renvoyez l'argent immédiatement",1,mobile_money_scam
-Bienvenue sur notre plateforme,0,none
-Votre rendez-vous est confirmé,0,none
-"Erreur de transfert, renvoyez l'argent immédiatement",1,social_engineering
-Votre facture est disponible,0,none
-Transaction réussie,0,none
-Votre commande a été expédiée,0,none
-Votre commande a été expédiée,0,none
-Envoyez de l'argent pour débloquer votre récompense,1,identity_fraud
-Votre rendez-vous est confirmé,0,none
-Transaction réussie,0,none
-"Offre urgente, doublez votre argent rapidement",1,credential_theft
-Confirmez vos informations bancaires maintenant,1,mobile_money_scam
-Votre compte sera suspendu si vous n'agissez pas,1,social_engineering
-Envoyez votre code OTP pour sécuriser votre compte,1,identity_fraud
-Bienvenue sur notre plateforme,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,advance_fee
-Envoyez de l'argent pour débloquer votre récompense,1,advance_fee
-Compte vérifié avec succès,0,none
-Envoyez votre code OTP pour sécuriser votre compte,1,credential_theft
-Votre compte sera suspendu si vous n'agissez pas,1,identity_fraud
-Votre paiement a été confirmé,0,none
-Votre commande a été expédiée,0,none
-Bienvenue sur notre plateforme,0,none
-Votre paiement a été confirmé,0,none
-"Offre urgente, doublez votre argent rapidement",1,otp_fraud
-"Erreur de transfert, renvoyez l'argent immédiatement",1,mobile_money_scam
-"Vous avez gagné de l'argent, envoyez vos informations",1,credential_theft
-Votre commande a été expédiée,0,none
-"Vous avez gagné de l'argent, envoyez vos informations",1,phishing
-Votre compte sera suspendu si vous n'agissez pas,1,scam
-"Offre urgente, doublez votre argent rapidement",1,credential_theft
-Compte vérifié avec succès,0,none
-Votre rendez-vous est confirmé,0,none
-Votre paiement a été confirmé,0,none
-Transaction réussie,0,none
-"Vous avez gagné de l'argent, envoyez vos informations",1,identity_fraud
-Envoyez votre code OTP pour sécuriser votre compte,1,investment_scam
-"Erreur de transfert, renvoyez l'argent immédiatement",1,advance_fee
-Confirmez vos informations bancaires maintenant,1,investment_scam
-Votre rendez-vous est confirmé,0,none
-Votre rendez-vous est confirmé,0,none
-Envoyez de l'argent pour débloquer votre récompense,1,phishing
-Transaction réussie,0,none
-Votre commande a été expédiée,0,none
-Envoyez votre code OTP pour sécuriser votre compte,1,phishing
-Bienvenue sur notre plateforme,0,none
-"Vous avez gagné de l'argent, envoyez vos informations",1,investment_scam
-Cliquez ici pour vérifier votre compte immédiatement,1,mobile_money_scam
-Votre paiement a été confirmé,0,none
-Merci pour votre achat,0,none
-Compte vérifié avec succès,0,none
-Merci pour votre achat,0,none
-Votre rendez-vous est confirmé,0,none
-Envoyez votre code OTP pour sécuriser votre compte,1,scam
-Compte vérifié avec succès,0,none
-"Erreur de transfert, renvoyez l'argent immédiatement",1,otp_fraud
-"Erreur de transfert, renvoyez l'argent immédiatement",1,social_engineering
-"Erreur de transfert, renvoyez l'argent immédiatement",1,otp_fraud
-"Vous avez gagné de l'argent, envoyez vos informations",1,phishing
-Votre facture est disponible,0,none
-Votre facture est disponible,0,none
-Votre commande a été expédiée,0,none
-Envoyez de l'argent pour débloquer votre récompense,1,advance_fee
-Envoyez de l'argent pour débloquer votre récompense,1,otp_fraud
-Confirmez vos informations bancaires maintenant,1,investment_scam
-"Offre urgente, doublez votre argent rapidement",1,advance_fee
-"Vous avez gagné de l'argent, envoyez vos informations",1,credential_theft
-Votre facture est disponible,0,none
-Transaction réussie,0,none
-Envoyez votre code OTP pour sécuriser votre compte,1,identity_fraud
-Votre compte sera suspendu si vous n'agissez pas,1,identity_fraud
-Envoyez votre code OTP pour sécuriser votre compte,1,advance_fee
-"Erreur de transfert, renvoyez l'argent immédiatement",1,advance_fee
-"Offre urgente, doublez votre argent rapidement",1,social_engineering
-Votre facture est disponible,0,none
-Merci pour votre achat,0,none
-Votre commande a été expédiée,0,none
-Transaction réussie,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,social_engineering
-"Vous avez gagné de l'argent, envoyez vos informations",1,identity_fraud
-Votre rendez-vous est confirmé,0,none
-Envoyez de l'argent pour débloquer votre récompense,1,mobile_money_scam
-Cliquez ici pour vérifier votre compte immédiatement,1,mobile_money_scam
-Bienvenue sur notre plateforme,0,none
-Votre compte sera suspendu si vous n'agissez pas,1,mobile_money_scam
-Votre commande a été expédiée,0,none
-Votre facture est disponible,0,none
-Transaction réussie,0,none
-Votre rendez-vous est confirmé,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,otp_fraud
-Votre paiement a été confirmé,0,none
-Envoyez de l'argent pour débloquer votre récompense,1,mobile_money_scam
-"Offre urgente, doublez votre argent rapidement",1,investment_scam
-Bienvenue sur notre plateforme,0,none
-Bienvenue sur notre plateforme,0,none
-Confirmez vos informations bancaires maintenant,1,social_engineering
-Envoyez votre code OTP pour sécuriser votre compte,1,advance_fee
-Compte vérifié avec succès,0,none
-Votre commande a été expédiée,0,none
-Votre facture est disponible,0,none
-Bienvenue sur notre plateforme,0,none
-Bienvenue sur notre plateforme,0,none
-Votre rendez-vous est confirmé,0,none
-Votre commande a été expédiée,0,none
-Votre rendez-vous est confirmé,0,none
-Votre rendez-vous est confirmé,0,none
-Bienvenue sur notre plateforme,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,mobile_money_scam
-"Vous avez gagné de l'argent, envoyez vos informations",1,social_engineering
-"Offre urgente, doublez votre argent rapidement",1,identity_fraud
-Confirmez vos informations bancaires maintenant,1,identity_fraud
-Votre paiement a été confirmé,0,none
-Compte vérifié avec succès,0,none
-Compte vérifié avec succès,0,none
-Envoyez de l'argent pour débloquer votre récompense,1,phishing
-Votre commande a été expédiée,0,none
-Votre commande a été expédiée,0,none
-Compte vérifié avec succès,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,social_engineering
-Transaction réussie,0,none
-Votre commande a été expédiée,0,none
-Votre compte sera suspendu si vous n'agissez pas,1,otp_fraud
-"Offre urgente, doublez votre argent rapidement",1,scam
-Votre facture est disponible,0,none
-Votre paiement a été confirmé,0,none
-Votre commande a été expédiée,0,none
-"Vous avez gagné de l'argent, envoyez vos informations",1,identity_fraud
-"Vous avez gagné de l'argent, envoyez vos informations",1,identity_fraud
-"Erreur de transfert, renvoyez l'argent immédiatement",1,otp_fraud
-Confirmez vos informations bancaires maintenant,1,social_engineering
-"Erreur de transfert, renvoyez l'argent immédiatement",1,mobile_money_scam
-Votre rendez-vous est confirmé,0,none
-"Offre urgente, doublez votre argent rapidement",1,advance_fee
-"Offre urgente, doublez votre argent rapidement",1,investment_scam
-Envoyez votre code OTP pour sécuriser votre compte,1,mobile_money_scam
-Transaction réussie,0,none
-Compte vérifié avec succès,0,none
-Votre compte sera suspendu si vous n'agissez pas,1,otp_fraud
-Envoyez de l'argent pour débloquer votre récompense,1,scam
-Envoyez votre code OTP pour sécuriser votre compte,1,advance_fee
-Votre commande a été expédiée,0,none
-Votre commande a été expédiée,0,none
-Voaray ny volanao,0,none
-Thank you for your purchase,0,none
-Your account will be suspended if you don't act,1,mobile_money_scam
-"Vous avez gagné 100000 Ar, envoyez vos infos",1,scam
-"Vous avez gagné 100000 Ar, envoyez vos infos",1,scam
-Votre paiement a été confirmé,0,none
-Votre paiement a été confirmé,0,none
-Merci pour votre achat,0,none
-"Vous avez gagné 100000 Ar, envoyez vos infos",1,identity_fraud
-Votre paiement a été confirmé,0,none
-Misaotra tamin'ny fividiananao,0,none
-Your payment was successful,0,none
-Your account will be suspended if you don't act,1,investment_scam
-Votre compte sera bloqué si vous n'agissez pas,1,otp_fraud
-Thank you for your purchase,0,none
-"You won $1000, send your details",1,identity_fraud
-Votre paiement a été confirmé,0,none
-Send your OTP code immediately,1,identity_fraud
-Cliquez ici pour vérifier votre compte immédiatement,1,phishing
-Tsindrio eto hanamarina ny kaontinao,1,mobile_money_scam
-Misaotra tamin'ny fividiananao,0,none
-Your payment was successful,0,none
-"Vous avez gagné 100000 Ar, envoyez vos infos",1,mobile_money_scam
-Ho voasakana ny kaontinao raha tsy manao zavatra ianao,1,investment_scam
-Votre paiement a été confirmé,0,none
-Thank you for your purchase,0,none
-Your account will be suspended if you don't act,1,scam
-Voaray ny volanao,0,none
-"Nahazo vola ianao, alefaso ny mombamomba anao",1,identity_fraud
-Your account will be suspended if you don't act,1,mobile_money_scam
-Votre paiement a été confirmé,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,otp_fraud
-Voaray ny volanao,0,none
-Votre paiement a été confirmé,0,none
-Votre paiement a été confirmé,0,none
-Tsindrio eto hanamarina ny kaontinao,1,otp_fraud
-"Nahazo vola ianao, alefaso ny mombamomba anao",1,otp_fraud
-Cliquez ici pour vérifier votre compte immédiatement,1,identity_fraud
-Click here to verify your account now,1,phishing
-Envoyez votre code OTP maintenant,1,mobile_money_scam
-Voaray ny volanao,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,mobile_money_scam
-"Nahazo vola ianao, alefaso ny mombamomba anao",1,phishing
-Voaray ny volanao,0,none
-Voaray ny volanao,0,none
-"You won $1000, send your details",1,otp_fraud
-Alefaso ny kaody OTP anao,1,mobile_money_scam
-Votre paiement a été confirmé,0,none
-Voaray ny volanao,0,none
-Votre paiement a été confirmé,0,none
-Send your OTP code immediately,1,phishing
-Tsindrio eto hanamarina ny kaontinao,1,otp_fraud
-Voaray ny volanao,0,none
-Your payment was successful,0,none
-Merci pour votre achat,0,none
-Thank you for your purchase,0,none
-"Vous avez gagné 100000 Ar, envoyez vos infos",1,scam
-Thank you for your purchase,0,none
-"You won $1000, send your details",1,otp_fraud
-"Nahazo vola ianao, alefaso ny mombamomba anao",1,phishing
-Your payment was successful,0,none
-"Vous avez gagné 100000 Ar, envoyez vos infos",1,scam
-Your payment was successful,0,none
-Merci pour votre achat,0,none
-Thank you for your purchase,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,otp_fraud
-Misaotra tamin'ny fividiananao,0,none
-Merci pour votre achat,0,none
-Ho voasakana ny kaontinao raha tsy manao zavatra ianao,1,mobile_money_scam
-Misaotra tamin'ny fividiananao,0,none
-Misaotra tamin'ny fividiananao,0,none
-Merci pour votre achat,0,none
-"Nahazo vola ianao, alefaso ny mombamomba anao",1,scam
-Misaotra tamin'ny fividiananao,0,none
-"Nahazo vola ianao, alefaso ny mombamomba anao",1,mobile_money_scam
-Votre compte sera bloqué si vous n'agissez pas,1,investment_scam
-Votre paiement a été confirmé,0,none
-Votre compte sera bloqué si vous n'agissez pas,1,phishing
-Your payment was successful,0,none
-Your payment was successful,0,none
-Thank you for your purchase,0,none
-Votre paiement a été confirmé,0,none
-"You won $1000, send your details",1,mobile_money_scam
-Voaray ny volanao,0,none
-Votre compte sera bloqué si vous n'agissez pas,1,identity_fraud
-Merci pour votre achat,0,none
-Click here to verify your account now,1,scam
-Merci pour votre achat,0,none
-Click here to verify your account now,1,identity_fraud
-Envoyez votre code OTP maintenant,1,investment_scam
-Send your OTP code immediately,1,phishing
-Tsindrio eto hanamarina ny kaontinao,1,otp_fraud
-Cliquez ici pour vérifier votre compte immédiatement,1,scam
-Votre paiement a été confirmé,0,none
-Your payment was successful,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,investment_scam
-"You won $1000, send your details",1,mobile_money_scam
-Your payment was successful,0,none
-Ho voasakana ny kaontinao raha tsy manao zavatra ianao,1,identity_fraud
-Cliquez ici pour vérifier votre compte immédiatement,1,otp_fraud
-Click here to verify your account now,1,investment_scam
-Your payment was successful,0,none
-Merci pour votre achat,0,none
-Votre paiement a été confirmé,0,none
-Thank you for your purchase,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,investment_scam
-Envoyez votre code OTP maintenant,1,scam
-Votre paiement a été confirmé,0,none
-Your payment was successful,0,none
-Merci pour votre achat,0,none
-Misaotra tamin'ny fividiananao,0,none
-Your payment was successful,0,none
-Voaray ny volanao,0,none
-Click here to verify your account now,1,investment_scam
-Misaotra tamin'ny fividiananao,0,none
-Your payment was successful,0,none
-Send your OTP code immediately,1,identity_fraud
-Your payment was successful,0,none
-Envoyez votre code OTP maintenant,1,identity_fraud
-Voaray ny volanao,0,none
-Thank you for your purchase,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,mobile_money_scam
-Tsindrio eto hanamarina ny kaontinao,1,phishing
-Votre compte sera bloqué si vous n'agissez pas,1,otp_fraud
-Your payment was successful,0,none
-Votre paiement a été confirmé,0,none
-Click here to verify your account now,1,phishing
-Your payment was successful,0,none
-Votre paiement a été confirmé,0,none
-"Vous avez gagné 100000 Ar, envoyez vos infos",1,investment_scam
-"You won $1000, send your details",1,investment_scam
-"You won $1000, send your details",1,otp_fraud
-Voaray ny volanao,0,none
-Click here to verify your account now,1,otp_fraud
-"Nahazo vola ianao, alefaso ny mombamomba anao",1,scam
-Thank you for your purchase,0,none
-Ho voasakana ny kaontinao raha tsy manao zavatra ianao,1,mobile_money_scam
-Voaray ny volanao,0,none
-"Vous avez gagné 100000 Ar, envoyez vos infos",1,identity_fraud
-Votre paiement a été confirmé,0,none
-Your payment was successful,0,none
-Votre compte sera bloqué si vous n'agissez pas,1,otp_fraud
-Click here to verify your account now,1,scam
-"Vous avez gagné 100000 Ar, envoyez vos infos",1,identity_fraud
-Votre paiement a été confirmé,0,none
-"You won $1000, send your details",1,investment_scam
-Your account will be suspended if you don't act,1,otp_fraud
-Tsindrio eto hanamarina ny kaontinao,1,otp_fraud
-Ho voasakana ny kaontinao raha tsy manao zavatra ianao,1,mobile_money_scam
-Votre compte sera bloqué si vous n'agissez pas,1,investment_scam
-"Nahazo vola ianao, alefaso ny mombamomba anao",1,investment_scam
-Envoyez votre code OTP maintenant,1,scam
-Click here to verify your account now,1,scam
-"You won $1000, send your details",1,scam
-Envoyez votre code OTP maintenant,1,otp_fraud
-Thank you for your purchase,0,none
-Misaotra tamin'ny fividiananao,0,none
-"Vous avez gagné 100000 Ar, envoyez vos infos",1,identity_fraud
-Misaotra tamin'ny fividiananao,0,none
-Envoyez votre code OTP maintenant,1,otp_fraud
-Tsindrio eto hanamarina ny kaontinao,1,identity_fraud
-Your payment was successful,0,none
-Merci pour votre achat,0,none
-"You won $1000, send your details",1,identity_fraud
-"Nahazo vola ianao, alefaso ny mombamomba anao",1,mobile_money_scam
-"Vous avez gagné 100000 Ar, envoyez vos infos",1,identity_fraud
-"Vous avez gagné 100000 Ar, envoyez vos infos",1,investment_scam
-Ho voasakana ny kaontinao raha tsy manao zavatra ianao,1,phishing
-Alefaso ny kaody OTP anao,1,otp_fraud
-Cliquez ici pour vérifier votre compte immédiatement,1,scam
-Votre paiement a été confirmé,0,none
-"You won $1000, send your details",1,scam
-Your account will be suspended if you don't act,1,scam
-Tsindrio eto hanamarina ny kaontinao,1,otp_fraud
-Misaotra tamin'ny fividiananao,0,none
-Envoyez votre code OTP maintenant,1,mobile_money_scam
-Merci pour votre achat,0,none
-Send your OTP code immediately,1,otp_fraud
-Thank you for your purchase,0,none
-Thank you for your purchase,0,none
-"You won $1000, send your details",1,mobile_money_scam
-Votre compte sera bloqué si vous n'agissez pas,1,mobile_money_scam
-Votre compte sera bloqué si vous n'agissez pas,1,identity_fraud
-Votre paiement a été confirmé,0,none
-Your account will be suspended if you don't act,1,investment_scam
-"Nahazo vola ianao, alefaso ny mombamomba anao",1,investment_scam
-Alefaso ny kaody OTP anao,1,investment_scam
-Cliquez ici pour vérifier votre compte immédiatement,1,scam
-"Nahazo vola ianao, alefaso ny mombamomba anao",1,investment_scam
-Your payment was successful,0,none
-Alefaso ny kaody OTP anao,1,mobile_money_scam
-Your payment was successful,0,none
-"Vous avez gagné 100000 Ar, envoyez vos infos",1,mobile_money_scam
-Thank you for your purchase,0,none
-Your payment was successful,0,none
-Voaray ny volanao,0,none
-Thank you for your purchase,0,none
-Merci pour votre achat,0,none
-Misaotra tamin'ny fividiananao,0,none
-Merci pour votre achat,0,none
-Ho voasakana ny kaontinao raha tsy manao zavatra ianao,1,investment_scam
-Your payment was successful,0,none
-"Nahazo vola ianao, alefaso ny mombamomba anao",1,phishing
-Thank you for your purchase,0,none
-Misaotra tamin'ny fividiananao,0,none
-Click here to verify your account now,1,phishing
-Votre paiement a été confirmé,0,none
-"You won $1000, send your details",1,otp_fraud
-Thank you for your purchase,0,none
-Your payment was successful,0,none
-Votre compte sera bloqué si vous n'agissez pas,1,phishing
-Misaotra tamin'ny fividiananao,0,none
-Votre compte sera bloqué si vous n'agissez pas,1,identity_fraud
-Merci pour votre achat,0,none
-Votre compte sera bloqué si vous n'agissez pas,1,investment_scam
-Your account will be suspended if you don't act,1,scam
-Your account will be suspended if you don't act,1,identity_fraud
-Your account will be suspended if you don't act,1,scam
-Votre paiement a été confirmé,0,none
-Envoyez votre code OTP maintenant,1,investment_scam
-"Vous avez gagné 100000 Ar, envoyez vos infos",1,phishing
-Voaray ny volanao,0,none
-Click here to verify your account now,1,investment_scam
-"Vous avez gagné 100000 Ar, envoyez vos infos",1,investment_scam
-Your payment was successful,0,none
-"Nahazo vola ianao, alefaso ny mombamomba anao",1,identity_fraud
-Alefaso ny kaody OTP anao,1,identity_fraud
-Merci pour votre achat,0,none
-Send your OTP code immediately,1,otp_fraud
-Your payment was successful,0,none
-Merci pour votre achat,0,none
-Misaotra tamin'ny fividiananao,0,none
-Thank you for your purchase,0,none
-Your account will be suspended if you don't act,1,investment_scam
-Thank you for your purchase,0,none
-Your payment was successful,0,none
-Send your OTP code immediately,1,investment_scam
-Click here to verify your account now,1,investment_scam
-Thank you for your purchase,0,none
-Tsindrio eto hanamarina ny kaontinao,1,phishing
-Votre paiement a été confirmé,0,none
-Voaray ny volanao,0,none
-Thank you for your purchase,0,none
-Voaray ny volanao,0,none
-Votre compte sera bloqué si vous n'agissez pas,1,scam
-Alefaso ny kaody OTP anao,1,otp_fraud
-Votre compte sera bloqué si vous n'agissez pas,1,mobile_money_scam
-Voaray ny volanao,0,none
-Votre paiement a été confirmé,0,none
-Tsindrio eto hanamarina ny kaontinao,1,identity_fraud
-Your payment was successful,0,none
-"Nahazo vola ianao, alefaso ny mombamomba anao",1,scam
-Alefaso ny kaody OTP anao,1,investment_scam
-"Nahazo vola ianao, alefaso ny mombamomba anao",1,scam
-Cliquez ici pour vérifier votre compte immédiatement,1,phishing
-Send your OTP code immediately,1,phishing
-"Nahazo vola ianao, alefaso ny mombamomba anao",1,identity_fraud
-Voaray ny volanao,0,none
-Votre paiement a été confirmé,0,none
-Ho voasakana ny kaontinao raha tsy manao zavatra ianao,1,mobile_money_scam
-Misaotra tamin'ny fividiananao,0,none
-Voaray ny volanao,0,none
-Tsindrio eto hanamarina ny kaontinao,1,investment_scam
-Votre compte sera bloqué si vous n'agissez pas,1,mobile_money_scam
-Votre paiement a été confirmé,0,none
-Send your OTP code immediately,1,scam
-"You won $1000, send your details",1,otp_fraud
-Ho voasakana ny kaontinao raha tsy manao zavatra ianao,1,investment_scam
-Misaotra tamin'ny fividiananao,0,none
-Merci pour votre achat,0,none
-Your payment was successful,0,none
-Click here to verify your account now,1,otp_fraud
-Misaotra tamin'ny fividiananao,0,none
-Votre paiement a été confirmé,0,none
-Thank you for your purchase,0,none
-Misaotra tamin'ny fividiananao,0,none
-Click here to verify your account now,1,phishing
-Merci pour votre achat,0,none
-Envoyez votre code OTP maintenant,1,investment_scam
-Misaotra tamin'ny fividiananao,0,none
-Misaotra tamin'ny fividiananao,0,none
-Merci pour votre achat,0,none
-"You won $1000, send your details",1,otp_fraud
-Votre compte sera bloqué si vous n'agissez pas,1,identity_fraud
-Merci pour votre achat,0,none
-Thank you for your purchase,0,none
-Merci pour votre achat,0,none
-Click here to verify your account now,1,otp_fraud
-Click here to verify your account now,1,phishing
-"Vous avez gagné 100000 Ar, envoyez vos infos",1,investment_scam
-Votre paiement a été confirmé,0,none
-Thank you for your purchase,0,none
-Envoyez votre code OTP maintenant,1,phishing
-Cliquez ici pour vérifier votre compte immédiatement,1,phishing
-Merci pour votre achat,0,none
-Send your OTP code immediately,1,phishing
-Ho voasakana ny kaontinao raha tsy manao zavatra ianao,1,scam
-Envoyez votre code OTP maintenant,1,identity_fraud
-"You won $1000, send your details",1,scam
-Your payment was successful,0,none
-Envoyez votre code OTP maintenant,1,investment_scam
-Votre paiement a été confirmé,0,none
-Votre paiement a été confirmé,0,none
-Envoyez votre code OTP maintenant,1,otp_fraud
-"Nahazo vola ianao, alefaso ny mombamomba anao",1,phishing
-"You won $1000, send your details",1,scam
-Your payment was successful,0,none
-Merci pour votre achat,0,none
-"Vous avez gagné 100000 Ar, envoyez vos infos",1,investment_scam
-"Vous avez gagné 100000 Ar, envoyez vos infos",1,investment_scam
-Send your OTP code immediately,1,phishing
-"Nahazo vola ianao, alefaso ny mombamomba anao",1,investment_scam
-Your account will be suspended if you don't act,1,mobile_money_scam
-Your payment was successful,0,none
-Misaotra tamin'ny fividiananao,0,none
-"Nahazo vola ianao, alefaso ny mombamomba anao",1,scam
-Voaray ny volanao,0,none
-Misaotra tamin'ny fividiananao,0,none
-Alefaso ny kaody OTP anao,1,otp_fraud
-Votre paiement a été confirmé,0,none
-Merci pour votre achat,0,none
-Send your OTP code immediately,1,otp_fraud
-Cliquez ici pour vérifier votre compte immédiatement,1,phishing
-Voaray ny volanao,0,none
-Misaotra tamin'ny fividiananao,0,none
-Alefaso ny kaody OTP anao,1,identity_fraud
-Click here to verify your account now,1,mobile_money_scam
-Merci pour votre achat,0,none
-Your payment was successful,0,none
-Votre paiement a été confirmé,0,none
-Ho voasakana ny kaontinao raha tsy manao zavatra ianao,1,mobile_money_scam
-Alefaso ny kaody OTP anao,1,phishing
-Merci pour votre achat,0,none
-"Nahazo vola ianao, alefaso ny mombamomba anao",1,scam
-"Nahazo vola ianao, alefaso ny mombamomba anao",1,otp_fraud
-Your account will be suspended if you don't act,1,scam
-Envoyez votre code OTP maintenant,1,investment_scam
-Cliquez ici pour vérifier votre compte immédiatement,1,mobile_money_scam
-Misaotra tamin'ny fividiananao,0,none
-Send your OTP code immediately,1,otp_fraud
-Voaray ny volanao,0,none
-Click here to verify your account now,1,phishing
-Misaotra tamin'ny fividiananao,0,none
-Click here to verify your account now,1,identity_fraud
-Click here to verify your account now,1,otp_fraud
-Thank you for your purchase,0,none
-Votre paiement a été confirmé,0,none
-Voaray ny volanao,0,none
-Envoyez votre code OTP maintenant,1,scam
-Voaray ny volanao,0,none
-Alefaso ny kaody OTP anao,1,identity_fraud
-Click here to verify your account now,1,scam
-Merci pour votre achat,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,otp_fraud
-Envoyez votre code OTP maintenant,1,phishing
-Voaray ny volanao,0,none
-Votre compte sera bloqué si vous n'agissez pas,1,identity_fraud
-Tsindrio eto hanamarina ny kaontinao,1,otp_fraud
-Merci pour votre achat,0,none
-Your payment was successful,0,none
-Voaray ny volanao,0,none
-Merci pour votre achat,0,none
-Send your OTP code immediately,1,scam
-Misaotra tamin'ny fividiananao,0,none
-Misaotra tamin'ny fividiananao,0,none
-"Nahazo vola ianao, alefaso ny mombamomba anao",1,scam
-Send your OTP code immediately,1,scam
-Voaray ny volanao,0,none
-Tsindrio eto hanamarina ny kaontinao,1,identity_fraud
-Misaotra tamin'ny fividiananao,0,none
-Your account will be suspended if you don't act,1,phishing
-Click here to verify your account now,1,mobile_money_scam
-"Vous avez gagné 100000 Ar, envoyez vos infos",1,identity_fraud
-Alefaso ny kaody OTP anao,1,phishing
-Voaray ny volanao,0,none
-Votre paiement a été confirmé,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,identity_fraud
-Tsindrio eto hanamarina ny kaontinao,1,mobile_money_scam
-"Vous avez gagné 100000 Ar, envoyez vos infos",1,investment_scam
-Merci pour votre achat,0,none
-Thank you for your purchase,0,none
-Your account will be suspended if you don't act,1,mobile_money_scam
-Envoyez votre code OTP maintenant,1,investment_scam
-Your payment was successful,0,none
-Thank you for your purchase,0,none
-Votre paiement a été confirmé,0,none
-Merci pour votre achat,0,none
-Thank you for your purchase,0,none
-Your account will be suspended if you don't act,1,otp_fraud
-Misaotra tamin'ny fividiananao,0,none
-"Nahazo vola ianao, alefaso ny mombamomba anao",1,mobile_money_scam
-Send your OTP code immediately,1,investment_scam
-Voaray ny volanao,0,none
-Merci pour votre achat,0,none
-Merci pour votre achat,0,none
-Your payment was successful,0,none
-"Vous avez gagné 100000 Ar, envoyez vos infos",1,investment_scam
-Misaotra tamin'ny fividiananao,0,none
-Send your OTP code immediately,1,mobile_money_scam
-Thank you for your purchase,0,none
-Send your OTP code immediately,1,scam
-Votre compte sera bloqué si vous n'agissez pas,1,identity_fraud
-Merci pour votre achat,0,none
-Alefaso ny kaody OTP anao,1,identity_fraud
-Ho voasakana ny kaontinao raha tsy manao zavatra ianao,1,investment_scam
-"Vous avez gagné 100000 Ar, envoyez vos infos",1,identity_fraud
-"Vous avez gagné 100000 Ar, envoyez vos infos",1,identity_fraud
-Merci pour votre achat,0,none
-"Nahazo vola ianao, alefaso ny mombamomba anao",1,otp_fraud
-Voaray ny volanao,0,none
-Ho voasakana ny kaontinao raha tsy manao zavatra ianao,1,phishing
-Voaray ny volanao,0,none
-Voaray ny volanao,0,none
-"You won $1000, send your details",1,scam
-Thank you for your purchase,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,phishing
-Merci pour votre achat,0,none
-Envoyez votre code OTP maintenant,1,otp_fraud
-Thank you for your purchase,0,none
-Votre paiement a été confirmé,0,none
-"Nahazo vola ianao, alefaso ny mombamomba anao",1,phishing
-Your payment was successful,0,none
-Votre paiement a été confirmé,0,none
-Votre paiement a été confirmé,0,none
-Voaray ny volanao,0,none
-Merci pour votre achat,0,none
-Your account will be suspended if you don't act,1,mobile_money_scam
-Click here to verify your account now,1,identity_fraud
-Your payment was successful,0,none
-Thank you for your purchase,0,none
-Misaotra tamin'ny fividiananao,0,none
-Your payment was successful,0,none
-Votre compte sera bloqué si vous n'agissez pas,1,mobile_money_scam
-Cliquez ici pour vérifier votre compte immédiatement,1,investment_scam
-Votre paiement a été confirmé,0,none
-Envoyez votre code OTP maintenant,1,identity_fraud
-Votre paiement a été confirmé,0,none
-Your account will be suspended if you don't act,1,phishing
-Voaray ny volanao,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,identity_fraud
-Your account will be suspended if you don't act,1,mobile_money_scam
-Thank you for your purchase,0,none
-Merci pour votre achat,0,none
-Tsindrio eto hanamarina ny kaontinao,1,otp_fraud
-"You won $1000, send your details",1,investment_scam
-Voaray ny volanao,0,none
-Click here to verify your account now,1,phishing
-Cliquez ici pour vérifier votre compte immédiatement,1,investment_scam
-Votre compte sera bloqué si vous n'agissez pas,1,identity_fraud
-Envoyez votre code OTP maintenant,1,identity_fraud
-Votre compte sera bloqué si vous n'agissez pas,1,phishing
-Your payment was successful,0,none
-Your payment was successful,0,none
-Votre paiement a été confirmé,0,none
-Misaotra tamin'ny fividiananao,0,none
-Tsindrio eto hanamarina ny kaontinao,1,scam
-Misaotra tamin'ny fividiananao,0,none
-Voaray ny volanao,0,none
-Your payment was successful,0,none
-"Nahazo vola ianao, alefaso ny mombamomba anao",1,mobile_money_scam
-Votre paiement a été confirmé,0,none
-Merci pour votre achat,0,none
-Your payment was successful,0,none
-Misaotra tamin'ny fividiananao,0,none
-Votre paiement a été confirmé,0,none
-Thank you for your purchase,0,none
-"Nahazo vola ianao, alefaso ny mombamomba anao",1,identity_fraud
-Your account will be suspended if you don't act,1,phishing
-"Vous avez gagné 100000 Ar, envoyez vos infos",1,otp_fraud
-Your account will be suspended if you don't act,1,phishing
-Envoyez votre code OTP maintenant,1,phishing
-Votre paiement a été confirmé,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,identity_fraud
-"Nahazo vola ianao, alefaso ny mombamomba anao",1,investment_scam
-"You won $1000, send your details",1,mobile_money_scam
-Tsindrio eto hanamarina ny kaontinao,1,otp_fraud
-Click here to verify your account now,1,identity_fraud
-Your payment was successful,0,none
-Thank you for your purchase,0,none
-Misaotra tamin'ny fividiananao,0,none
-Envoyez votre code OTP maintenant,1,investment_scam
-Your payment was successful,0,none
-Click here to verify your account now,1,otp_fraud
-Send your OTP code immediately,1,phishing
-Envoyez votre code OTP maintenant,1,identity_fraud
-Voaray ny volanao,0,none
-"You won $1000, send your details",1,otp_fraud
-Thank you for your purchase,0,none
-"You won $1000, send your details",1,mobile_money_scam
-Votre paiement a été confirmé,0,none
-Envoyez votre code OTP maintenant,1,phishing
-Thank you for your purchase,0,none
-Ho voasakana ny kaontinao raha tsy manao zavatra ianao,1,otp_fraud
-Ho voasakana ny kaontinao raha tsy manao zavatra ianao,1,otp_fraud
-Votre paiement a été confirmé,0,none
-Alefaso ny kaody OTP anao,1,phishing
-Votre compte sera bloqué si vous n'agissez pas,1,scam
-Ho voasakana ny kaontinao raha tsy manao zavatra ianao,1,investment_scam
-Ho voasakana ny kaontinao raha tsy manao zavatra ianao,1,mobile_money_scam
-Misaotra tamin'ny fividiananao,0,none
-Your payment was successful,0,none
-"Vous avez gagné 100000 Ar, envoyez vos infos",1,scam
-Votre paiement a été confirmé,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,phishing
-Ho voasakana ny kaontinao raha tsy manao zavatra ianao,1,investment_scam
-Misaotra tamin'ny fividiananao,0,none
-Ho voasakana ny kaontinao raha tsy manao zavatra ianao,1,mobile_money_scam
-Votre paiement a été confirmé,0,none
-Send your OTP code immediately,1,investment_scam
-Tsindrio eto hanamarina ny kaontinao,1,otp_fraud
-Votre compte sera bloqué si vous n'agissez pas,1,investment_scam
-Voaray ny volanao,0,none
-Envoyez votre code OTP maintenant,1,identity_fraud
-Misaotra tamin'ny fividiananao,0,none
-"You won $1000, send your details",1,otp_fraud
-Thank you for your purchase,0,none
-Your payment was successful,0,none
-Your payment was successful,0,none
-Misaotra tamin'ny fividiananao,0,none
-Click here to verify your account now,1,scam
-Votre paiement a été confirmé,0,none
-Ho voasakana ny kaontinao raha tsy manao zavatra ianao,1,mobile_money_scam
-"Nahazo vola ianao, alefaso ny mombamomba anao",1,otp_fraud
-Merci pour votre achat,0,none
-Tsindrio eto hanamarina ny kaontinao,1,mobile_money_scam
-Your payment was successful,0,none
-Envoyez votre code OTP maintenant,1,phishing
-Merci pour votre achat,0,none
-"Nahazo vola ianao, alefaso ny mombamomba anao",1,identity_fraud
-Voaray ny volanao,0,none
-Thank you for your purchase,0,none
-Your payment was successful,0,none
-Send your OTP code immediately,1,otp_fraud
-Voaray ny volanao,0,none
-Merci pour votre achat,0,none
-Your payment was successful,0,none
-Votre compte sera bloqué si vous n'agissez pas,1,identity_fraud
-Cliquez ici pour vérifier votre compte immédiatement,1,mobile_money_scam
-Votre compte sera bloqué si vous n'agissez pas,1,phishing
-Click here to verify your account now,1,scam
-Your payment was successful,0,none
-Your payment was successful,0,none
-Votre compte sera bloqué si vous n'agissez pas,1,scam
-Click here to verify your account now,1,scam
-Tsindrio eto hanamarina ny kaontinao,1,scam
-Tsindrio eto hanamarina ny kaontinao,1,scam
-"You won $1000, send your details",1,scam
-Votre paiement a été confirmé,0,none
-Votre compte sera bloqué si vous n'agissez pas,1,investment_scam
-Votre paiement a été confirmé,0,none
-Voaray ny volanao,0,none
-Click here to verify your account now,1,investment_scam
-Ho voasakana ny kaontinao raha tsy manao zavatra ianao,1,phishing
-Cliquez ici pour vérifier votre compte immédiatement,1,otp_fraud
-Merci pour votre achat,0,none
-Votre paiement a été confirmé,0,none
-Voaray ny volanao,0,none
-Merci pour votre achat,0,none
-Votre paiement a été confirmé,0,none
-Merci pour votre achat,0,none
-Send your OTP code immediately,1,identity_fraud
-"Vous avez gagné 100000 Ar, envoyez vos infos",1,phishing
-Merci pour votre achat,0,none
-Click here to verify your account now,1,investment_scam
-Voaray ny volanao,0,none
-Your payment was successful,0,none
-Envoyez votre code OTP maintenant,1,phishing
-Ho voasakana ny kaontinao raha tsy manao zavatra ianao,1,scam
-Ho voasakana ny kaontinao raha tsy manao zavatra ianao,1,scam
-Tsindrio eto hanamarina ny kaontinao,1,mobile_money_scam
-Votre compte sera bloqué si vous n'agissez pas,1,phishing
-Voaray ny volanao,0,none
-"Vous avez gagné 100000 Ar, envoyez vos infos",1,investment_scam
-Misaotra tamin'ny fividiananao,0,none
-Tsindrio eto hanamarina ny kaontinao,1,phishing
-Ho voasakana ny kaontinao raha tsy manao zavatra ianao,1,identity_fraud
-Ho voasakana ny kaontinao raha tsy manao zavatra ianao,1,phishing
-Voaray ny volanao,0,none
-"Vous avez gagné 100000 Ar, envoyez vos infos",1,identity_fraud
-Misaotra tamin'ny fividiananao,0,none
-Voaray ny volanao,0,none
-Misaotra tamin'ny fividiananao,0,none
-Thank you for your purchase,0,none
-"Nahazo vola ianao, alefaso ny mombamomba anao",1,phishing
-Alefaso ny kaody OTP anao,1,investment_scam
-Merci pour votre achat,0,none
-Voaray ny volanao,0,none
-Merci pour votre achat,0,none
-Alefaso ny kaody OTP anao,1,mobile_money_scam
-Votre paiement a été confirmé,0,none
-Thank you for your purchase,0,none
-Merci pour votre achat,0,none
-Merci pour votre achat,0,none
-Votre paiement a été confirmé,0,none
-Votre paiement a été confirmé,0,none
-Votre paiement a été confirmé,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,mobile_money_scam
-Merci pour votre achat,0,none
-Your payment was successful,0,none
-"You won $1000, send your details",1,scam
-Envoyez votre code OTP maintenant,1,phishing
-Ho voasakana ny kaontinao raha tsy manao zavatra ianao,1,identity_fraud
-Votre paiement a été confirmé,0,none
-Votre paiement a été confirmé,0,none
-"Nahazo vola ianao, alefaso ny mombamomba anao",1,investment_scam
-Votre paiement a été confirmé,0,none
-Voaray ny volanao,0,none
-Thank you for your purchase,0,none
-Misaotra tamin'ny fividiananao,0,none
-Merci pour votre achat,0,none
-Votre paiement a été confirmé,0,none
-Voaray ny volanao,0,none
-Alefaso ny kaody OTP anao,1,investment_scam
-Thank you for your purchase,0,none
-Ho voasakana ny kaontinao raha tsy manao zavatra ianao,1,scam
-Send your OTP code immediately,1,otp_fraud
-Voaray ny volanao,0,none
-Thank you for your purchase,0,none
-Send your OTP code immediately,1,identity_fraud
-Your account will be suspended if you don't act,1,investment_scam
-Send your OTP code immediately,1,scam
-"Nahazo vola ianao, alefaso ny mombamomba anao",1,mobile_money_scam
-Ho voasakana ny kaontinao raha tsy manao zavatra ianao,1,mobile_money_scam
-Tsindrio eto hanamarina ny kaontinao,1,investment_scam
-Tsindrio eto hanamarina ny kaontinao,1,otp_fraud
-Ho voasakana ny kaontinao raha tsy manao zavatra ianao,1,otp_fraud
-"Nahazo vola ianao, alefaso ny mombamomba anao",1,phishing
-Voaray ny volanao,0,none
-Tsindrio eto hanamarina ny kaontinao,1,investment_scam
-Send your OTP code immediately,1,phishing
-"Vous avez gagné 100000 Ar, envoyez vos infos",1,otp_fraud
-Click here to verify your account now,1,phishing
-Merci pour votre achat,0,none
-Votre paiement a été confirmé,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,phishing
-Ho voasakana ny kaontinao raha tsy manao zavatra ianao,1,mobile_money_scam
-Voaray ny volanao,0,none
-Envoyez votre code OTP maintenant,1,scam
-"You won $1000, send your details",1,identity_fraud
-Misaotra tamin'ny fividiananao,0,none
-Click here to verify your account now,1,scam
-Votre paiement a été confirmé,0,none
-Thank you for your purchase,0,none
-Your payment was successful,0,none
-Your payment was successful,0,none
-Merci pour votre achat,0,none
-Votre paiement a été confirmé,0,none
-Merci pour votre achat,0,none
-Alefaso ny kaody OTP anao,1,investment_scam
-"Vous avez gagné 100000 Ar, envoyez vos infos",1,mobile_money_scam
-"You won $1000, send your details",1,investment_scam
-Ho voasakana ny kaontinao raha tsy manao zavatra ianao,1,phishing
-Thank you for your purchase,0,none
-"Nahazo vola ianao, alefaso ny mombamomba anao",1,investment_scam
-Send your OTP code immediately,1,identity_fraud
-Misaotra tamin'ny fividiananao,0,none
-Thank you for your purchase,0,none
-Your account will be suspended if you don't act,1,identity_fraud
-Misaotra tamin'ny fividiananao,0,none
-"Nahazo vola ianao, alefaso ny mombamomba anao",1,phishing
-Voaray ny volanao,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,scam
-Alefaso ny kaody OTP anao,1,phishing
-Cliquez ici pour vérifier votre compte immédiatement,1,scam
-Tsindrio eto hanamarina ny kaontinao,1,scam
-Your payment was successful,0,none
-Misaotra tamin'ny fividiananao,0,none
-Votre paiement a été confirmé,0,none
-Envoyez votre code OTP maintenant,1,identity_fraud
-Envoyez votre code OTP maintenant,1,mobile_money_scam
-Envoyez votre code OTP maintenant,1,identity_fraud
-Misaotra tamin'ny fividiananao,0,none
-Your payment was successful,0,none
-"Nahazo vola ianao, alefaso ny mombamomba anao",1,scam
-Voaray ny volanao,0,none
-"Nahazo vola ianao, alefaso ny mombamomba anao",1,investment_scam
-Votre paiement a été confirmé,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,identity_fraud
-Tsindrio eto hanamarina ny kaontinao,1,mobile_money_scam
-Send your OTP code immediately,1,mobile_money_scam
-Your account will be suspended if you don't act,1,phishing
-Tsindrio eto hanamarina ny kaontinao,1,otp_fraud
-Votre paiement a été confirmé,0,none
-Your payment was successful,0,none
-Your account will be suspended if you don't act,1,mobile_money_scam
-Send your OTP code immediately,1,identity_fraud
-Thank you for your purchase,0,none
-Ho voasakana ny kaontinao raha tsy manao zavatra ianao,1,investment_scam
-Cliquez ici pour vérifier votre compte immédiatement,1,otp_fraud
-Merci pour votre achat,0,none
-Tsindrio eto hanamarina ny kaontinao,1,investment_scam
-Your account will be suspended if you don't act,1,phishing
-"Nahazo vola ianao, alefaso ny mombamomba anao",1,otp_fraud
-Votre paiement a été confirmé,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,scam
-Click here to verify your account now,1,scam
-Merci pour votre achat,0,none
-"You won $1000, send your details",1,otp_fraud
-Misaotra tamin'ny fividiananao,0,none
-Misaotra tamin'ny fividiananao,0,none
-Voaray ny volanao,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,phishing
-Cliquez ici pour vérifier votre compte immédiatement,1,investment_scam
-Misaotra tamin'ny fividiananao,0,none
-Send your OTP code immediately,1,phishing
-Ho voasakana ny kaontinao raha tsy manao zavatra ianao,1,scam
-Your payment was successful,0,none
-Misaotra tamin'ny fividiananao,0,none
-Votre paiement a été confirmé,0,none
-"You won $1000, send your details",1,otp_fraud
-Your payment was successful,0,none
-Tsindrio eto hanamarina ny kaontinao,1,mobile_money_scam
-Cliquez ici pour vérifier votre compte immédiatement,1,scam
-Thank you for your purchase,0,none
-Tsindrio eto hanamarina ny kaontinao,1,scam
-Your payment was successful,0,none
-Votre paiement a été confirmé,0,none
-Thank you for your purchase,0,none
-Your payment was successful,0,none
-Voaray ny volanao,0,none
-Voaray ny volanao,0,none
-Click here to verify your account now,1,mobile_money_scam
-Thank you for your purchase,0,none
-Misaotra tamin'ny fividiananao,0,none
-Votre paiement a été confirmé,0,none
-Ho voasakana ny kaontinao raha tsy manao zavatra ianao,1,scam
-Voaray ny volanao,0,none
-Misaotra tamin'ny fividiananao,0,none
-Voaray ny volanao,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,investment_scam
-Cliquez ici pour vérifier votre compte immédiatement,1,scam
-Tsindrio eto hanamarina ny kaontinao,1,investment_scam
-Votre compte sera bloqué si vous n'agissez pas,1,phishing
-Misaotra tamin'ny fividiananao,0,none
-Merci pour votre achat,0,none
-"You won $1000, send your details",1,identity_fraud
-Envoyez votre code OTP maintenant,1,investment_scam
-Your payment was successful,0,none
-Votre compte sera bloqué si vous n'agissez pas,1,identity_fraud
-Your account will be suspended if you don't act,1,mobile_money_scam
-Misaotra tamin'ny fividiananao,0,none
-Envoyez votre code OTP maintenant,1,otp_fraud
-Misaotra tamin'ny fividiananao,0,none
-Thank you for your purchase,0,none
-Your payment was successful,0,none
-Votre paiement a été confirmé,0,none
-Click here to verify your account now,1,mobile_money_scam
-Votre compte sera bloqué si vous n'agissez pas,1,scam
-Ho voasakana ny kaontinao raha tsy manao zavatra ianao,1,investment_scam
-Ho voasakana ny kaontinao raha tsy manao zavatra ianao,1,otp_fraud
-Your payment was successful,0,none
-"Nahazo vola ianao, alefaso ny mombamomba anao",1,phishing
-Voaray ny volanao,0,none
-Your payment was successful,0,none
-Click here to verify your account now,1,identity_fraud
-Click here to verify your account now,1,phishing
-Voaray ny volanao,0,none
-"You won $1000, send your details",1,mobile_money_scam
-Thank you for your purchase,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,mobile_money_scam
-Tsindrio eto hanamarina ny kaontinao,1,identity_fraud
-Cliquez ici pour vérifier votre compte immédiatement,1,identity_fraud
-"Nahazo vola ianao, alefaso ny mombamomba anao",1,investment_scam
-Your payment was successful,0,none
-Voaray ny volanao,0,none
-Votre paiement a été confirmé,0,none
-Votre paiement a été confirmé,0,none
-Voaray ny volanao,0,none
-Your payment was successful,0,none
-Alefaso ny kaody OTP anao,1,otp_fraud
-Tsindrio eto hanamarina ny kaontinao,1,identity_fraud
-Votre paiement a été confirmé,0,none
-"You won $1000, send your details",1,otp_fraud
-Click here to verify your account now,1,otp_fraud
-Misaotra tamin'ny fividiananao,0,none
-Send your OTP code immediately,1,phishing
-Votre compte sera bloqué si vous n'agissez pas,1,otp_fraud
-Merci pour votre achat,0,none
-Misaotra tamin'ny fividiananao,0,none
-Your payment was successful,0,none
-Merci pour votre achat,0,none
-Misaotra tamin'ny fividiananao,0,none
-Thank you for your purchase,0,none
-Envoyez votre code OTP maintenant,1,identity_fraud
-Send your OTP code immediately,1,mobile_money_scam
-Click here to verify your account now,1,scam
-Thank you for your purchase,0,none
-Alefaso ny kaody OTP anao,1,identity_fraud
-Your payment was successful,0,none
-Voaray ny volanao,0,none
-Your payment was successful,0,none
-Your payment was successful,0,none
-"Vous avez gagné 100000 Ar, envoyez vos infos",1,otp_fraud
-Your account will be suspended if you don't act,1,otp_fraud
-"Nahazo vola ianao, alefaso ny mombamomba anao",1,identity_fraud
-Votre paiement a été confirmé,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,otp_fraud
-Alefaso ny kaody OTP anao,1,scam
-Send your OTP code immediately,1,scam
-Voaray ny volanao,0,none
-Votre paiement a été confirmé,0,none
-"You won $1000, send your details",1,investment_scam
-Envoyez votre code OTP maintenant,1,scam
-Merci pour votre achat,0,none
-Voaray ny volanao,0,none
-"You won $1000, send your details",1,identity_fraud
-Cliquez ici pour vérifier votre compte immédiatement,1,investment_scam
-Merci pour votre achat,0,none
-Votre compte sera bloqué si vous n'agissez pas,1,investment_scam
-Merci pour votre achat,0,none
-Your payment was successful,0,none
-Your payment was successful,0,none
-"Nahazo vola ianao, alefaso ny mombamomba anao",1,mobile_money_scam
-Misaotra tamin'ny fividiananao,0,none
-Your account will be suspended if you don't act,1,otp_fraud
-Tsindrio eto hanamarina ny kaontinao,1,scam
-"Nahazo vola ianao, alefaso ny mombamomba anao",1,investment_scam
-Cliquez ici pour vérifier votre compte immédiatement,1,mobile_money_scam
-Misaotra tamin'ny fividiananao,0,none
-Send your OTP code immediately,1,mobile_money_scam
-Misaotra tamin'ny fividiananao,0,none
-Click here to verify your account now,1,phishing
-"You won $1000, send your details",1,phishing
-Envoyez votre code OTP maintenant,1,phishing
-Tsindrio eto hanamarina ny kaontinao,1,otp_fraud
-Thank you for your purchase,0,none
-Thank you for your purchase,0,none
-"Vous avez gagné 100000 Ar, envoyez vos infos",1,identity_fraud
-Misaotra tamin'ny fividiananao,0,none
-Your payment was successful,0,none
-Ho voasakana ny kaontinao raha tsy manao zavatra ianao,1,scam
-Your account will be suspended if you don't act,1,mobile_money_scam
-"You won $1000, send your details",1,mobile_money_scam
-Merci pour votre achat,0,none
-Click here to verify your account now,1,investment_scam
-Your account will be suspended if you don't act,1,identity_fraud
-Your payment was successful,0,none
-Your payment was successful,0,none
-Merci pour votre achat,0,none
-Thank you for your purchase,0,none
-Alefaso ny kaody OTP anao,1,scam
-Thank you for your purchase,0,none
-Votre compte sera bloqué si vous n'agissez pas,1,phishing
-Misaotra tamin'ny fividiananao,0,none
-Ho voasakana ny kaontinao raha tsy manao zavatra ianao,1,scam
-Misaotra tamin'ny fividiananao,0,none
-Thank you for your purchase,0,none
-Voaray ny volanao,0,none
-Send your OTP code immediately,1,otp_fraud
-Cliquez ici pour vérifier votre compte immédiatement,1,scam
-Votre paiement a été confirmé,0,none
-Alefaso ny kaody OTP anao,1,investment_scam
-Your payment was successful,0,none
-Ho voasakana ny kaontinao raha tsy manao zavatra ianao,1,identity_fraud
-Misaotra tamin'ny fividiananao,0,none
-Ho voasakana ny kaontinao raha tsy manao zavatra ianao,1,mobile_money_scam
-Merci pour votre achat,0,none
-Your payment was successful,0,none
-Merci pour votre achat,0,none
-Your account will be suspended if you don't act,1,scam
-"You won $1000, send your details",1,otp_fraud
-Your payment was successful,0,none
-Your account will be suspended if you don't act,1,otp_fraud
-Voaray ny volanao,0,none
-Tsindrio eto hanamarina ny kaontinao,1,phishing
-Thank you for your purchase,0,none
-Your payment was successful,0,none
-Thank you for your purchase,0,none
-Your account will be suspended if you don't act,1,investment_scam
-"Vous avez gagné 100000 Ar, envoyez vos infos",1,otp_fraud
-Thank you for your purchase,0,none
-Click here to verify your account now,1,investment_scam
-Merci pour votre achat,0,none
-Tsindrio eto hanamarina ny kaontinao,1,otp_fraud
-Misaotra tamin'ny fividiananao,0,none
-Your account will be suspended if you don't act,1,investment_scam
-Votre compte sera bloqué si vous n'agissez pas,1,mobile_money_scam
-Misaotra tamin'ny fividiananao,0,none
-Envoyez votre code OTP maintenant,1,investment_scam
-Thank you for your purchase,0,none
-Thank you for your purchase,0,none
-Votre paiement a été confirmé,0,none
-Click here to verify your account now,1,mobile_money_scam
-Misaotra tamin'ny fividiananao,0,none
-Voaray ny volanao,0,none
-Send your OTP code immediately,1,scam
-"Vous avez gagné 100000 Ar, envoyez vos infos",1,phishing
-Ho voasakana ny kaontinao raha tsy manao zavatra ianao,1,phishing
-"Nahazo vola ianao, alefaso ny mombamomba anao",1,phishing
-Alefaso ny kaody OTP anao,1,identity_fraud
-Thank you for your purchase,0,none
-Send your OTP code immediately,1,otp_fraud
-Thank you for your purchase,0,none
-Votre paiement a été confirmé,0,none
-"You won $1000, send your details",1,investment_scam
-Voaray ny volanao,0,none
-Thank you for your purchase,0,none
-Voaray ny volanao,0,none
-Thank you for your purchase,0,none
-Your payment was successful,0,none
-Voaray ny volanao,0,none
-Send your OTP code immediately,1,otp_fraud
-Thank you for your purchase,0,none
-Your payment was successful,0,none
-Thank you for your purchase,0,none
-"Vous avez gagné 100000 Ar, envoyez vos infos",1,identity_fraud
-Ho voasakana ny kaontinao raha tsy manao zavatra ianao,1,otp_fraud
-Ho voasakana ny kaontinao raha tsy manao zavatra ianao,1,phishing
-Alefaso ny kaody OTP anao,1,mobile_money_scam
-Merci pour votre achat,0,none
-Voaray ny volanao,0,none
-Click here to verify your account now,1,mobile_money_scam
-"You won $1000, send your details",1,otp_fraud
-Alefaso ny kaody OTP anao,1,investment_scam
-Votre paiement a été confirmé,0,none
-Envoyez votre code OTP maintenant,1,identity_fraud
-Send your OTP code immediately,1,scam
-Merci pour votre achat,0,none
-Envoyez votre code OTP maintenant,1,phishing
-Voaray ny volanao,0,none
-Your payment was successful,0,none
-Thank you for your purchase,0,none
-Ho voasakana ny kaontinao raha tsy manao zavatra ianao,1,investment_scam
-Your payment was successful,0,none
-Merci pour votre achat,0,none
-Send your OTP code immediately,1,identity_fraud
-Your payment was successful,0,none
-Misaotra tamin'ny fividiananao,0,none
-Tsindrio eto hanamarina ny kaontinao,1,scam
-Send your OTP code immediately,1,phishing
-Votre paiement a été confirmé,0,none
-"Nahazo vola ianao, alefaso ny mombamomba anao",1,investment_scam
-Voaray ny volanao,0,none
-Your payment was successful,0,none
-Your account will be suspended if you don't act,1,mobile_money_scam
-Envoyez votre code OTP maintenant,1,otp_fraud
-Thank you for your purchase,0,none
-Votre paiement a été confirmé,0,none
-Thank you for your purchase,0,none
-Envoyez votre code OTP maintenant,1,investment_scam
-Misaotra tamin'ny fividiananao,0,none
-Your account will be suspended if you don't act,1,phishing
-Voaray ny volanao,0,none
-Tsindrio eto hanamarina ny kaontinao,1,investment_scam
-Votre paiement a été confirmé,0,none
-Votre compte sera bloqué si vous n'agissez pas,1,identity_fraud
-Merci pour votre achat,0,none
-Merci pour votre achat,0,none
-Your account will be suspended if you don't act,1,otp_fraud
-Votre paiement a été confirmé,0,none
-Misaotra tamin'ny fividiananao,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,otp_fraud
-Your payment was successful,0,none
-Merci pour votre achat,0,none
-Cliquez ici pour vérifier votre compte immédiatement,1,investment_scam
-Your payment was successful,0,none
-Votre paiement a été confirmé,0,none
-Voaray ny volanao,0,none
-Votre paiement a été confirmé,0,none
-Voaray ny volanao,0,none
-Thank you for your purchase,0,none
-Tsindrio eto hanamarina ny kaontinao,1,scam
-Click here to verify your account now,1,otp_fraud
-Alefaso ny kaody OTP anao,1,phishing
-Cliquez ici pour vérifier votre compte immédiatement,1,otp_fraud
-Your payment was successful,0,none
-Alefaso ny kaody OTP anao,1,mobile_money_scam
-"Nahazo vola ianao, alefaso ny mombamomba anao",1,phishing
-Tsindrio eto hanamarina ny kaontinao,1,phishing
-Your payment was successful,0,none
-Merci pour votre achat,0,none
-Alefaso ny kaody OTP anao,1,investment_scam
-Ho voasakana ny kaontinao raha tsy manao zavatra ianao,1,phishing
-Tsindrio eto hanamarina ny kaontinao,1,phishing
-Cliquez ici pour vérifier votre compte immédiatement,1,investment_scam
-Tsindrio eto hanamarina ny kaontinao,1,investment_scam
-Merci pour votre achat,0,none
-Click here to verify your account now,1,otp_fraud
-Voaray ny volanao,0,none
-Envoyez votre code OTP maintenant,1,phishing
-Misaotra tamin'ny fividiananao,0,none
-Votre paiement a été confirmé,0,none
-Your payment was successful,0,none
-Send your OTP code immediately,1,otp_fraud
-"You won $1000, send your details",1,phishing
-Votre paiement a été confirmé,0,none
-Your payment was successful,0,none
-Merci pour votre achat,0,none
-Your account will be suspended if you don't act,1,mobile_money_scam
-"You won $1000, send your details",1,investment_scam
-Voaray ny volanao,0,none
-"Vous avez gagné 100000 Ar, envoyez vos infos",1,mobile_money_scam
-Misaotra tamin'ny fividiananao,0,none
-Tsindrio eto hanamarina ny kaontinao,1,investment_scam
-Misaotra tamin'ny fividiananao,0,none
-"You won $1000, send your details",1,identity_fraud
-Thank you for your purchase,0,none
-Click here to verify your account now,1,phishing
-Cliquez ici pour vérifier votre compte immédiatement,1,otp_fraud
-Your account will be suspended if you don't act,1,otp_fraud
-Nahazo tambiny lehibe ianao! Alefaso ny laharanao банк mba hahazoana ny vola,1,phishing
-"Misy asa azo atao an-trano, vola betsaka isan'andro, mifandraisa aminay",1,scam_asa
-Ny kaontinao dia voaidy. Tsindrio eto mba hamerenana azy,1,phishing
-"Mandroso tanana aho, mila €500 fotsiny aho mba hahazoana ny lova €50000",1,avance_vola
-Ny finday Samsung Galaxy S24 vaovao dia amidy amin'ny vidiny €50 fotsiny,1,varo_sandoka
-"Jesosy nitso-drano anao, alefa ny laharanao mba hahazoana fitahiana vola",1,fandaharana_ara_pivavahana
-"Efa menany ny kaoninao, asehoy ny tenimiafina mba hanadio azy",1,phishing
-Tombola nasionaly: menany ianao! Alefa ny taratasy ID sy vola €100 ho saram-pindramana,1,tombola_sandoka
-"Docteur malagasy mila mpanampy amin'ny asa ara-tsosialy, karama tsara",0,tsy_misy
-Ny fivoriana fikambanana dia hatao ny Alatsinainy ho avy amin'ny 10 ora,0,tsy_misy
-"Misy fihinanam-borona amin'ny tranonay ny Sabotsy, tongava ianareo",0,tsy_misy
-Ny fidiran'ny mpianatra amin'ny sekoly ambony dia misokatra ankehitriny,0,tsy_misy
-Orinasa iray mitady mpiasa mahay ordinatera any Antananarivo,0,tsy_misy
-Vola 1 000 000 Ar no azo raha mandoa €200 ianao aloha,1,avance_vola
-"Ny passportanao dia efa vonona, efa-bolana anefa mbola tsy nalainao",0,tsy_misy
-Asehoy ny code OTP nalefa tamin'ny finday mba hanamarinana ny matihanina,1,phishing
-"Ny renivohitry Madagascar dia Antananarivo, tanàna manan-tantara",0,tsy_misy
-Mila mpiantoka aho ho an'ny tranom-pivarotana vaovao ato an-tanàna,0,tsy_misy
-"Manana vola any amin'ny banky ivelany aho, mila olona mahatoky hitana azy",1,avance_vola
-Ny fampianarana teny anglisy an-tserasera dia manomboka ny herinandro ho avy,0,tsy_misy
-Alero ny kaontinao Facebook sy tenimiafina mba hanadrenina ny olana teknika,1,phishing
-Misy mpivarotra sandoka mivarotra entana tsy misy kalitao amin'ny vidiny avo,1,varo_sandoka
-Ny rano sy herinaratra dia mety ho voasakana raha tsy mandoa amin'ny fotoana,0,tsy_misy
-"Tompon'ny vola lehibe mila mpanampy hitana ny hareny, tsy misy hetra",1,avance_vola
-Ny fifanatrehan'ny mpampianatra sy ny ray aman-dreny dia natao omaly hariva,0,tsy_misy
-"Ny finday iPhone 15 Pro dia amidy amin'ny vidiny tena ambany, mifandraisa haingana",1,varo_sandoka
-Azonao adika ny hetsika hankany amin'ny toby fitsaboana amin'ny alalan'ny app,0,tsy_misy
-"Mpitsabo voatendry hitondra vola ho an'ny marary, karama tsara",1,scam_asa
-Ny fampisehoana hira dia hatao amin'ny arena lehibe ny Sabotsy alina,0,tsy_misy
-Taratasy ofisialy avy amin'ny ministera: mandoa €300 mba hahazoana ny taratasy,1,scam_ofisialy
-Ny tranonkala dia miasa tsara indray taorian'ny fanavaozana nataonay,0,tsy_misy
-"Crypto-monnaie vaovao dia hiakatra 1000% amin'ny herinandro, mividia haingana",1,scam_investissement
-Ny fivoriamben'ny tanàna dia holàlaina amin'ny efitrano lehibe ny Alarobia,0,tsy_misy
-Menany ny kibao goavana! Asehoy ny laharana carte bancaire hahazoana azy,1,tombola_sandoka
-Ny toby fampianarana teny gasy dia misokatra ho an'ny rehetra tsy misy saram-pianarana,0,tsy_misy
-"Mpivarotra akamoana mitady mpanampy mitantana ny ranomasina, vola betsaka",1,scam_asa
-Ny herinaratra any aminareo dia ho voasakana raha tsy mandoa vola ankehitriny,1,scam_ofisialy
-"Vonjeo ny zanakolombelona any Afrika, alefa ny fanampiana vola amin'ity laharana ity",1,scam_asa
-Ny fitsaboana ny ankizy kely ao amin'ny hopitaly dia maimaim-poana,0,tsy_misy
-Ny lalana vaovao ao amin'ny tanàna dia efa tapitra ny asa fanamboarana,0,tsy_misy
-"Mpandraharaha avy any ivelany mitady mpiara-miasa malagasy, vola betsaka anefa tsy mitady",1,scam_asa
-Ny tranom-barotra vaovao dia manomboka ny heriny amin'ny volana ho avy,0,tsy_misy
-"Mety ho menany ianao, asehoy ny kaontinao Gmail sy tenimiafina mba hamarinana",1,phishing
-Ny fihodinana ara-toekarena malagasy dia miovaova amin'ny taona farany,0,tsy_misy
-"Mampindra vola haingana tsy misy banky, fanerena kely ihany no ilaina",1,scam_pindramana
-Ny hira isan'andro dia atao amin'ny radio nasionaly amin'ny 7 ora maraina,0,tsy_misy
-Ny kaontinao dia ho fafana raha tsy mandoa saram-pitandreman'ny €50 ianao,1,phishing
-"Mpiandry zaza mitady asa ao Antananarivo, mahalala mampianatra ankizy kely",0,tsy_misy
-"Misaotra tamin'ny fandaminana ny fety, tsara dia tsara ny fanaovana",0,tsy_misy
-Ny vondron'olona maro dia misangana hanohitra ny kolikoly amin'ny fanjakana,0,tsy_misy
-Investissement tsy misy loza: averina 300% ny volanao amin'ny roa herinandro,1,scam_investissement
-Ny fampisehoana tantara malagasy dia hatao ao amin'ny foibe kolontsaina,0,tsy_misy
-"Vaovao lehibe: ny kaontinao banky dia voaidy, tsindrio eto mba hanitsiana",1,phishing
-Misotro rano madio sy mihinana sakafo ara-pahasalamana no tena ilain'ny vatana,0,tsy_misy
-"Ny mpitazona tranon-dalana mila mpanome sakafo, karama ara-dalàna",0,tsy_misy
-Alefa €150 mba hahazoana vola 2 000 000 Ar avy amin'ny fandaharana fanampiana,1,avance_vola
-Ny biblioteka nasionaly dia manana boky malagasy an'arivony nosoratan'ny mpanoratra taloha,0,tsy_misy
-Ny fanadinana fidirana amin'ny oniversite dia holàlaina ny volana Oktobra,0,tsy_misy
-"Ataovy haingana: ny tombola lehibe dia mifarana amin'ny andro, menany ianao",1,tombola_sandoka
-Ny faritra Vakinankaratra dia manan-karena amin'ny voly vary sy voly anana,0,tsy_misy
-"Mila mpanampy mitantana ny vola aho, hizara 40% amin'ny tombo hita",1,avance_vola
-Ny fanabeazana ny ankizy dia andraikitry ny ray aman-dreny sy ny fanjakana,0,tsy_misy
-Asehoy ny sary ID sy selfie miaraka amin'ny taratasy mba hahazoana ny vola,1,phishing
-Ny rano fisotro madio dia mbola olana lehibe any amin'ny faritra sasany,0,tsy_misy
-Ny mpamboly any amin'ny faritra atsimo dia mijaly noho ny hain-tany,0,tsy_misy
-Tombola: menany ny fiara Toyota vaovao! Mila €200 fotsiny ho saram-pandefasana,1,tombola_sandoka
-Ny lalana fanabeazana vaovao dia hampiditra teny malagasy bebe kokoa amin'ny sekoly,0,tsy_misy
-Ny mpivarotra entana any amin'ny tsena Analakely dia mampiseho vokatra tsara kalitao,0,tsy_misy
-Mpitsabo ara-tsaina mitady mpiasa malagasy mpanampy amin'ny tetikasa fandraisana,0,tsy_misy
-Ny dihy malagasy toy ny Hira Gasy dia ampitaina amin'ny taranaka izao,0,tsy_misy
-"Mety ho voasambotra ianao noho ny hetra tsy naloa, alefa vola aloha mba hisorohana",1,scam_ofisialy
-Ny fianarana programation dia manan-danja ho an'ny tanora malagasy amin'ny ho avy,0,tsy_misy
-Code de vérification: 847291. Tsy asehoy olona hafa na dia ny mpiasa banky aza,0,tsy_misy
-Ny mpiasa fanjakana iray mila olona hitana vola mandritra ny fanamboarana trano,1,avance_vola
-Ny zanaky ny mpanjaka taloha mila olona mahatoky hitana ny hareny miisa an'arivo,1,avance_vola
-Ny fandaharana fanampiana tsotra dia misy ho an'ny fianakaviana sahirana,0,tsy_misy
-Ny dioksida karbone voaroaka amin'ny tontolo iainana dia mampiditra ny hainandro,0,tsy_misy
-Fampindramam-bola haingana tsy mila antoka: 500 000 Ar amin'ny ora iray ihany,1,scam_pindramana
-Ny boky vaovao momba ny tantaran'i Madagasikara dia efa azo atosika any amin'ny tsenan-taratasy,0,tsy_misy
-Ny fikambanana mpanao fanamboarana entana malagasy dia mitady mpamita baiko,0,tsy_misy
-Tsindrio eto mba hijery ny sary nahaliana nalaina taminao omaly alina,1,phishing
-Ny tokatrano maintso dia manampy amin'ny fanariana fako sy fanaotronana hery,0,tsy_misy
-Ny fitsaboana ara-bakiteny dia maimaim-poana amin'ny hopitaly vitsivitsy any Tana,0,tsy_misy
-Mpitatitra malagasy mitady mpanjifa mipetraka any amin'ny faritra atsinanana,0,tsy_misy
-"Investissez maintenant: ny bitcoin dia hiakatra 500% amin'ny herinandro iray, azo antoka",1,scam_investissement
-Ny fandaharana nanatanteraka asa soa ho an'ny ankizy mahantra dia nahomby,0,tsy_misy
-Ny kilalao baolina kitra nasionaly dia hatao amin'ny kianja lehibe ny Asabotsy,0,tsy_misy
-Alefa ny finday sy vola €500 mba hahazoana ny lova be narovan'ny mpiray tanindrazana,1,avance_vola
-"Ny mpanao gazety malagasy dia mitady mpanampy an-tserasera, karama tsara",0,tsy_misy
-Minisiteran'ny Atitany: mandoa vola ankehitriny mba hisorohana ny fanaretsana,1,scam_ofisialy
-Ny fampandrosoana ny faritra ambanivohitra dia mila fampiasam-bola betsaka,0,tsy_misy
-Ny tranombarotra be dia be any Antananarivo dia manolotra vokatra isan-karazany,0,tsy_misy
-"Jesosy hiteny tamiko fa ianao no voafidy, alefa vola mba hahazoana fitahiana",1,fandaharana_ara_pivavahana
-Ny fitsaboana ny tontolo iainana dia andraikitry ny rehetra eto Madagasikara,0,tsy_misy
-Ny Programme d'échange étudiant dia misokatra ho an'ny mpianatra malagasy,0,tsy_misy
-Mpiasam-panjakana amin'ny sehatry ny fahasalamana mitady mpitsabo ho an'ny faritra,0,tsy_misy
-Asehoy ny crypto wallet address sy private key mba hahazoana vola maimaim-poana,1,phishing
-"Ny toky farany mba hahazoana ny vidiny ambany: alefa ny vola aloha, atoranay ny entana",1,varo_sandoka
+content,is_fraud
+"URGENT! Votre colis DHL est retenu en douane. Payez 2€ maintenant: http://bit.ly/abc123",1
+"Votre colis Chronopost est bloqué. Réglez 1.99€ ici: https://t.co/xyz",1
+"Colissimo: paquet en attente. Frais 2.50€: bit.ly/pay-colis",1
+"La Poste: livraison échouée. Reprogrammez: laposte-delivery.fr/reschedule",1
+"UPS: votre colis nécessite 3€ pour livraison: http://ups-fr.click/pay",1
+"Amazon: commande suspendue. Cliquez pour valider: amaz0n-fr.shop/verify",1
+"FedEx: adresse incorrecte. Corrigez: https://fedex-update.info",1
+"Mondial Relay: colis perdu. Réclamez: mondial-relay-claim.net",1
+"Votre livraison Chronopost attend. Frais de 1.99€ à payer",1
+"Votre colis DHL bloqué en douane. Payez 3€ de frais",1
+"Livraison UPS impossible. Payez frais stockage 3€",1
+"Colissimo: échec livraison. Reprogrammez sur colissimo-fr.com",1
+"La Poste: colis non distribué. Frais de réexpédition 2.50€",1
+"URGENT! Votre colis attend. Payez 2€ maintenant: http://bit.ly/abc123",1
+"TNT: votre colis nécessite un complément d'affranchissement de 1.80€",1
+"Point Relais: votre colis expire demain. Récupération urgente",1
+"GLS Express: adresse incomplète. Mettez à jour vos informations",1
+"Votre compte bancaire sera bloqué dans 24h. Confirmez: http://secu-banque.fr",1
+"ALERTE BNP: connexion suspecte. Vérifiez: bnp-securise.com/verif",1
+"Crédit Agricole: opération à valider. Authentifiez-vous: ca-secure.click",1
+"Société Générale: carte bloquée. Débloquez: http://sg-debloq.net",1
+"LCL: virement 2450€ en attente. Confirmez: https://lcl-valid.fr",1
+"CB désactivée. Réactivez: bit.ly/cb-reactiv",1
+"Boursorama: transaction 890€ suspecte. Bloquez: boursorama-fr.net",1
+"Banque Populaire: identifiez-vous sous 24h: bp-secure.com",1
+"Caisse Epargne: carte bancaire bloquée. Cliquez: ce-debloquer.net",1
+"Compte bloqué pour raison de sécurité. Confirmez identité: http://bit.ly/sec-bank",1
+"Votre compte bancaire sera bloqué. Confirmez vos infos: http://secure-bank.ru",1
+"ALERTE SECURITE: Connexion suspecte détectée. Changez mot de passe ici",1
+"URGENT: Carte bancaire expirée. Renouvelez maintenant",1
+"Votre virement de 890€ est en attente de validation",1
+"Paypal: Activité inhabituelle. Confirmez identité immédiatement",1
+"HSBC: prélèvement douteux de 1250€. Bloquez immédiatement",1
+"ING Direct: accès limité. Réactivez votre compte sous 48h",1
+"Monabanq: sécurité renforcée requise. Connectez-vous pour vérifier",1
+"Fortuneo: virement suspect en attente de votre validation",1
+"Impôts: remboursement 378€ disponible. Réclamez: impots-gouv-remb.fr",1
+"CAF: dossier incomplet. Mettez à jour sous 48h: caf-update.fr",1
+"Ameli: remboursement 156€ en attente: ameli-rembours.com",1
+"Pôle Emploi: nouveau paiement. Actualisez: pole-empl0i.fr",1
+"URSSAF: régularisation. Payez 234€: urssaf-pay.net",1
+"ANTS: carte grise prête. Frais 1.50€: ants-gouv.click",1
+"Service Public: document à valider sous 48h: service-public-fr.net",1
+"Remboursement impôts de 450€. Réclamez maintenant sur impots-gouv.net",1
+"Amende impayée de 75€. Payez sous 48h sinon majoration",1
+"CAF: Vous avez droit à 380€ d'aide. Réclamez vite",1
+"Pole Emploi: mise à jour dossier requise sous 72h",1
+"Ameli: carte vitale expirée. Renouvelez en ligne",1
+"CPAM: vous avez droit à 156€ de remboursement",1
+"Mutuelle santé: remboursement de 245€ en attente",1
+"SNCF: Remboursement retard de 18€. Demandez-le ici",1
+"Préfecture: votre dossier est incomplet. Régularisez: prefecture-fr.click",1
+"FÉLICITATIONS! Vous avez gagné 10000€. Réclamez: http://gain-express.fr",1
+"Tirage Loto! Prix 5000€. Cliquez: loto-win.net",1
+"Cadeau Samsung offert! Derniers iPhone disponibles: samsung-cadeau.fr",1
+"Vous avez gagné un voyage aux Maldives! Validez: voyage-gagne.com",1
+"PRIX GAGNANT! iPhone 15 Pro offert. Réclamez: iphone-gratuit.net",1
+"Carrefour cadeau anniversaire 500€. Réclamez: carrefour-cadeau.click",1
+"Félicitations! Vous avez gagné 5000€. Cliquez ici: http://bit.ly/win",1
+"Gagnez un iPhone 15 GRATUIT! Participez maintenant",1
+"Vous êtes sélectionné pour tester iPhone 15 gratuitement",1
+"Tombola Leclerc: 1000€ de bons d'achat à gagner. Inscrivez-vous",1
+"Lidl vous offre un panier cadeau. Réclamez dans 24h",1
+"Binance: connexion Russie détectée. Sécurisez: https://binance-secu.io",1
+"Portefeuille Coinbase gelé. Débloquez: coinbase-unlock.net",1
+"Opportunité Bitcoin! Doublez en 7j: crypto-profit.click",1
+"Trading garanti 500€/jour. Inscrivez-vous: trading-easy.fr",1
+"Investissement crypto 300% retour garanti: invest-crypto.net",1
+"Kraken: activité inhabituelle. Vérifiez votre portefeuille maintenant",1
+"Netflix: paiement échoué. Mettez à jour: netflix-billing.co",1
+"Spotify Premium expire dans 24h. Renouvelez: spotify-renew.fr",1
+"Abonnement Apple prolongé 79.99€. Annulez: apple-cancel.net",1
+"Microsoft: compte suspendu. Réactivez: microsoft-fr.click",1
+"Google: activité suspecte détectée. Vérifiez: google-verify.io",1
+"Facebook: compte désactivé. Réactivez: fb-reactivate.net",1
+"Instagram: violation des règles. Connectez-vous: instagram-appeal.com",1
+"Netflix: Votre abonnement expire. Mettez à jour paiement",1
+"Amazon: Problème avec votre commande. Cliquez pour résoudre",1
+"Disney+: mise à jour de paiement requise. Cliquez pour continuer",1
+"Canal+: facture impayée. Régularisez avant coupure",1
+"LinkedIn: votre compte présente une activité suspecte",1
+"Nous avons piraté votre téléphone. Payez 500€ en Bitcoin sous 48h",1
+"Vos données sont en ligne. Protégez-vous: http://protect-fr.net",1
+"Photo intime détenue. Payez en crypto pour suppression",1
+"Windows a détecté un virus. Appelez le 08 XX XX XX XX",1
+"Votre ordinateur est infecté. Contactez le support Microsoft",1
+"Alerte virus: vos données seront effacées dans 1h",1
+"Appel de 12€ inclus. Votre forfait Free Mobile est activé",1
+"Votre facture EDF impayée. Coupure d'électricité prévue",1
+"FreeBox: Votre ligne sera coupée. Régularisez vite",1
+"SFR: Dernière facture impayée. Ligne suspendue demain",1
+"Telma: ligne sera désactivée. Rechargez: telma-recharge.mg",1
+"Orange Money: transfert 500000 Ar en attente: orange-mg.click",1
+"Airtel Money: solde crédité. Retirez: airtel-withdraw.mg",1
+"Free Mobile: facture impayée. Régularisez: free-facture.net",1
+"Bouygues: prélèvement échoué. Cliquez: bouygues-paiement.fr",1
+"Engie: coupure de gaz prévue. Payez facture impayée urgent",1
+"Pass sanitaire expire. Renouvelez: pass-sanit.fr",1
+"Rappel vaccin COVID obligatoire. RDV: vaccin-covid.click",1
+"Prime énergie 1500€ disponible. Demandez: prime-energie-2026.fr",1
+"Chèque carburant 100€ à récupérer: cheque-carburant.click",1
+"Crédit rapide 5000€ sans justificatif. Réponse en 2h",1
+"Prêt urgent 10000€ accordé. Cliquez pour finaliser",1
+"Héritage 500000€ en attente. Contactez avocat maître Dubois",1
+"Investissement garanti sans risque. Doublez votre épargne",1
+"Envoyez de l'argent pour débloquer votre récompense",1
+"Votre compte sera suspendu si vous n'agissez pas",1
+"Offre urgente doublez votre argent rapidement",1
+"Confirmez vos informations bancaires maintenant",1
+"Cliquez ici pour vérifier votre compte immédiatement",1
+"Erreur de transfert renvoyez l'argent immédiatement",1
+"Vous avez gagné de l'argent envoyez vos informations",1
+"Envoyez votre code OTP pour sécuriser votre compte",1
+"Votre compte sera bloqué si vous n'agissez pas",1
+"Envoyez votre code OTP maintenant",1
+"Mandat postal de 3500€ à votre nom. Confirmez pour retrait",1
+"Votre IBAN a été compromis. Communiquez nouveau RIB",1
+"Dernière chance! Validez avant minuit ou perdez tout",1
+"Salut ça va? On se voit ce soir?",0
+"RDV dentiste demain 14h n'oublie pas!",0
+"Le repas est prêt à table!",0
+"Je t'aime mon amour tu me manques",0
+"Merci pour ton cadeau c'était super",0
+"Je suis en retard arrive dans 10 min",0
+"Peux-tu acheter du pain en rentrant?",0
+"Bonjour réunion reportée à 15h",0
+"Ta commande #FR789456 est en préparation",0
+"Votre code de vérification est 439812",0
+"Code d'accès: 5847. Ne le partagez avec personne.",0
+"Bonjour Marie le devis est prêt je te l'envoie par mail",0
+"Docteur: votre résultat d'analyse est disponible",0
+"Pharmacie: votre ordonnance est prête à récupérer",0
+"Le concert est à 20h on se retrouve devant l'entrée",0
+"Papa je rentre tard ce soir ne m'attendez pas",0
+"Bonne fête maman je pense à toi!",0
+"L'école est fermée demain journée pédagogique",0
+"Votre taxi arrive dans 3 minutes",0
+"Uber: Karim arrive dans 2 minutes avec une Peugeot 308",0
+"Votre livraison Deliveroo arrive dans 5 minutes",0
+"DHL: votre colis a été livré à l'adresse indiquée",0
+"La Poste: votre recommandé est disponible au bureau",0
+"Chronopost: colis livré signature Martin D.",0
+"Bonjour nous confirmons votre réservation pour samedi 19h à 4 personnes",0
+"Rappel: RDV chez le garagiste demain 9h",0
+"Votre vol AF1234 est à l'heure embarquement 11h30",0
+"SNCF: votre train TGV 6789 partira du quai 12",0
+"Parking gratuit pendant 2h avec votre achat",0
+"Votre abonnement Netflix sera renouvelé le 15/05",0
+"Spotify: votre playlist hebdomadaire est prête",0
+"Nouvel épisode disponible sur Disney+",0
+"Bonjour votre relevé de compte est disponible dans l'application",0
+"Banque: virement reçu de Jean Dupont",0
+"Votre solde Livret A: 3456.78€",0
+"Prélèvement EDF effectué: 87.50€",0
+"Loyer prélevé ce jour: 650€",0
+"Salaire de mars versé: 2150€",0
+"Ameli: consultation remboursée 25€ virée sur votre compte",0
+"CAF: allocation versée ce jour",0
+"Réunion d'équipe reportée à 14h salle 205",0
+"N'oublie pas d'appeler maman pour son anniversaire",0
+"Le match commence dans 10 min viens vite!",0
+"Soirée chez Sophie samedi à 20h tu viens?",0
+"Bonjour Kevin merci pour votre candidature nous vous recontactons bientôt",0
+"Cours annulé aujourd'hui prof malade",0
+"École: mon fils sera absent demain pour rdv médical",0
+"Bibliothèque: votre livre est à rendre avant le 10/05",0
+"Centre commercial: vos achats sont prêts au click and collect",0
+"Darty: votre commande est disponible en magasin",0
+"Fnac: votre livre commandé est en rayon",0
+"Amazon: votre commande a été expédiée livraison prévue mercredi",0
+"Bonjour à tous on se retrouve à 12h au resto habituel",0
+"Pense à sortir les poubelles ce soir",0
+"Chéri tu peux récupérer les enfants à 17h?",0
+"Le paiement de votre cantine a bien été reçu",0
+"Votre RDV sera demain à 10h30 merci",0
+"Salle de sport: votre cours de yoga commence à 18h",0
+"Compteur EDF: relevé effectué ce matin",0
+"Pôle emploi: votre actualisation est bien enregistrée",0
+"Impôts: votre avis est consultable sur impots.gouv.fr",0
+"CAF: votre versement mensuel sera effectué le 5",0
+"Ameli: téléchargez votre attestation de sécurité sociale",0
+"Votre commande 12345 sera livrée demain entre 9h et 12h",0
+"Pizza livrée dans 20 minutes merci pour votre commande",0
+"SNCF: votre e-billet est disponible dans votre compte",0
+"Ryanair: enregistrement en ligne ouvert pour votre vol",0
+"Air France: votre réservation a bien été prise en compte",0
+"Booking: votre réservation à Paris est confirmée",0
+"Airbnb: votre hôte a validé votre séjour",0
+"Restaurant La Bonne Fourchette confirme votre réservation ce soir",0
+"Médecin de garde disponible ce weekend au 15",0
+"Votre ordonnance est disponible en pharmacie",0
+"Laboratoire: résultats disponibles sur votre espace patient",0
+"Dentiste: pensez à prendre rendez-vous pour votre contrôle annuel",0
+"Votre lettre recommandée est disponible au bureau de poste",0
+"Taxi G7 arrive dans 5 minutes plaque AB-123-CD",0
+"Votre cours de piano a lieu demain 17h avec M. Durand",0
+"Club de foot: entraînement mercredi 18h au stade",0
+"École de danse: spectacle de fin d'année samedi 14h",0
+"Votre boulangère vous informe: fermeture exceptionnelle demain",0
+"Mairie: inscription cantine ouverte jusqu'au 20/05",0
+"Crèche: pensez à signer le carnet de santé de votre enfant",0
+"Hôpital: rendez-vous IRM confirmé le 12/05 à 9h30",0
+"Kiné: votre prochaine séance est prévue jeudi 14h",0
+"Ophtalmologue: RDV contrôle annuel à reprendre",0
+"Syndicat copropriété: AG le 15 juin à 19h",0
+"EDF: facture disponible dans votre espace client",0
+"Engie: relevé de consommation ce mois",0
+"Veolia: intervention prévue demain matin",0
+"Orange: votre box sera livrée mercredi entre 14h et 17h",0
+"Free: activation de votre ligne prévue vendredi",0
+"Bouygues: votre forfait a été renouvelé comme convenu",0
+"Bonjour comment ça va?",0
+"Merci pour votre achat. Livraison prévue lundi",0
+"Votre code de vérification: 123456",0
+"Réunion reportée à 15h. A tout à l'heure",0
+"Papa rentre tard ce soir. Bisous",0
+"N'oublie pas le pain. Merci",0
+"Joyeux anniversaire! Gros bisous",0
+"Le train a 10min de retard. J'arrive bientôt",0
+"Super soirée hier! On remet ça quand?",0
+"Rappelle-moi quand tu peux",0
+"J'ai reçu le colis. Merci beaucoup!",0
+"Rendez-vous confirmé pour le 15/02 à 10h",0
+"Bon courage pour ton exam!",0
+"Tu veux qu'on mange ensemble ce midi?",0
+"PROMO -50% sur tout le site jusqu'à dimanche",0
+"Votre commande #12345 est expédiée",0
+"Cours annulé demain matin",0
+"Ta pizza arrive dans 15min",0
+"Soldes d'hiver: jusqu'à -70% en magasin",0
+"Salut! Ça te dit un ciné ce weekend?",0
+"J'ai trouvé ton portefeuille. Appelle-moi",0
+"Le médecin peut te recevoir à 16h30",0
+"Promo McDo: 2 menus achetés = 1 offert",0
+"Ton colis Amazon arrive aujourd'hui entre 14h-18h",0
+"Confirmation réservation hôtel du 20 au 25 mars",0
+"Joyeuses fêtes! Bisous de toute la famille",0
+"Vol AF1234 décollage à l'heure. Bon voyage!",0
+"Pharmacie de garde ce weekend: Pharmacie Centrale",0
+"Météo: risque d'orages cet après-midi",0
+"Match ce soir 21h. On se retrouve au bar?",0
+"Ton compte Spotify Premium est renouvelé",0
+"Rdv coiffeur samedi 10h. N'oublie pas!",0
+"Le garagiste a fini la révision. Tu peux passer",0
+"Bonne année 2026! Santé et bonheur",0
+"Votre colis Chronopost n°12345 est en cours de livraison. Il sera déposé dans votre boîte aux lettres.",0
+"Le livreur est en route avec votre commande Amazon. Code d'accès requis ?",0
+"Votre livraison est prévue entre 14h et 16h aujourd'hui.",0
+"Chronopost: Votre colis a été livré au point relais choisi.",0
+"La Poste: Votre colis est bien arrivé. Bonne réception !",0
+"Votre livraison Chronopost attend ici en bas venez le récupérer.",0
+"Merci pour votre achat",0
+"Votre facture est disponible",0
+"Compte vérifié avec succès",0
+"Votre rendez-vous est confirmé",0
+"Votre paiement a été confirmé",0
+"Transaction réussie",0
+"Bienvenue sur notre plateforme",0
+"Votre commande a été expédiée",0
+"Ta voiture est prête au garage de Martin",0
+"Le plombier passe demain vers 10h",0
+"N'oublie pas ton sac de sport ce soir",0
+"Le colis est devant la porte",0
+"Bon appétit mon cœur à ce soir",0
+"J'arrive dans 5 minutes attends-moi",0
+"La réunion est annulée cet après-midi",0
+"Félicitations pour le poste! Bien mérité",0
+"Le bébé dort enfin, ouf!",0
+"Tu peux passer à la pharmacie stp?",0
+"On se retrouve au cinéma à 20h?",0
+"Rdv avec l'avocat jeudi 16h",0
+"Pense à arroser les plantes",0
+"Désolé j'ai raté ton appel, je te rappelle",0
+"Tu as pensé à faire les courses?",0
+"Bonne chance pour ta présentation!",0
+"Le chien a besoin de sortir",0
+"Le train arrive gare de Lyon à 18h45",0
+"Félicitations aux mariés!",0
+"La baby-sitter arrive à 19h comme prévu",0
+"Ton virement est bien arrivé merci",0
+"J'ai oublié mes clés tu peux m'ouvrir?",0
+"Soirée jeu de société chez nous vendredi?",0
+"Le four est en panne il faut appeler le réparateur",0
+"Mamie est arrivée à la gare à l'heure",0
+"Votre bulletin de paie est disponible en ligne",0
+"Mon Compte Formation: votre formation est validée",0
+"Impôts: déclaration préremplie disponible sur impots.gouv.fr",0
+"Votre nouveau permis de conduire est à retirer en préfecture",0
+"Mairie: votre carte d'identité est prête",0
+"CAF: pensez à déclarer vos ressources trimestrielles",0
+"Ameli: votre carte vitale a été renouvelée automatiquement",0
+"Votre courrier recommandé est disponible en mairie",0
+"Pôle Emploi: votre convocation conseiller le 15/05 à 10h",0
+"Votre attestation de droits Ameli est téléchargeable",0
+"La Sécurité sociale vous a remboursé 42.30€ ce jour",0
