@@ -1,0 +1,57 @@
+name: Deploy Backend
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Validate Python syntax
+        run: python -m compileall -q app main_ip.py
+
+      - name: Deploy on server (non-Docker)
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            set -e
+            cd ${{ secrets.APP_PATH }}
+            git pull origin main
+            cat > backend/.env << 'EOF'
+            ${{ secrets.ENV_FILE }}
+            EOF
+            chmod 600 backend/.env
+            python3.11 -m venv venv
+            . venv/bin/activate
+            pip install --upgrade pip
+            pip install -r backend/requirements.txt
+            cd backend
+            alembic upgrade head
+            sudo systemctl restart dyleth-backend
