@@ -45,130 +45,92 @@ class EmailService:
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <meta name="color-scheme" content="light dark">
+            <meta name="supported-color-schemes" content="light dark">
+            <title>Réinitialisation du mot de passe · DYLETH</title>
             <style>
-                body {{
-                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-                    background-color: #f3f4f6;
-                    margin: 0;
-                    padding: 20px;
-                    line-height: 1.6;
-                    color: #1f2937;
-                }}
-                .container {{
-                    max-width: 600px;
-                    margin: 0 auto;
-                    background-color: #ffffff;
-                    border-radius: 8px;
-                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-                    overflow: hidden;
-                }}
-                .header {{
-                    background: #ffffff;
-                    padding: 40px 20px;
-                    text-align: center;
-                    color: #111827;
-                }}
-                .logo {{
-                    width: 80px;
-                    height: 80px;
-                    margin: 0 auto 20px;
-                }}
-                .logo img {{
-                    width: 100%;
-                    height: 100%;
-                    object-fit: contain;
-                }}
-                .header-title {{
-                    font-size: 28px;
-                    margin: 0;
-                    font-weight: 600;
-                    color: #111827;
-                }}
-                .content {{
-                    padding: 40px 30px;
-                    text-align: center;
-                }}
-                .greeting {{
-                    font-size: 16px;
-                    margin-bottom: 20px;
-                    color: #374151;
-                }}
-                .message {{
-                    font-size: 14px;
-                    margin-bottom: 30px;
-                    color: #6b7280;
-                }}
-                .cta-button {{
-                    display: inline-block;
-                    background-color: #111827;
-                    color: #ffffff !important;
-                    -webkit-text-fill-color: #ffffff;
-                    padding: 16px 40px;
-                    text-decoration: none;
-                    border-radius: 6px;
-                    font-weight: 600;
-                    font-size: 16px;
-                    margin: 20px 0;
-                    transition: background-color 0.3s ease;
-                }}
-                .cta-button:visited,
-                .cta-button:hover,
-                .cta-button:active {{
-                    color: #ffffff !important;
-                    -webkit-text-fill-color: #ffffff;
-                }}
-                .cta-button:hover {{
-                    background-color: #1f2937;
-                }}
-                .expiry {{
-                    font-size: 12px;
-                    color: #9ca3af;
-                    margin-top: 30px;
-                    padding-top: 20px;
-                    border-top: 1px solid #e5e7eb;
-                }}
-                .security-notice {{
-                    background-color: #f9fafb;
-                    padding: 15px 20px;
-                    margin-top: 20px;
-                    border-left: 4px solid #10b981;
-                    border-radius: 4px;
-                    font-size: 12px;
-                    color: #6b7280;
-                }}
-                .footer {{
-                    background-color: #f9fafb;
-                    padding: 20px 30px;
-                    text-align: center;
-                    font-size: 12px;
-                    color: #9ca3af;
-                    border-top: 1px solid #e5e7eb;
+                :root {{ color-scheme: light dark; supported-color-schemes: light dark; }}
+                html, body {{ margin:0 !important; padding:0 !important; height:100% !important; width:100% !important; }}
+                a[x-apple-data-detectors] {{ color: inherit !important; text-decoration: none !important; }}
+                @media (prefers-color-scheme: dark) {{
+                    .bg {{ background: #0b0c0e !important; }}
+                    .card {{ background: #111827 !important; color: #e5e7eb !important; }}
+                    .muted {{ color: #9ca3af !important; }}
+                    .btn {{ background: #2563eb !important; }}
+                    .bordered {{ border-color: #1f2937 !important; }}
                 }}
             </style>
         </head>
-        <body>
-            <div class="container">
-                <div class="header">
-                    <div class="logo">
-                        <img src="cid:{LOGO_CID}" alt="DYLETH Logo">
-                    </div>
-                    <h1 class="header-title">DYLETH</h1>
-                </div>
-                <div class="content">
-                    <p class="greeting">Bonjour,</p>
-                    <p class="message">Nous avons reçu une demande de réinitialisation de votre mot de passe. Cliquez sur le bouton ci-dessous pour choisir un nouveau mot de passe.</p>
-                    <a href="{reset_url}" class="cta-button">Cliquez ici pour réinitialiser votre mot de passe</a>
-                    <div class="expiry">
-                        Ce lien expire dans {settings.PASSWORD_RESET_TOKEN_EXPIRE_MINUTES} minutes.
-                    </div>
-                    <div class="security-notice">
-                        ✓ Si vous n'avez pas demandé cette réinitialisation, vous pouvez ignorer cet email en toute sécurité.
-                    </div>
-                </div>
-                <div class="footer">
-                    <p>© 2026 DYLETH. Tous droits réservés.</p>
-                </div>
+        <body class="bg" style="background:#f3f4f6; margin:0; padding:0;">
+            <!-- Preheader (affiché dans l'aperçu des boîtes mail) -->
+            <div style="display:none; max-height:0; overflow:hidden; opacity:0; mso-hide:all;">
+                Réinitialisez votre mot de passe pour accéder à votre compte DYLETH. Ce lien expire dans {settings.PASSWORD_RESET_TOKEN_EXPIRE_MINUTES} minutes.
             </div>
+
+            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background:#f3f4f6;">
+                <tr>
+                    <td align="center" style="padding:24px;">
+                        <table role="presentation" width="600" cellspacing="0" cellpadding="0" border="0" class="card bordered" style="width:600px; max-width:600px; background:#ffffff; border:1px solid #e5e7eb; border-radius:12px; overflow:hidden;">
+                            <tr>
+                                <td align="center" style="padding:36px 24px 0 24px;">
+                                    <img src="cid:{LOGO_CID}" width="72" height="72" alt="Logo DYLETH" style="display:block; width:72px; height:72px; margin:0 auto 12px auto; border:0; outline:none; text-decoration:none;">
+                                    <h1 style="margin:0; font-family:Segoe UI, Arial, sans-serif; font-size:24px; line-height:32px; font-weight:700; color:#111827;">DYLETH</h1>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="left" style="padding:32px 32px 0 32px; font-family:Segoe UI, Arial, sans-serif; color:#374151; font-size:16px; line-height:24px;">
+                                    Bonjour,
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="left" style="padding:12px 32px 0 32px; font-family:Segoe UI, Arial, sans-serif; color:#6b7280; font-size:14px; line-height:22px;">
+                                    Nous avons reçu une demande de réinitialisation de votre mot de passe. Cliquez sur le bouton ci‑dessous pour choisir un nouveau mot de passe.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="center" style="padding:28px 32px 8px 32px;">
+                                    <!--[if mso]>
+                                    <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" href="{reset_url}" style="height:48px;v-text-anchor:middle;width:460px;" arcsize="8%" strokecolor="none" fillcolor="#111827">
+                                        <w:anchorlock/>
+                                        <center style="color:#ffffff; font-family:Segoe UI, Arial, sans-serif; font-size:16px; font-weight:700;">
+                                            Cliquez ici pour réinitialiser votre mot de passe
+                                        </center>
+                                    </v:roundrect>
+                                    <![endif]-->
+                                    <!--[if !mso]><!-- -->
+                                    <a href="{reset_url}" class="btn" style="display:inline-block; background:#111827; color:#ffffff; text-decoration:none; font-family:Segoe UI, Arial, sans-serif; font-weight:700; font-size:16px; line-height:24px; padding:14px 24px; border-radius:8px;">
+                                        Cliquez ici pour réinitialiser votre mot de passe
+                                    </a>
+                                    <!--<![endif]-->
+                                </td>
+                            </tr>   
+                            <tr>
+                                <td align="left" style="padding:16px 32px 0 32px; font-family:Segoe UI, Arial, sans-serif; font-size:12px; line-height:18px; color:#6b7280; border-top:1px solid #e5e7eb;" class="bordered">
+                                    Ce lien expire dans {settings.PASSWORD_RESET_TOKEN_EXPIRE_MINUTES} minutes.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="left" style="padding:16px 32px 32px 32px;">
+                                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background:#f9fafb; border-left:4px solid #10b981; border-radius:6px;">
+                                        <tr>
+                                            <td style="padding:12px 14px; font-family:Segoe UI, Arial, sans-serif; font-size:12px; line-height:18px; color:#6b7280;">
+                                                ✓ Si vous n'avez pas demandé cette réinitialisation, vous pouvez ignorer cet email en toute sécurité.
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="center" style="padding:0 24px 24px 24px;">
+                                    <p class="muted" style="margin:0; font-family:Segoe UI, Arial, sans-serif; font-size:12px; line-height:18px; color:#9ca3af;">
+                                        © 2026 DYLETH. Tous droits réservés.
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
         </body>
         </html>
         """
