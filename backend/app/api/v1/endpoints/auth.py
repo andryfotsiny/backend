@@ -8,6 +8,8 @@ from app.schemas.auth import (
     Token,
     UserResponse,
     PasswordChange,
+    ForgotPasswordRequest,
+    ResetPasswordRequest,
     DeviceTokenCreate,
     AuthError,
 )
@@ -264,7 +266,46 @@ async def change_password(
     return {"message": "Mot de passe changé avec succès"}
 
 
-# === ADD DEVICE TOKEN ===
+# === FORGOT PASSWORD ===
+
+
+@router.post("/forgot-password")
+async def forgot_password(
+    payload: ForgotPasswordRequest,
+    db: AsyncSession = Depends(get_db),
+):
+    """Envoyer un lien de réinitialisation de mot de passe par email."""
+
+    await auth_service.request_password_reset(email=payload.email, db=db)
+
+    return {
+        "message": "Si un compte existe pour cet email, un lien de réinitialisation a été envoyé"
+    }
+
+
+# === RESET PASSWORD ===
+
+
+@router.post("/reset-password")
+async def reset_password(
+    payload: ResetPasswordRequest,
+    db: AsyncSession = Depends(get_db),
+):
+    """Réinitialiser un mot de passe avec un token valide."""
+
+    success = await auth_service.reset_password(
+        token=payload.token,
+        new_password=payload.new_password,
+        db=db,
+    )
+
+    if not success:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Lien de réinitialisation invalide ou expiré",
+        )
+
+    return {"message": "Mot de passe réinitialisé avec succès"}
 
 
 @router.post("/device-token")

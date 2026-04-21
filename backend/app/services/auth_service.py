@@ -8,6 +8,7 @@ from app.models.user import User
 from app.models.report import UserReport, VerificationStatus
 from app.core.config import settings
 from app.services.redis_service import redis_service
+from app.services.email_service import email_service
 import uuid
 import logging
 
@@ -15,6 +16,7 @@ logger = logging.getLogger(__name__)
 
 ACCESS_TOKEN_EXPIRE_MINUTES = settings.ACCESS_TOKEN_EXPIRE_MINUTES
 REFRESH_TOKEN_EXPIRE_DAYS = 7
+PASSWORD_RESET_TOKEN_EXPIRE_MINUTES = settings.PASSWORD_RESET_TOKEN_EXPIRE_MINUTES
 
 
 class AuthService:
@@ -71,6 +73,23 @@ class AuthService:
             "jti": jti,
             "exp": expires,
             "type": "refresh",
+            "iat": datetime.utcnow(),
+        }
+
+        token = jwt.encode(payload, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
+        return token, expires
+
+    @staticmethod
+    def create_password_reset_token(user_id: str) -> Tuple[str, datetime]:
+        """Crée un token de réinitialisation de mot de passe."""
+        expires = datetime.utcnow() + timedelta(minutes=PASSWORD_RESET_TOKEN_EXPIRE_MINUTES)
+
+        jti = str(uuid.uuid4())
+        payload = {
+            "sub": user_id,
+            "jti": jti,
+            "exp": expires,
+            "type": "password_reset",
             "iat": datetime.utcnow(),
         }
 
@@ -248,6 +267,62 @@ class AuthService:
 
         user.password_hash = AuthService.hash_password(new_password)
         await db.commit()
+
+        return True
+
+    @staticmethod
+    async def request_password_reset(email: str, db: AsyncSession) -> bool:
+        """Envoie un lien de réinitialisation si l'email existe."""
+        logger.info("[forgot-password] Demande reçue pour email=%s", email)
+        result = await db.execute(select(User).where(User.email == email.lower()))
+        user = result.scalar_one_or_none()
+
+        if not user:
+            logger.info("[forgot-password] Aucun compte trouvé pour email=%s", email)
+            return True
+
+        reset_token, _ = AuthService.create_password_reset_token(user.id)
+        logger.info("[forgot-password] Compte trouvé user_id=%s, tentative d'envoi email", user.id)
+        sent = await email_service.send_password_reset_email(user.email, reset_token)
+        logger.info("[forgot-password] Résultat envoi email user_id=%s sent=%s", user.id, sent)
+        return True
+
+    @staticmethod
+    async def reset_password(token: str, new_password: str, db: AsyncSession) -> bool:
+        """Réinitialise le mot de passe à partir d'un token valide."""
+        try:
+            payload = jwt.decode(
+                token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
+            )
+        except jwt.ExpiredSignatureError:
+            return False
+        except jwt.JWTError:
+            return False
+
+        user_id = payload.get("sub")
+        token_type_claim = payload.get("type")
+        jti = payload.get("jti")
+
+        if user_id is None or token_type_claim != "password_reset":
+            return False
+
+        if jti and await redis_service.is_token_blacklisted(jti):
+            return False
+
+        user = await AuthService.get_user_by_id(user_id, db)
+        if not user:
+            return False
+
+        user.password_hash = AuthService.hash_password(new_password)
+        await db.commit()
+
+        if jti:
+            exp = payload.get("exp")
+            if exp:
+                now = datetime.utcnow().timestamp()
+                expire_seconds = int(exp - now)
+                if expire_seconds > 0:
+                    await redis_service.blacklist_token(jti, expire_seconds)
 
         return True
 

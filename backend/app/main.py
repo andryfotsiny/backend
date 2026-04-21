@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
+import logging
 from app.core.config import settings
 from app.api.v1 import api_router
 from app.services.cache import cache_service
@@ -11,6 +12,11 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
+logging.basicConfig(
+    level=getattr(logging, settings.LOG_LEVEL.upper(), logging.INFO),
+    format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
+)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
