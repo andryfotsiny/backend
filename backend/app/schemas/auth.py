@@ -3,6 +3,19 @@ from typing import Optional
 from datetime import datetime
 import re
 
+
+def validate_password_strength(password: str) -> str:
+    """Valide la complexité d'un mot de passe."""
+    if len(password) < 8:
+        raise ValueError('Mot de passe trop court (min 8 caractères)')
+    if not re.search(r'[A-Z]', password):
+        raise ValueError('Mot de passe doit contenir au moins une majuscule')
+    if not re.search(r'[a-z]', password):
+        raise ValueError('Mot de passe doit contenir au moins une minuscule')
+    if not re.search(r'[0-9]', password):
+        raise ValueError('Mot de passe doit contenir au moins un chiffre')
+    return password
+
 # === REGISTER ===
 
 class UserRegister(BaseModel):
@@ -38,15 +51,7 @@ class UserRegister(BaseModel):
     @validator('password')
     def validate_password(cls, v):
         """Validation force du mot de passe"""
-        if len(v) < 8:
-            raise ValueError('Mot de passe trop court (min 8 caractères)')
-        if not re.search(r'[A-Z]', v):
-            raise ValueError('Mot de passe doit contenir au moins une majuscule')
-        if not re.search(r'[a-z]', v):
-            raise ValueError('Mot de passe doit contenir au moins une minuscule')
-        if not re.search(r'[0-9]', v):
-            raise ValueError('Mot de passe doit contenir au moins un chiffre')
-        return v
+        return validate_password_strength(v)
 
     @validator('phone')
     def validate_phone(cls, v):
@@ -159,15 +164,20 @@ class PasswordChange(BaseModel):
 
     @validator('new_password')
     def validate_new_password(cls, v):
-        if len(v) < 8:
-            raise ValueError('Nouveau mot de passe trop court')
-        if not re.search(r'[A-Z]', v):
-            raise ValueError('Doit contenir une majuscule')
-        if not re.search(r'[a-z]', v):
-            raise ValueError('Doit contenir une minuscule')
-        if not re.search(r'[0-9]', v):
-            raise ValueError('Doit contenir un chiffre')
-        return v
+        return validate_password_strength(v)
+
+
+class ForgotPasswordRequest(BaseModel):
+    email: EmailStr
+
+
+class ResetPasswordRequest(BaseModel):
+    token: str = Field(..., min_length=10)
+    new_password: str = Field(..., min_length=8)
+
+    @validator('new_password')
+    def validate_new_password(cls, v):
+        return validate_password_strength(v)
 
 
 # === DEVICE TOKEN (pour notifications push) ===
