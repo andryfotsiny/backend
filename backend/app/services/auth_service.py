@@ -8,7 +8,6 @@ from app.models.user import User
 from app.models.report import UserReport, VerificationStatus
 from app.core.config import settings
 from app.services.redis_service import redis_service
-from app.services.email_service import email_service
 import uuid
 import logging
 
@@ -16,7 +15,6 @@ logger = logging.getLogger(__name__)
 
 ACCESS_TOKEN_EXPIRE_MINUTES = settings.ACCESS_TOKEN_EXPIRE_MINUTES
 REFRESH_TOKEN_EXPIRE_DAYS = 7
-PASSWORD_RESET_TOKEN_EXPIRE_MINUTES = settings.PASSWORD_RESET_TOKEN_EXPIRE_MINUTES
 
 
 class AuthService:
@@ -24,31 +22,25 @@ class AuthService:
 
     @staticmethod
     def hash_password(password: str) -> str:
-        """Hash un mot de passe avec argon2"""
         return pwd_context.hash(password)
 
     @staticmethod
     def verify_password(plain_password: str, hashed_password: str) -> bool:
-        """Vérifie un mot de passe et gère la re-hachage si nécessaire"""
         return pwd_context.verify(plain_password, hashed_password)
 
     @staticmethod
     def hash_email(email: str) -> str:
-        """Hash email pour backup/compatibilité (SHA256)"""
         if not email:
             return None
         return hash_sha256(email.lower())
 
     @staticmethod
     def hash_phone(phone: str) -> str:
-        """Hash téléphone pour backup/compatibilité (SHA256)"""
         return hash_sha256(phone)
 
     @staticmethod
     def create_access_token(user_id: str, role: str) -> Tuple[str, datetime]:
-        """Crée un access token JWT"""
         expires = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-
         jti = str(uuid.uuid4())
         payload = {
             "sub": user_id,
@@ -58,15 +50,12 @@ class AuthService:
             "role": role,
             "iat": datetime.utcnow(),
         }
-
         token = jwt.encode(payload, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
         return token, expires
 
     @staticmethod
     def create_refresh_token(user_id: str, role: str) -> Tuple[str, datetime]:
-        """Crée un refresh token JWT"""
         expires = datetime.utcnow() + timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
-
         jti = str(uuid.uuid4())
         payload = {
             "sub": user_id,
@@ -75,30 +64,11 @@ class AuthService:
             "type": "refresh",
             "iat": datetime.utcnow(),
         }
-
-        token = jwt.encode(payload, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
-        return token, expires
-
-    @staticmethod
-    def create_password_reset_token(user_id: str) -> Tuple[str, datetime]:
-        """Crée un token de réinitialisation de mot de passe."""
-        expires = datetime.utcnow() + timedelta(minutes=PASSWORD_RESET_TOKEN_EXPIRE_MINUTES)
-
-        jti = str(uuid.uuid4())
-        payload = {
-            "sub": user_id,
-            "jti": jti,
-            "exp": expires,
-            "type": "password_reset",
-            "iat": datetime.utcnow(),
-        }
-
         token = jwt.encode(payload, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
         return token, expires
 
     @staticmethod
     async def get_user_by_id(user_id: any, db: AsyncSession) -> Optional[User]:
-        """Récupère un utilisateur par ID"""
         try:
             user_uuid = (
                 user_id if isinstance(user_id, uuid.UUID) else uuid.UUID(user_id)
@@ -110,12 +80,10 @@ class AuthService:
 
     @staticmethod
     async def verify_token(token: str, token_type: str = "access") -> Optional[str]:
-        """Vérifie un token JWT et retourne user_id"""
         try:
             payload = jwt.decode(
                 token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
             )
-
             user_id: str = payload.get("sub")
             token_type_claim: str = payload.get("type")
             jti: str = payload.get("jti")
@@ -123,7 +91,6 @@ class AuthService:
             if user_id is None or token_type_claim != token_type:
                 return None
 
-            # Vérification de la blacklist Redis
             if jti and await redis_service.is_token_blacklisted(jti):
                 return None
 
@@ -138,14 +105,13 @@ class AuthService:
 
     @staticmethod
     async def revoke_token(token: str):
-        """Révoque un token en l'ajoutant à la blacklist Redis"""
         try:
             payload = jwt.decode(
                 token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
             )
             jti = payload.get("jti")
             exp = payload.get("exp")
-            
+
             if jti and exp:
                 now = datetime.utcnow().timestamp()
                 expire_seconds = int(exp - now)
@@ -162,6 +128,7 @@ class AuthService:
         country_code: str,
         db: AsyncSession,
         role: str = "USER",
+        name: Optional[str] = None,  # ← NOUVEAU
     ) -> User:
         """Enregistre un nouvel utilisateur"""
 
@@ -178,8 +145,9 @@ class AuthService:
             user_id=uuid.uuid4(),
             email=email.lower(),
             phone=phone,
+            name=name,  # ← NOUVEAU
             email_hash=AuthService.hash_email(email),
-            phone_hash=AuthService.hash_phone(phone) if phone else None,  # Optionnel
+            phone_hash=AuthService.hash_phone(phone) if phone else None,
             password_hash=AuthService.hash_password(password),
             country_code=country_code,
             role=role,
@@ -201,9 +169,6 @@ class AuthService:
     async def authenticate_user(
         email: str, password: str, db: AsyncSession
     ) -> Optional[User]:
-        """Authentifie un utilisateur"""
-
-        # Chercher par email en clair
         result = await db.execute(select(User).where(User.email == email.lower()))
         user = result.scalar_one_or_none()
 
@@ -229,17 +194,14 @@ class AuthService:
         settings: Optional[dict],
         db: AsyncSession,
     ) -> User:
-        """Met à jour un utilisateur"""
         user = await AuthService.get_user_by_id(user_id, db)
 
         if not user:
             raise ValueError("USER_NOT_FOUND")
 
         if phone is not None:
-            user.phone = phone  # ✅ Téléphone en clair
-            user.phone_hash = AuthService.hash_phone(
-                phone
-            )  # Optionnel: mettre à jour hash
+            user.phone = phone
+            user.phone_hash = AuthService.hash_phone(phone)
 
         if country_code is not None:
             user.country_code = country_code
@@ -256,7 +218,6 @@ class AuthService:
     async def change_password(
         user_id: str, current_password: str, new_password: str, db: AsyncSession
     ) -> bool:
-        """Change le mot de passe utilisateur"""
         user = await AuthService.get_user_by_id(user_id, db)
 
         if not user:
@@ -271,66 +232,9 @@ class AuthService:
         return True
 
     @staticmethod
-    async def request_password_reset(email: str, db: AsyncSession) -> bool:
-        """Envoie un lien de réinitialisation si l'email existe."""
-        logger.info("[forgot-password] Demande reçue pour email=%s", email)
-        result = await db.execute(select(User).where(User.email == email.lower()))
-        user = result.scalar_one_or_none()
-
-        if not user:
-            logger.info("[forgot-password] Aucun compte trouvé pour email=%s", email)
-            return True
-
-        reset_token, _ = AuthService.create_password_reset_token(user.id)
-        logger.info("[forgot-password] Compte trouvé user_id=%s, tentative d'envoi email", user.id)
-        sent = await email_service.send_password_reset_email(user.email, reset_token)
-        logger.info("[forgot-password] Résultat envoi email user_id=%s sent=%s", user.id, sent)
-        return True
-
-    @staticmethod
-    async def reset_password(token: str, new_password: str, db: AsyncSession) -> bool:
-        """Réinitialise le mot de passe à partir d'un token valide."""
-        try:
-            payload = jwt.decode(
-                token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
-            )
-        except jwt.ExpiredSignatureError:
-            return False
-        except jwt.JWTError:
-            return False
-
-        user_id = payload.get("sub")
-        token_type_claim = payload.get("type")
-        jti = payload.get("jti")
-
-        if user_id is None or token_type_claim != "password_reset":
-            return False
-
-        if jti and await redis_service.is_token_blacklisted(jti):
-            return False
-
-        user = await AuthService.get_user_by_id(user_id, db)
-        if not user:
-            return False
-
-        user.password_hash = AuthService.hash_password(new_password)
-        await db.commit()
-
-        if jti:
-            exp = payload.get("exp")
-            if exp:
-                now = datetime.utcnow().timestamp()
-                expire_seconds = int(exp - now)
-                if expire_seconds > 0:
-                    await redis_service.blacklist_token(jti, expire_seconds)
-
-        return True
-
-    @staticmethod
     async def add_device_token(
         user_id: str, token: str, platform: str, db: AsyncSession
     ) -> bool:
-        """Ajoute un token de device pour notifications push"""
         user = await AuthService.get_user_by_id(user_id, db)
 
         if not user:
@@ -344,9 +248,6 @@ class AuthService:
 
     @staticmethod
     async def get_user_stats(user_id: str, db: AsyncSession) -> dict:
-        """Récupère les statistiques utilisateur"""
-
-        # Total signalements
         total_reports_result = await db.execute(
             select(func.count(UserReport.report_id)).where(
                 UserReport.user_id == user_id
@@ -354,7 +255,6 @@ class AuthService:
         )
         total_reports = total_reports_result.scalar() or 0
 
-        # Signalements vérifiés
         verified_reports_result = await db.execute(
             select(func.count(UserReport.report_id)).where(
                 UserReport.user_id == user_id,
@@ -363,7 +263,6 @@ class AuthService:
         )
         verified_reports = verified_reports_result.scalar() or 0
 
-        # Signalements par type
         by_type_result = await db.execute(
             select(UserReport.report_type, func.count(UserReport.report_id))
             .where(UserReport.user_id == user_id)
@@ -381,5 +280,4 @@ class AuthService:
         }
 
 
-# Instance globale
 auth_service = AuthService()

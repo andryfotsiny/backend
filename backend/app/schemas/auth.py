@@ -1,208 +1,55 @@
-from pydantic import BaseModel, EmailStr, Field, validator
+from pydantic import BaseModel, EmailStr
 from typing import Optional
 from datetime import datetime
-import re
+from uuid import UUID
 
-
-def validate_password_strength(password: str) -> str:
-    """Valide la complexité d'un mot de passe."""
-    if len(password) < 8:
-        raise ValueError('Mot de passe trop court (min 8 caractères)')
-    if not re.search(r'[A-Z]', password):
-        raise ValueError('Mot de passe doit contenir au moins une majuscule')
-    if not re.search(r'[a-z]', password):
-        raise ValueError('Mot de passe doit contenir au moins une minuscule')
-    if not re.search(r'[0-9]', password):
-        raise ValueError('Mot de passe doit contenir au moins un chiffre')
-    return password
-
-# === REGISTER ===
 
 class UserRegister(BaseModel):
-    email: EmailStr = Field(
-        ..., 
-        description="Adresse email de l'utilisateur. Doit être unique.",
-        example="user@example.com"
-    )
-    password: str = Field(
-        ..., 
-        min_length=8, 
-        max_length=100, 
-        description="Mot de passe (min 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre).",
-        example="SecurePass123"
-    )
-    phone: Optional[str] = Field(
-        None, 
-        description="Numéro de téléphone au format international (E.164). Optionnel.",
-        example="+33612345678"
-    )
-    country_code: str = Field(
-        "FR", 
-        max_length=2, 
-        description="Code pays sur 2 lettres (ISO 3166-1 alpha-2).",
-        example="FR"
-    )
-    role: Optional[str] = Field(
-        "USER",
-        description="Rôle de l'utilisateur. 'USER' par défaut. 'ADMIN' ou 'ORGANISATION' nécessite un token administrateur.",
-        example="USER"
-    )
+    email: EmailStr
+    password: str
+    phone: Optional[str] = None
+    name: Optional[str] = None  # ← NOUVEAU
+    country_code: str
+    role: Optional[str] = None
 
-    @validator('password')
-    def validate_password(cls, v):
-        """Validation force du mot de passe"""
-        return validate_password_strength(v)
-
-    @validator('phone')
-    def validate_phone(cls, v):
-        """Validation format téléphone"""
-        if v and not re.match(r'^\+?[1-9]\d{1,14}$', v):
-            raise ValueError('Format téléphone invalide (utiliser E.164: +33612345678)')
-        return v
-
-    class Config:
-        json_schema_extra = {
-            "example": {
-                "email": "user@exle.com",
-                "password": "SecurePass123",
-                "phone": "+33612345671",
-                "country_code": "FR",
-                "role": "USER"
-            }
-        }
-
-
-# === LOGIN ===
 
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
 
+
+class UserResponse(BaseModel):
+    id: str
+    email: EmailStr
+    phone: Optional[str] = None
+    name: Optional[str] = None  # ← NOUVEAU
+    country_code: str
+    role: str
+    created_at: datetime
+    last_active: Optional[datetime] = None
+    total_reports: int = 0
+    verified_reports: int = 0
+
     class Config:
-        json_schema_extra = {
-            "example": {
-                "email": "user@example.com",
-                "password": "SecurePass123"
-            }
-        }
+        from_attributes = True
 
-
-# === TOKEN ===
 
 class Token(BaseModel):
     access_token: str
     refresh_token: str
     token_type: str = "bearer"
-    expires_in: int = Field(..., description="Expiration en secondes")
+    expires_in: int
 
-
-class TokenPayload(BaseModel):
-    sub: str  # user_id
-    exp: int  # expiration timestamp
-    type: str = "access"  # access ou refresh
-    role: str
-
-
-class RefreshTokenRequest(BaseModel):
-    refresh_token: str
-
-
-# === USER RESPONSE ===
-
-class UserResponse(BaseModel):
-    id: str
-    email: str
-    phone: Optional[str]
-    country_code: str
-    created_at: datetime
-    last_active: datetime
-    total_reports: int = 0
-    verified_reports: int = 0
-    role: str
-
-    class Config:
-        from_attributes = True
-
-
-class UserProfile(BaseModel):
-    id: str
-    email: str
-    phone: Optional[str]
-    country_code: str
-    settings: dict
-    created_at: datetime
-    last_active: datetime
-    stats: dict = {}
-
-    class Config:
-        from_attributes = True
-
-
-# === UPDATE PROFILE ===
-
-class UserUpdate(BaseModel):
-    phone: Optional[str] = None
-    country_code: Optional[str] = None
-    settings: Optional[dict] = None
-
-    @validator('settings')
-    def validate_settings(cls, v):
-        """Valider structure settings"""
-        if v:
-            allowed_keys = ['notifications', 'language', 'theme', 'auto_block']
-            for key in v.keys():
-                if key not in allowed_keys:
-                    raise ValueError(f'Clé settings invalide: {key}')
-        return v
-
-
-# === PASSWORD CHANGE ===
 
 class PasswordChange(BaseModel):
     current_password: str
-    new_password: str = Field(..., min_length=8)
+    new_password: str
 
-    @validator('new_password')
-    def validate_new_password(cls, v):
-        return validate_password_strength(v)
-
-
-class ForgotPasswordRequest(BaseModel):
-    email: EmailStr
-
-
-class ResetPasswordRequest(BaseModel):
-    token: str = Field(..., min_length=10)
-    new_password: str = Field(..., min_length=8)
-
-    @validator('new_password')
-    def validate_new_password(cls, v):
-        return validate_password_strength(v)
-
-
-# === DEVICE TOKEN (pour notifications push) ===
 
 class DeviceTokenCreate(BaseModel):
-    token: str = Field(..., description="Token FCM/APNS")
-    platform: str = Field(..., description="android ou ios")
+    token: str
+    platform: str
 
-    @validator('platform')
-    def validate_platform(cls, v):
-        if v not in ['android', 'ios']:
-            raise ValueError('Platform doit être android ou ios')
-        return v
-
-
-# === AUTH ERROR RESPONSES ===
 
 class AuthError(BaseModel):
     detail: str
-    error_code: str
-
-    class Config:
-        json_schema_extra = {
-            "example": {
-                "detail": "Email ou mot de passe incorrect",
-                "error_code": "INVALID_CREDENTIALS"
-            }
-        }

@@ -6,7 +6,6 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = "DYLETH API"
     VERSION: str = "1.0.0"
     API_V1_STR: str = "/api/v1"
-    LOG_LEVEL: str = "INFO"
 
     SECRET_KEY: str
     ALGORITHM: str = "HS256"
@@ -27,20 +26,6 @@ class Settings(BaseSettings):
     REDIS_URL: str = "redis://localhost:6379/0"
     QDRANT_URL: str = "http://localhost:6333"
     CORS_ORIGINS: List[str] = ["*"]
-    FRONTEND_HOST: str = "http://localhost:3000"
-
-    SMTP_HOST: str = "smtp.gmail.com"
-    SMTP_PORT: int = 587
-    SMTP_USER: str = ""
-    SMTP_PASSWORD: str = ""
-    SMTP_PASS: str = ""
-    SMTP_SECURE: bool = False
-    SMTP_TIMEOUT_SECONDS: int = 30
-    SMTP_DEBUG: bool = False
-    EMAILS_FROM_NAME: str = "DYLETH"
-    EMAILS_FROM_EMAIL: str = ""
-    PASSWORD_RESET_TOKEN_EXPIRE_MINUTES: int = 30
-
     ML_MODEL_PATH: str = "/app/models/ml_models"
     FRAUD_CONFIDENCE_THRESHOLD: float = 0.7
     MAX_REQUESTS_PER_MINUTE: int = 100

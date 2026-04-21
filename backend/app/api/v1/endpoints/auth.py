@@ -8,8 +8,6 @@ from app.schemas.auth import (
     Token,
     UserResponse,
     PasswordChange,
-    ForgotPasswordRequest,
-    ResetPasswordRequest,
     DeviceTokenCreate,
     AuthError,
 )
@@ -24,37 +22,16 @@ from typing import Optional
 
 router = APIRouter()
 
-# === REGISTER ===
-
 
 @router.post(
     "/register",
     response_model=UserResponse,
     status_code=status.HTTP_201_CREATED,
     summary="Créer un nouveau compte utilisateur",
-    description="""
-Permet de créer un compte utilisateur. 
-
-**Note sur l'authentification :**
-- L'authentification est **optionnelle** pour créer un compte avec le rôle `USER`.
-- L'authentification est **obligatoire** (token ADMIN requis) pour créer un compte avec le rôle `ORGANISATION` ou `ADMIN`.
-
-**Champs importants :**
-- `email` : Doit être unique dans le système.
-- `password` : Doit respecter les règles de complexité (min 8 chars, 1 maj, 1 min, 1 chiffre).
-- `phone` : Format international E.164 (ex: +33612345678).
-- `country_code` : Code ISO 2 lettres du pays (ex: FR, US).
-""",
     responses={
         201: {"description": "Compte créé avec succès"},
-        400: {
-            "model": AuthError,
-            "description": "Données invalides ou email déjà utilisé",
-        },
-        403: {
-            "model": AuthError,
-            "description": "Permission refusée (nécessite un rôle ADMIN pour certains rôles)",
-        },
+        400: {"model": AuthError, "description": "Données invalides ou email déjà utilisé"},
+        403: {"model": AuthError, "description": "Permission refusée"},
         422: {"description": "Erreur de validation des champs"},
     },
 )
@@ -63,10 +40,6 @@ async def register(
     current_admin: Optional[User] = Depends(get_current_user_optional),
     db: AsyncSession = Depends(get_db),
 ):
-    """
-    Endpoint de création de compte
-    """
-
     role = "USER"
 
     if user_data.role and user_data.role != "USER":
@@ -91,6 +64,7 @@ async def register(
             phone=user_data.phone,
             country_code=user_data.country_code,
             role=role,
+            name=user_data.name,  # ← NOUVEAU
             db=db,
         )
     except ValueError as e:
@@ -111,6 +85,7 @@ async def register(
         id=user.id,
         email=user.email,
         phone=user.phone,
+        name=user.name,  # ← NOUVEAU
         country_code=user.country_code,
         role=user.role,
         created_at=user.created_at,
@@ -120,26 +95,12 @@ async def register(
     )
 
 
-# === LOGIN ===
-
-
 @router.post(
     "/login",
     response_model=Token,
     responses={401: {"model": AuthError, "description": "Identifiants invalides"}},
 )
 async def login(credentials: UserLogin, db: AsyncSession = Depends(get_db)):
-    """
-    Se connecter et obtenir des tokens JWT
-
-    - **email**: Email du compte
-    - **password**: Mot de passe
-
-    Retourne:
-    - **access_token**: Token d'accès (30 min)
-    - **refresh_token**: Token de renouvellement (7 jours)
-    """
-
     user = await auth_service.authenticate_user(
         email=credentials.email, password=credentials.password, db=db
     )
@@ -162,9 +123,6 @@ async def login(credentials: UserLogin, db: AsyncSession = Depends(get_db)):
     )
 
 
-# === REFRESH TOKEN ===
-
-
 @router.post(
     "/refresh",
     response_model=Token,
@@ -174,13 +132,6 @@ async def refresh_token(
     current_user: User = Depends(verify_refresh_token),
     db: AsyncSession = Depends(get_db),
 ):
-    """
-    Renouveler l'access token avec un refresh token
-
-    Headers:
-    - **Authorization**: Bearer {refresh_token}
-    """
-
     access_token, _ = auth_service.create_access_token(
         current_user.id, current_user.role
     )
@@ -196,40 +147,27 @@ async def refresh_token(
     )
 
 
-# === LOGOUT ===
-
-
 @router.post("/logout")
 async def logout(
     current_user: User = Depends(get_current_user),
     credentials: Optional[str] = Depends(security),
 ):
-    """Se déconnecter et révoquer le token"""
     if credentials:
         await auth_service.revoke_token(credentials.credentials)
     return {"message": "Déconnexion réussie"}
-
-
-# === GET CURRENT USER (ME) ===
 
 
 @router.get("/me", response_model=UserResponse)
 async def get_me(
     current_user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)
 ):
-    """
-    Obtenir les informations de l'utilisateur connecté
-
-    Headers:
-    - **Authorization**: Bearer {access_token}
-    """
-
     stats = await auth_service.get_user_stats(current_user.id, db)
 
     return UserResponse(
         id=current_user.id,
         email=current_user.email,
         phone=current_user.phone,
+        name=current_user.name,  # ← NOUVEAU
         country_code=current_user.country_code,
         role=current_user.role,
         created_at=current_user.created_at,
@@ -239,17 +177,12 @@ async def get_me(
     )
 
 
-# === CHANGE PASSWORD ===
-
-
 @router.post("/change-password")
 async def change_password(
     password_data: PasswordChange,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    """Changer le mot de passe"""
-
     success = await auth_service.change_password(
         user_id=current_user.id,
         current_password=password_data.current_password,
@@ -266,56 +199,12 @@ async def change_password(
     return {"message": "Mot de passe changé avec succès"}
 
 
-# === FORGOT PASSWORD ===
-
-
-@router.post("/forgot-password")
-async def forgot_password(
-    payload: ForgotPasswordRequest,
-    db: AsyncSession = Depends(get_db),
-):
-    """Envoyer un lien de réinitialisation de mot de passe par email."""
-
-    await auth_service.request_password_reset(email=payload.email, db=db)
-
-    return {
-        "message": "Si un compte existe pour cet email, un lien de réinitialisation a été envoyé"
-    }
-
-
-# === RESET PASSWORD ===
-
-
-@router.post("/reset-password")
-async def reset_password(
-    payload: ResetPasswordRequest,
-    db: AsyncSession = Depends(get_db),
-):
-    """Réinitialiser un mot de passe avec un token valide."""
-
-    success = await auth_service.reset_password(
-        token=payload.token,
-        new_password=payload.new_password,
-        db=db,
-    )
-
-    if not success:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Lien de réinitialisation invalide ou expiré",
-        )
-
-    return {"message": "Mot de passe réinitialisé avec succès"}
-
-
 @router.post("/device-token")
 async def add_device_token(
     device_data: DeviceTokenCreate,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    """Enregistrer un token de device pour notifications push"""
-
     success = await auth_service.add_device_token(
         user_id=current_user.id,
         token=device_data.token,
@@ -332,15 +221,10 @@ async def add_device_token(
     return {"message": "Token enregistré"}
 
 
-# === GET USER STATS ===
-
-
 @router.get("/stats")
 async def get_stats(
     current_user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)
 ):
-    """Obtenir les statistiques de contribution de l'utilisateur"""
-
     stats = await auth_service.get_user_stats(current_user.id, db)
 
     return {
@@ -352,13 +236,8 @@ async def get_stats(
     }
 
 
-# === TEST PROTECTED ROUTE ===
-
-
 @router.get("/test-protected")
 async def test_protected(current_user: User = Depends(get_current_user)):
-    """Route de test pour vérifier que l'authentification fonctionne"""
-
     return {
         "message": "Accès autorisé !",
         "user_id": current_user.id,
