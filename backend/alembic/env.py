@@ -10,7 +10,9 @@ from app.models.fraud import FraudulentNumber, FraudulentSMSPattern, FraudulentD
 from app.models.report import UserReport, DetectionLog
 from app.models.ml_model import MLModelVersion
 from app.models.business import Business
+from dotenv import load_dotenv
 
+load_dotenv()
 config = context.config
 
 if config.config_file_name is not None:
