@@ -63,10 +63,10 @@ class EmailService:
                     overflow: hidden;
                 }}
                 .header {{
-                    background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
+                    background: #ffffff;
                     padding: 40px 20px;
                     text-align: center;
-                    color: #ffffff;
+                    color: #111827;
                 }}
                 .logo {{
                     width: 80px;
@@ -82,6 +82,7 @@ class EmailService:
                     font-size: 28px;
                     margin: 0;
                     font-weight: 600;
+                    color: #111827;
                 }}
                 .content {{
                     padding: 40px 30px;
@@ -100,7 +101,8 @@ class EmailService:
                 .cta-button {{
                     display: inline-block;
                     background-color: #111827;
-                    color: #ffffff;
+                    color: #ffffff !important;
+                    -webkit-text-fill-color: #ffffff;
                     padding: 16px 40px;
                     text-decoration: none;
                     border-radius: 6px;
@@ -108,6 +110,12 @@ class EmailService:
                     font-size: 16px;
                     margin: 20px 0;
                     transition: background-color 0.3s ease;
+                }}
+                .cta-button:visited,
+                .cta-button:hover,
+                .cta-button:active {{
+                    color: #ffffff !important;
+                    -webkit-text-fill-color: #ffffff;
                 }}
                 .cta-button:hover {{
                     background-color: #1f2937;
