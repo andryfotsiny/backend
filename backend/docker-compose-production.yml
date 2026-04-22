@@ -1,0 +1,157 @@
+services:
+
+
+  dyleth-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dyleth-api
+    restart: unless-stopped
+    ports:
+      - "5003:8000"
+    environment:
+      PROJECT_NAME: ${PROJECT_NAME}
+      VERSION: ${VERSION}
+      API_V1_STR: ${API_V1_STR}
+      SECRET_KEY: ${SECRET_KEY}
+      ALGORITHM: ${ALGORITHM:-HS256}
+      ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES:-30}
+      REFRESH_TOKEN_EXPIRE_DAYS: ${REFRESH_TOKEN_EXPIRE_DAYS:-7}
+      DB_TYPE: ${DB_TYPE}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_HOST: dyleth-postgres
+      DB_PORT: ${DB_PORT}
+      DB_NAME: ${DB_NAME}
+      REDIS_URL: redis://dyleth-redis:6379/0
+      QDRANT_URL: http://dyleth-qdrant:6333
+      CORS_ORIGINS: ${CORS_ORIGINS:-["*"]}
+      ML_MODEL_PATH: /app/models/ml_models
+      FRAUD_CONFIDENCE_THRESHOLD: ${FRAUD_CONFIDENCE_THRESHOLD:-0.7}
+      MAX_REQUESTS_PER_MINUTE: ${MAX_REQUESTS_PER_MINUTE:-100}
+    volumes:
+      - dyleth_models:/app/models/ml_models
+      - dyleth_data:/app/data/datasets
+    depends_on:
+      dyleth-postgres:
+        condition: service_healthy
+      dyleth-redis:
+        condition: service_healthy
+      dyleth-qdrant:
+        condition: service_started
+    networks:
+      - dyleth-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  dyleth-migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dyleth-migrate
+    command: alembic upgrade head
+    environment:
+      DB_TYPE: ${DB_TYPE}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_HOST: dyleth-postgres
+      DB_PORT: ${DB_PORT}
+      DB_NAME: ${DB_NAME}
+    depends_on:
+      dyleth-postgres:
+        condition: service_healthy
+    networks:
+      - dyleth-network
+    restart: "no"
+
+  dyleth-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dyleth-worker
+    command: celery -A app.workers.celery_app worker --loglevel=info -Q ml,db,analytics,notifications --concurrency=2
+    environment:
+      DB_TYPE: ${DB_TYPE}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_HOST: dyleth-postgres
+      DB_PORT: ${DB_PORT}
+      DB_NAME: ${DB_NAME}
+      REDIS_URL: redis://dyleth-redis:6379/0
+      QDRANT_URL: http://dyleth-qdrant:6333
+      SECRET_KEY: ${SECRET_KEY}
+      ML_MODEL_PATH: /app/models/ml_models
+    volumes:
+      - dyleth_models:/app/models/ml_models
+      - dyleth_data:/app/data/datasets
+    depends_on:
+      dyleth-postgres:
+        condition: service_healthy
+      dyleth-redis:
+        condition: service_healthy
+    networks:
+      - dyleth-network
+    restart: unless-stopped
+
+  dyleth-beat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dyleth-beat
+    command: celery -A app.workers.celery_app beat --loglevel=info
+    environment:
+      DB_TYPE: ${DB_TYPE}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_HOST: dyleth-postgres
+      DB_PORT: ${DB_PORT}
+      DB_NAME: ${DB_NAME}
+      REDIS_URL: redis://dyleth-redis:6379/0
+      SECRET_KEY: ${SECRET_KEY}
+    depends_on:
+      dyleth-redis:
+        condition: service_healthy
+    networks:
+      - dyleth-network
+    restart: unless-stopped
+
+  dyleth-flower:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dyleth-flower
+    command: celery -A app.workers.celery_app flower --port=5555
+    ports:
+      - "5556:5555"
+    environment:
+      DB_TYPE: ${DB_TYPE}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_HOST: dyleth-postgres
+      DB_PORT: ${DB_PORT}
+      DB_NAME: ${DB_NAME}
+      REDIS_URL: redis://dyleth-redis:6379/0
+      SECRET_KEY: ${SECRET_KEY}
+    depends_on:
+      dyleth-redis:
+        condition: service_healthy
+      dyleth-worker:
+        condition: service_started
+    networks:
+      - dyleth-network
+    restart: unless-stopped
+
+volumes:
+  dyleth_postgres_data:
+  dyleth_redis_data:
+  dyleth_qdrant_data:
+  dyleth_models:
+  dyleth_data:
+
+networks:
+  dyleth-network:
+    driver: bridge
+    name: dyleth-network
