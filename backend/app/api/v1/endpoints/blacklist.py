@@ -10,6 +10,9 @@ from app.api.deps.role_deps import require_organisation
 from app.models.user import User
 from app.models.fraud import FraudulentNumber, FraudulentDomain, FraudType
 from app.services.cache import cache_service
+from fastapi import UploadFile, File
+from app.services.fraud_service import fraud_service
+from app.schemas.business import ImportResult
 
 router = APIRouter()
 
@@ -443,3 +446,62 @@ async def remove_domain_from_blacklist(
     await db.commit()
 
     return {"message": f"{domain} retiré de la blacklist"}
+
+@router.post("/phone/import", response_model=ImportResult)
+async def import_phones_csv(
+    file: UploadFile = File(...),
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(require_organisation),
+):
+    """
+    Import en masse de numéros frauduleux via CSV.
+
+    Colonnes requises : `phone_number`, `country_code`, `fraud_type`, `confidence_score`
+
+    Colonnes optionnelles : `source`, `verified`
+
+    Valeurs `fraud_type` acceptées : spam, scam, robocall, phishing, spoofing
+
+    En cas de doublon (phone_number existant), la ligne est mise à jour (upsert).
+
+    **Accès:** ADMIN / ORGANISATION
+    """
+    if not file.filename.lower().endswith(".csv"):
+        raise HTTPException(status_code=400, detail="Seuls les fichiers CSV sont acceptés")
+
+    content = await file.read()
+    result = await fraud_service.import_phones_from_csv(content, db)
+
+    if result.errors:
+        raise HTTPException(status_code=400, detail=result.errors[0])
+
+    return result
+
+
+@router.post("/domain/import", response_model=ImportResult)
+async def import_domains_csv(
+    file: UploadFile = File(...),
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(require_organisation),
+):
+    """
+    Import en masse de domaines frauduleux via CSV.
+
+    Colonnes requises : `domain`, `reputation_score`
+
+    Colonnes optionnelles : `phishing_type`
+
+    En cas de doublon (domain existant), la ligne est mise à jour (upsert).
+
+    **Accès:** ADMIN / ORGANISATION
+    """
+    if not file.filename.lower().endswith(".csv"):
+        raise HTTPException(status_code=400, detail="Seuls les fichiers CSV sont acceptés")
+
+    content = await file.read()
+    result = await fraud_service.import_domains_from_csv(content, db)
+
+    if result.errors:
+        raise HTTPException(status_code=400, detail=result.errors[0])
+
+    return result
