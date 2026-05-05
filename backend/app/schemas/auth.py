@@ -1,3 +1,4 @@
+# app/schemas/auth.py
 from pydantic import BaseModel, EmailStr
 from typing import Optional
 from datetime import datetime
@@ -8,7 +9,7 @@ class UserRegister(BaseModel):
     email: EmailStr
     password: str
     phone: Optional[str] = None
-    name: Optional[str] = None  # ← NOUVEAU
+    name: Optional[str] = None
     country_code: str
     role: Optional[str] = None
 
@@ -17,12 +18,21 @@ class UserLogin(BaseModel):
     email: EmailStr
     password: str
 
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "email": "admin@dyleth.com",
+                "password": "Admin@2026"
+            }
+        }
+    }
+
 
 class UserResponse(BaseModel):
     id: str
     email: EmailStr
     phone: Optional[str] = None
-    name: Optional[str] = None  # ← NOUVEAU
+    name: Optional[str] = None
     country_code: str
     role: str
     created_at: datetime

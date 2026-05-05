@@ -1,3 +1,4 @@
+# app/services/detection/service.py
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from typing import Optional
@@ -12,6 +13,7 @@ from app.services.rag_service import rag_service
 from app.rag.embeddings import embedding_service
 from sqlalchemy.exc import SQLAlchemyError
 from app.core.phone_utils import normalize_phone_number
+from app.core.telemarketing import is_telemarketing_number, TELEMARKETING_RESPONSE
 from app.core.trusted_domains import (
     is_trusted_email_domain,
     is_trusted_sms_sender,
@@ -35,7 +37,7 @@ class DetectionService:
                 "response_time_ms": int((time.time() - start_time) * 1000),
             }
 
-        # 1. Blacklist
+        # 1. Blacklist DB
         result = await db.execute(
             select(FraudulentNumber).where(FraudulentNumber.phone_number == normalized_phone)
         )
@@ -63,7 +65,23 @@ class DetectionService:
             )
             return response
 
-        # 2. Business (whitelist phone)
+        # 1.5. Télémarketing (check en mémoire, pas de DB)
+        if is_telemarketing_number(normalized_phone, country):
+            response = {
+                **TELEMARKETING_RESPONSE,
+                "response_time_ms": int((time.time() - start_time) * 1000),
+            }
+            await cache_service.set(cache_key, response, expire=86400)
+            await self._log_detection(
+                db, user_id, "phone", True,
+                confidence=0.6,
+                method="telemarketing",
+                response_time=int((time.time() - start_time) * 1000),
+                meta_data={"phone": normalized_phone, "country": country},
+            )
+            return response
+
+        # 2. Business (whitelist)
         digits_only = "".join(filter(str.isdigit, phone))
         normalized_digits = normalized_phone.lstrip("+")
 
@@ -139,7 +157,6 @@ class DetectionService:
     ) -> dict:
         start_time = time.time()
 
-        # === 1. Whitelist SMS sender ===
         if is_trusted_sms_sender(sender):
             try:
                 ml_is_fraud, ml_confidence, _ = ml_service.predict_sms(content, sender)
@@ -181,7 +198,6 @@ class DetectionService:
             )
             return response
 
-        # === 2. RAG : recherche sémantique ===
         similar_frauds_count = 0
         similar_examples = []
         rag_is_fraud = False
@@ -210,14 +226,12 @@ class DetectionService:
             except Exception as e:
                 logging.warning("RAG similarity search failed: %s", e)
 
-        # === 3. ML Random Forest ===
         try:
             ml_is_fraud, ml_confidence, ml_risk_factors = ml_service.predict_sms(content, sender)
         except Exception as e:
             logging.error("ML prediction failed: %s", e)
             ml_is_fraud, ml_confidence, ml_risk_factors = False, 0.0, []
 
-        # === 4. Décision hybride ===
         is_fraud = ml_is_fraud or rag_is_fraud
         confidence = max(ml_confidence, rag_confidence)
 
@@ -234,7 +248,6 @@ class DetectionService:
         else:
             method = "ml"
 
-        # === 5. Auto-ajout blacklist ===
         if is_fraud:
             try:
                 normalized_sender = normalize_phone_number(sender)
@@ -271,7 +284,6 @@ class DetectionService:
                 logging.exception("Failed to auto-report fraudulent SMS sender: %s", e)
                 await db.rollback()
 
-        # === 6. Enrichir Qdrant pour détections futures ===
         if is_fraud and confidence >= 0.85 and embedding_service.enabled and rag_service.enabled:
             try:
                 vector = embedding_service.get_embedding(content)
@@ -329,7 +341,6 @@ class DetectionService:
         domain = sender.split("@")[1] if "@" in sender else ""
         domain = domain.strip().lower()
 
-        # === 1. Whitelist domaine ===
         if is_trusted_email_domain(domain):
             try:
                 ml_is_fraud, ml_confidence = ml_service.predict_email(sender, subject, body)
@@ -373,7 +384,6 @@ class DetectionService:
             )
             return response
 
-        # === 2. Blacklist domaine ===
         result = await db.execute(
             select(FraudulentDomain).where(FraudulentDomain.domain == domain)
         )
@@ -395,15 +405,10 @@ class DetectionService:
                 db, user_id, "email", True,
                 fraud_domain.reputation_score, "blacklist",
                 int((time.time() - start_time) * 1000),
-                meta_data={
-                    "sender": sender,
-                    "subject": subject,
-                    "has_attachment": False,
-                },
+                meta_data={"sender": sender, "subject": subject, "has_attachment": False},
             )
             return response
 
-        # === 3. RAG email ===
         similar_frauds_count = 0
         rag_is_fraud = False
         rag_confidence = 0.0
@@ -423,14 +428,12 @@ class DetectionService:
             except Exception as e:
                 logging.warning("RAG similarity search failed for email: %s", e)
 
-        # === 4. ML ===
         try:
             ml_is_fraud, ml_confidence = ml_service.predict_email(sender, subject, body)
         except Exception as e:
             logging.error("Email ML prediction failed: %s", e)
             ml_is_fraud, ml_confidence = False, 0.0
 
-        # === 5. SPF ===
         spf_valid = False
         try:
             answers = dns.resolver.resolve(domain, "TXT")
@@ -441,7 +444,6 @@ class DetectionService:
         except Exception:
             spf_valid = False
 
-        # === 6. Décision hybride ===
         is_fraud = ml_is_fraud or rag_is_fraud
         confidence = max(ml_confidence, rag_confidence)
 
@@ -449,9 +451,7 @@ class DetectionService:
         if ml_is_fraud:
             risk_factors.append("Contenu suspect (ML)")
         if rag_is_fraud:
-            risk_factors.append(
-                f"Similaire à {similar_frauds_count} emails frauduleux signalés"
-            )
+            risk_factors.append(f"Similaire à {similar_frauds_count} emails frauduleux signalés")
         if not spf_valid:
             risk_factors.append("Absence de protection SPF sur le domaine")
 
@@ -462,7 +462,6 @@ class DetectionService:
         else:
             method = "ml"
 
-        # === 7. Auto-ajout blacklist domaine ===
         if is_fraud:
             try:
                 result_fd = await db.execute(
@@ -489,7 +488,6 @@ class DetectionService:
                 logging.exception("Failed to auto-report fraudulent email domain: %s", e)
                 await db.rollback()
 
-        # === 8. Enrichir Qdrant ===
         if is_fraud and confidence >= 0.85 and embedding_service.enabled and rag_service.enabled:
             try:
                 vector = embedding_service.get_embedding(combined_text)

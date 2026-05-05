@@ -1,8 +1,10 @@
+# app/models/fraud.py
 from sqlalchemy import Column, String, Float, Integer, Boolean, DateTime, Enum as SQLEnum
 from sqlalchemy.dialects.postgresql import JSONB
 from datetime import datetime
 import enum
 from app.db.base import Base
+
 
 class FraudType(str, enum.Enum):
     SPAM = "spam"
@@ -10,10 +12,12 @@ class FraudType(str, enum.Enum):
     ROBOCALL = "robocall"
     PHISHING = "phishing"
     SPOOFING = "spoofing"
+    TELEMARKETING = "telemarketing"
+
 
 class FraudulentNumber(Base):
     __tablename__ = "fraudulent_numbers"
-    
+
     phone_number = Column(String(20), primary_key=True, index=True)
     country_code = Column(String(3), index=True, nullable=False)
     fraud_type = Column(SQLEnum(FraudType), nullable=False)
@@ -25,9 +29,10 @@ class FraudulentNumber(Base):
     meta_data = Column(JSONB, default={})
     source = Column(String(50), default="crowdsource")
 
+
 class FraudulentSMSPattern(Base):
     __tablename__ = "fraudulent_sms_patterns"
-    
+
     pattern_id = Column(Integer, primary_key=True, autoincrement=True)
     regex_pattern = Column(String, nullable=True)
     keywords = Column(JSONB, default=[])
@@ -38,9 +43,10 @@ class FraudulentSMSPattern(Base):
     false_positive_rate = Column(Float, default=0.0)
     created_at = Column(DateTime, default=datetime.utcnow)
 
+
 class FraudulentDomain(Base):
     __tablename__ = "fraudulent_domains"
-    
+
     domain = Column(String(255), primary_key=True, index=True)
     phishing_type = Column(String(50))
     first_seen = Column(DateTime, default=datetime.utcnow)
