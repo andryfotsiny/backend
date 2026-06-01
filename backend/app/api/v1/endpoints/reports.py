@@ -16,7 +16,7 @@ from app.schemas.reports import (
 from app.api.deps.auth_deps import get_current_user_optional
 from typing import Optional
 
-from datetime import datetime
+from datetime import datetime, timezone
 import hashlib
 from app.services.rag_service import rag_service
 from app.rag.embeddings import embedding_service
@@ -96,14 +96,14 @@ async def report_phone(
 
         existing_fraud = await db.execute(
             select(FraudulentNumber).where(
-                FraudulentNumber.phone_number == report.phone
+                FraudulentNumber.phone_number == normalized_phone
             )
         )
         fraud_entry = existing_fraud.scalar_one_or_none()
 
         if fraud_entry:
             fraud_entry.report_count += 1
-            fraud_entry.last_reported = datetime.utcnow()
+            fraud_entry.last_reported = datetime.now(timezone.utc).replace(tzinfo=None)
             fraud_entry.verified = True
         else:
             new_fraud = FraudulentNumber(
@@ -121,11 +121,13 @@ async def report_phone(
         await db.commit()
         verified = True
 
-    # Invalidation proactive du cache de détection
+    # Invalidation du cache de détection
     await cache_service.delete(f"phone:{normalized_phone}")
-    # Aussi supprimer pour le numéro non normalisé au cas où
     if normalized_phone != report.phone:
         await cache_service.delete(f"phone:{report.phone}")
+    # Si le numéro vient d'être ajouté à la blacklist → invalider la liste offline
+    if auto_added:
+        await cache_service.delete_pattern("fraud_list:*")
 
     return ReportResponse(
         success=True,
@@ -207,7 +209,7 @@ async def report_sms(
                     "fraud_category": report.fraud_category,
                     "verified": True,
                     "report_count": total_reports,
-                    "timestamp": str(datetime.utcnow()),
+                    "timestamp": str(datetime.now(timezone.utc).replace(tzinfo=None)),
                 },
             )
 

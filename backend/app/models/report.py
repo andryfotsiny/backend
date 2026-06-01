@@ -1,9 +1,12 @@
-from sqlalchemy import Column, String, DateTime, Integer, Boolean, ForeignKey, Enum as SQLEnum, BigInteger, Float
+from sqlalchemy import Column, String, DateTime, Integer, Boolean, ForeignKey, Enum as SQLEnum, BigInteger, Float, Index
 from sqlalchemy.dialects.postgresql import UUID, JSONB
-from datetime import datetime
+from datetime import datetime, timezone
 import uuid
 import enum
 from app.db.base import Base
+
+def _utcnow():
+    return datetime.now(timezone.utc).replace(tzinfo=None)
 
 
 class ReportType(str, enum.Enum):
@@ -27,7 +30,7 @@ class UserReport(Base):
     reported_value = Column(String(255), nullable=True)
     fraud_category = Column(String(100), nullable=True)
     comment = Column(String(500), nullable=True)
-    timestamp = Column(DateTime, default=datetime.utcnow, index=True)
+    timestamp = Column(DateTime, default=_utcnow, index=True)
     verification_status = Column(SQLEnum(VerificationStatus), default=VerificationStatus.PENDING)
     verified_by = Column(Integer, default=0)
     meta_data = Column(JSONB, default={})
@@ -42,6 +45,15 @@ class DetectionLog(Base):
     confidence = Column(Float, nullable=False)
     method_used = Column(String(20), nullable=False)
     response_time_ms = Column(Integer, nullable=False)
-    timestamp = Column(DateTime, default=datetime.utcnow, index=True)
+    timestamp = Column(DateTime, default=_utcnow, index=True)
     model_version = Column(String(20), nullable=True)
     meta_data = Column(JSONB, nullable=True, default={})
+
+    __table_args__ = (
+        # Requêtes analytics par utilisateur + type
+        Index("ix_detection_logs_user_type", "user_id", "detection_type"),
+        # Requêtes de stats fraude sur période
+        Index("ix_detection_logs_fraud_timestamp", "is_fraud", "timestamp"),
+        # Requêtes par méthode de détection
+        Index("ix_detection_logs_method", "method_used"),
+    )

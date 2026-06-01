@@ -1,9 +1,12 @@
 # app/models/fraud.py
 from sqlalchemy import Column, String, Float, Integer, Boolean, DateTime, Enum as SQLEnum
 from sqlalchemy.dialects.postgresql import JSONB
-from datetime import datetime
+from datetime import datetime, timezone
 import enum
 from app.db.base import Base
+
+def _utcnow():
+    return datetime.now(timezone.utc).replace(tzinfo=None)
 
 
 class FraudType(str, enum.Enum):
@@ -24,8 +27,8 @@ class FraudulentNumber(Base):
     confidence_score = Column(Float, nullable=False)
     report_count = Column(Integer, default=1)
     verified = Column(Boolean, default=False)
-    first_reported = Column(DateTime, default=datetime.utcnow)
-    last_reported = Column(DateTime, default=datetime.utcnow)
+    first_reported = Column(DateTime, default=_utcnow)
+    last_reported = Column(DateTime, default=_utcnow)
     meta_data = Column(JSONB, default={})
     source = Column(String(50), default="crowdsource")
 
@@ -41,7 +44,7 @@ class FraudulentSMSPattern(Base):
     severity = Column(Integer, default=5)
     detection_count = Column(Integer, default=0)
     false_positive_rate = Column(Float, default=0.0)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=_utcnow)
 
 
 class FraudulentDomain(Base):

@@ -10,6 +10,8 @@ from app.schemas.auth import (
     PasswordChange,
     DeviceTokenCreate,
     AuthError,
+    ForgotPasswordRequest,
+    ResetPasswordRequest,
 )
 from app.models.user import User
 from app.api.deps.auth_deps import (
@@ -234,6 +236,61 @@ async def get_stats(
         "member_since": current_user.created_at.isoformat(),
         "last_active": current_user.last_active.isoformat(),
     }
+
+
+@router.post(
+    "/forgot-password",
+    status_code=status.HTTP_200_OK,
+    summary="Demander un lien de réinitialisation",
+    responses={200: {"description": "Email envoyé (réponse identique si email inconnu)"}},
+)
+async def forgot_password(
+    request: ForgotPasswordRequest,
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Envoie un lien de réinitialisation par email.
+
+    - Toujours 200 pour éviter l'énumération d'emails.
+    - Le lien expire après `PASSWORD_RESET_TOKEN_EXPIRE_MINUTES` minutes.
+
+    **Accès:** Public
+    """
+    await auth_service.send_password_reset(request.email, db)
+    return {"message": "Si cet email existe, un lien de réinitialisation a été envoyé."}
+
+
+@router.post(
+    "/reset-password",
+    status_code=status.HTTP_200_OK,
+    summary="Réinitialiser le mot de passe avec le token",
+    responses={
+        200: {"description": "Mot de passe réinitialisé"},
+        400: {"model": AuthError, "description": "Token invalide ou expiré"},
+    },
+)
+async def reset_password(
+    request: ResetPasswordRequest,
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Réinitialise le mot de passe en utilisant le token reçu par email.
+
+    - Le token est à usage unique (invalidé après utilisation).
+
+    **Accès:** Public
+    """
+    success = await auth_service.reset_password_with_token(
+        token=request.token,
+        new_password=request.new_password,
+        db=db,
+    )
+    if not success:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Lien de réinitialisation invalide ou expiré",
+        )
+    return {"message": "Mot de passe réinitialisé avec succès"}
 
 
 @router.get("/test-protected")

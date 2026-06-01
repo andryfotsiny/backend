@@ -35,27 +35,56 @@ class MLService:
             logging.error("Failed to load ML models: %s", e)
 
     def predict_phone(self, phone: str, features: dict) -> Tuple[bool, float]:
-        """Simple rule-based phone prediction placeholder."""
+        """
+        Détection de fraude par heuristiques enrichies.
+        Retourne (is_fraud, confidence) où confidence ∈ [0, 1].
+        """
         if not phone:
             return False, 0.0
 
         score = 0.0
         clean_phone = phone.replace("+", "").replace(" ", "").replace("-", "")
-        if len(clean_phone) < 8 or len(clean_phone) > 15:
-            score += 0.4
 
+        # Longueur anormale
+        if len(clean_phone) < 8 or len(clean_phone) > 15:
+            score += 0.35
+
+        # Heure d'appel suspecte (avant 7h ou après 21h)
+        hour = features.get("hour", 12)
+        if hour < 7 or hour > 21:
+            score += 0.15
+
+        # Fréquence d'appels élevée
         call_count = features.get("call_count", 0)
         if call_count > 50:
-            score += 0.5
+            score += 0.50
+        elif call_count > 20:
+            score += 0.30
         elif call_count > 10:
-            score += 0.2
+            score += 0.15
 
-        hour = features.get("hour", 0)
-        if hour < 7 or hour > 21:
-            score += 0.1
+        # Préfixes internationaux fréquemment usurpés
+        suspicious_prefixes = [
+            "+1900", "+1800", "+44", "+33970", "+33650",
+            "+2250", "+2270", "+22890", "+212",
+        ]
+        if any(phone.startswith(p) for p in suspicious_prefixes):
+            score += 0.20
+
+        # Numéro trop court ou composé de chiffres répétés (ex: 0000000000)
+        digits = re.sub(r"\D", "", phone)
+        if len(set(digits)) <= 2:
+            score += 0.40
+
+        # Nombre de reports communautaires (signal fort)
+        report_count = features.get("report_count", 0)
+        if report_count >= 5:
+            score += 0.60
+        elif report_count >= 2:
+            score += 0.30
 
         is_fraud = score >= 0.5
-        confidence = min(score, 0.95)
+        confidence = round(min(score, 0.99), 3)
         return is_fraud, confidence
 
     def predict_sms(self, content: str, sender: str) -> Tuple[bool, float, List[str]]:

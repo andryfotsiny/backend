@@ -62,4 +62,19 @@ class CacheService:
         except Exception:
             return 0
 
+    async def delete_pattern(self, pattern: str):
+        """Supprime toutes les clés correspondant au pattern (ex: 'fraud_list:*')."""
+        if not self.redis_client:
+            return
+        try:
+            cursor = 0
+            while True:
+                cursor, keys = await self.redis_client.scan(cursor, match=pattern, count=100)
+                if keys:
+                    await self.redis_client.delete(*keys)
+                if cursor == 0:
+                    break
+        except Exception:
+            pass
+
 cache_service = CacheService()

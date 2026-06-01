@@ -1,7 +1,10 @@
 from sqlalchemy import Column, String, DateTime, ARRAY, Integer
 from sqlalchemy.dialects.postgresql import UUID, JSONB
-from datetime import datetime
+from datetime import datetime, timezone
 import uuid
+
+def _utcnow():
+    return datetime.now(timezone.utc).replace(tzinfo=None)
 from app.db.base import Base
 from enum import Enum
 from sqlalchemy.orm import validates
@@ -25,8 +28,8 @@ class User(Base):
     phone_hash = Column(String(64), unique=True, index=True, nullable=True)
     password_hash = Column(String(255), nullable=False)
     country_code = Column(String(3), nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
-    last_active = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=_utcnow, nullable=False)
+    last_active = Column(DateTime, default=_utcnow, onupdate=datetime.utcnow)
     settings = Column(JSONB, default={})
     device_tokens = Column(ARRAY(String), default=[])
     report_count = Column(Integer, default=0)

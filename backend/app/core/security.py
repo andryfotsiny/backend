@@ -32,11 +32,15 @@ def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
 
 
-def hash_sha256(data: str) -> str:
-    """Return SHA256 hash of the input string for sensitive data (email, phone)."""
+def hash_sha256(data: str) -> Optional[str]:
+    """
+    Return SHA256 hash of the input string for sensitive data (email, phone).
+    Returns None explicitly (et non une chaîne vide) si data est vide/None,
+    pour permettre les contraintes UNIQUE nullable en base.
+    """
     if not data:
         return None
-    return hashlib.sha256(data.encode()).hexdigest()
+    return hashlib.sha256(data.strip().lower().encode()).hexdigest()
 
 
 def verify_token(token: str) -> Optional[dict]:

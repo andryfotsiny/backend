@@ -202,7 +202,7 @@ class EmailService:
 
     def _send_message(self, sender_email: str, recipient_email: str, message: MIMEMultipart) -> None:
         context = ssl.create_default_context()
-        smtp_password_raw = settings.SMTP_PASSWORD or settings.SMTP_PASS
+        smtp_password_raw = settings.SMTP_PASS
         smtp_password = "".join((smtp_password_raw or "").split())
 
         if smtp_password_raw and smtp_password_raw != smtp_password:

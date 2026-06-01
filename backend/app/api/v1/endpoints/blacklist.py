@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, delete, func, asc, desc
 from typing import Optional, List
-from datetime import datetime
+from datetime import datetime, timezone
 from pydantic import BaseModel
 
 from app.db.session import get_db
@@ -210,11 +210,12 @@ async def blacklist_phone(
         existing.fraud_type = payload.fraud_type
         existing.confidence_score = payload.confidence_score
         existing.verified = True
-        existing.last_reported = datetime.utcnow()
+        existing.last_reported = datetime.now(timezone.utc).replace(tzinfo=None)
         existing.source = payload.source
         await db.commit()
         await db.refresh(existing)
         await cache_service.delete(f"phone:{payload.phone_number}")
+        await cache_service.delete_pattern("fraud_list:*")
         return BlacklistPhoneResponse(
             phone_number=existing.phone_number,
             country_code=existing.country_code,
@@ -232,14 +233,15 @@ async def blacklist_phone(
         confidence_score=payload.confidence_score,
         report_count=1,
         verified=True,
-        first_reported=datetime.utcnow(),
-        last_reported=datetime.utcnow(),
+        first_reported=datetime.now(timezone.utc).replace(tzinfo=None),
+        last_reported=datetime.now(timezone.utc).replace(tzinfo=None),
         source=payload.source,
     )
     db.add(new_entry)
     await db.commit()
     await db.refresh(new_entry)
     await cache_service.delete(f"phone:{payload.phone_number}")
+    await cache_service.delete_pattern("fraud_list:*")
 
     return BlacklistPhoneResponse(
         phone_number=new_entry.phone_number,
@@ -408,7 +410,7 @@ async def blacklist_domain(
         domain=payload.domain,
         phishing_type=payload.phishing_type,
         reputation_score=payload.reputation_score,
-        first_seen=datetime.utcnow(),
+        first_seen=datetime.now(timezone.utc).replace(tzinfo=None),
         blocked_count=1,
     )
     db.add(new_entry)
@@ -474,6 +476,9 @@ async def import_phones_csv(
 
     if result.errors:
         raise HTTPException(status_code=400, detail=result.errors[0])
+
+    # Invalider la liste offline après import
+    await cache_service.delete_pattern("fraud_list:*")
 
     return result
 

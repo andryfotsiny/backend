@@ -3,7 +3,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from typing import Optional
 import time
-from datetime import datetime
+from datetime import datetime, timezone
+
+def _now() -> datetime:
+    """Retourne l'heure UTC actuelle (compatible Python 3.12+)."""
+    return datetime.now(timezone.utc).replace(tzinfo=None)
 from app.models.fraud import FraudulentNumber, FraudulentDomain, FraudType
 from app.models.business import Business
 from app.models.report import DetectionLog
@@ -126,9 +130,10 @@ class DetectionService:
             )
             return response
 
-        # 3. ML
+        # 3. ML — features basées sur le contexte réel
+        current_hour = _now().hour
         is_fraud, confidence = ml_service.predict_phone(
-            phone, {"hour": 14, "call_count": 1}
+            normalized_phone, {"hour": current_hour, "call_count": 1}
         )
 
         response = {
@@ -258,7 +263,7 @@ class DetectionService:
 
                 if existing_fn:
                     existing_fn.report_count += 1
-                    existing_fn.last_reported = datetime.utcnow()
+                    existing_fn.last_reported = _now()
                     if confidence > existing_fn.confidence_score:
                         existing_fn.confidence_score = confidence
                 else:
@@ -297,7 +302,7 @@ class DetectionService:
                             "sender": sender,
                             "confidence": confidence,
                             "source": method,
-                            "timestamp": datetime.utcnow().isoformat(),
+                            "timestamp": _now().isoformat(),
                         },
                     )
             except Exception as e:
@@ -502,7 +507,7 @@ class DetectionService:
                             "domain": domain,
                             "confidence": confidence,
                             "source": method,
-                            "timestamp": datetime.utcnow().isoformat(),
+                            "timestamp": _now().isoformat(),
                         },
                     )
             except Exception as e:

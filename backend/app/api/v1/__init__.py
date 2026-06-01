@@ -10,10 +10,10 @@ from app.api.v1.endpoints.business import router as business_router
 from app.api.v1.endpoints.ai import router as ai_router
 from app.api.v1.endpoints import analytics
 from app.api.v1.endpoints.blacklist import router as blacklist_router
+from app.api.v1.endpoints.fraud import router as fraud_router
 
 api_router = APIRouter()
 
-print("DEBUG: Registering routers in /api/v1")
 api_router.include_router(phone_router, prefix="/phone", tags=["phone"])
 api_router.include_router(sms_router, prefix="/sms", tags=["sms"])
 api_router.include_router(email_router, prefix="/email", tags=["email"])
@@ -25,3 +25,4 @@ api_router.include_router(business_router, prefix="/business", tags=["business"]
 api_router.include_router(ai_router, prefix="/ai", tags=["ai"])
 api_router.include_router(analytics.router, prefix="/analytics", tags=["analytics"])
 api_router.include_router(blacklist_router, prefix="/blacklist", tags=["blacklist"])
+api_router.include_router(fraud_router, prefix="/fraud", tags=["fraud"])

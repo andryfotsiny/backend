@@ -16,8 +16,8 @@ class Settings(BaseSettings):
     # =========================
     SECRET_KEY: str
     ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 43200
-    REFRESH_TOKEN_EXPIRE_DAYS: int = 365
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60   # 1h — réduire via .env si besoin
+    REFRESH_TOKEN_EXPIRE_DAYS: int = 30    # 30j — renouvelé silencieusement par le client
     PASSWORD_RESET_TOKEN_EXPIRE_MINUTES: int = 30
 
     # =========================

@@ -1,41 +1,22 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
+"""
+Router /fraud — Endpoints pour la synchronisation offline des numéros frauduleux.
+Chemin complet : /api/v1/fraud/numbers/list
+"""
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from typing import Optional, List
 from pydantic import BaseModel
 from datetime import datetime
+
 from app.db.session import get_db
-from app.schemas.phone import PhoneCheckRequest, PhoneCheckResponse
-from app.services.detection import detection_service
-from app.services.cache import cache_service
 from app.api.deps.auth_deps import get_current_user
 from app.models.fraud import FraudulentNumber
 from app.models.user import User
+from app.services.cache import cache_service
 
 router = APIRouter()
 
-
-@router.post("/check-phone", response_model=PhoneCheckResponse)
-async def check_phone(
-    request: PhoneCheckRequest,
-    db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
-):
-    if request.user_id:
-        rate_ok = await cache_service.check_rate_limit(
-            request.user_id, current_user.role
-        )
-        if not rate_ok:
-            raise HTTPException(status_code=429, detail="Rate limit exceeded")
-
-    result = await detection_service.check_phone(
-        db=db, phone=request.phone, country=request.country, user_id=request.user_id
-    )
-
-    return PhoneCheckResponse(**result)
-
-
-# ── Schémas pour la liste offline ────────────────────────────────────────────
 
 class FraudNumberItem(BaseModel):
     phone_number: str
@@ -50,22 +31,21 @@ class FraudNumberListResponse(BaseModel):
     total: int
 
 
-# ── Endpoint sync offline ─────────────────────────────────────────────────────
-
-@router.get("/fraud-list", response_model=FraudNumberListResponse)
+@router.get("/numbers/list", response_model=FraudNumberListResponse)
 async def get_fraud_number_list(
-    limit: int = Query(5000, ge=1, le=20000, description="Nombre maximum de numéros à retourner"),
+    limit: int = Query(5000, ge=1, le=20000, description="Nombre maximum de numéros"),
     country_code: Optional[str] = Query(None, description="Filtrer par pays (ex: MG, FR)"),
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
     """
-    Retourne la liste des numéros frauduleux vérifiés pour la synchronisation offline.
+    Liste des numéros frauduleux vérifiés pour la synchronisation offline des apps mobiles.
 
-    Utilisé par les apps mobiles pour stocker localement la liste et effectuer
-    des vérifications sans connexion réseau.
+    - Retourne uniquement les numéros **vérifiés** (verified=true)
+    - Triés par nombre de signalements décroissant
+    - Cache Redis 6h pour minimiser la charge DB
 
-    **Accès:** USER (authentifié)
+    **Accès:** USER authentifié
     """
     cache_key = f"fraud_list:{country_code or 'all'}:{limit}"
     cached = await cache_service.get(cache_key)
@@ -76,7 +56,6 @@ async def get_fraud_number_list(
     if country_code:
         query = query.where(FraudulentNumber.country_code == country_code.upper())
 
-    # Trier par report_count desc pour prioriser les plus signalés
     query = query.order_by(FraudulentNumber.report_count.desc()).limit(limit)
 
     result = await db.execute(query)
@@ -98,7 +77,7 @@ async def get_fraud_number_list(
         "total": len(items),
     }
 
-    # Cache 6h — la liste évolue peu
+    # Cache 6h — la liste évolue lentement
     await cache_service.set(cache_key, response_data, expire=21600)
 
     return FraudNumberListResponse(**response_data)
